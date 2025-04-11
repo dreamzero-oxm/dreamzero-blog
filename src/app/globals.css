@@ -4,112 +4,199 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* 基础背景色变量映射 */
   --color-background: var(--background);
+  /* 基础文字色变量映射 */  
   --color-foreground: var(--foreground);
+  
+  /* 无衬线字体变量（使用Geist字体） */
   --font-sans: var(--font-geist-sans);
+  /* 等宽字体变量（使用Geist Mono字体） */
   --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* 侧边栏相关变量映射 */
+  --color-sidebar-ring: var(--sidebar-ring);       /* 侧边栏焦点环颜色 */
+  --color-sidebar-border: var(--sidebar-border);   /* 侧边栏边框颜色 */
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground); /* 侧边栏强调文字色 */
+  --color-sidebar-accent: var(--sidebar-accent);   /* 侧边栏强调色 */
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground); /* 侧边栏主按钮文字色 */
+  --color-sidebar-primary: var(--sidebar-primary); /* 侧边栏主按钮色 */
+  --color-sidebar-foreground: var(--sidebar-foreground); /* 侧边栏文字色 */
+  --color-sidebar: var(--sidebar);                 /* 侧边栏背景色 */
+  
+  /* 图表颜色变量映射 */
+  --color-chart-5: var(--chart-5);  /* 图表第五系列颜色 */
+  --color-chart-4: var(--chart-4);  /* 图表第四系列颜色 */
+  --color-chart-3: var(--chart-3);  /* 图表第三系列颜色 */
+  --color-chart-2: var(--chart-2);  /* 图表第二系列颜色 */
+  --color-chart-1: var(--chart-1);  /* 图表第一系列颜色 */
+  
+  /* 交互元素变量映射 */
+  --color-ring: var(--ring);        /* 焦点环颜色 */
+  --color-input: var(--input);      /* 输入框背景色 */
+  --color-border: var(--border);    /* 通用边框颜色 */
+  --color-destructive: var(--destructive); /* 错误/危险操作颜色 */
+  
+  /* 强调色系变量映射 */
+  --color-accent-foreground: var(--accent-foreground); /* 强调文字色 */
+  --color-accent: var(--accent);     /* 强调色 */
+  
+  /* 次要内容变量映射 */
+  --color-muted-foreground: var(--muted-foreground); /* 次要文字色 */
+  --color-muted: var(--muted);       /* 次要背景色 */
+  
+  /* 次级内容变量映射 */  
+  --color-secondary-foreground: var(--secondary-foreground); /* 次级文字色 */
+  --color-secondary: var(--secondary); /* 次级背景色 */
+  
+  /* 主色系变量映射 */
+  --color-primary-foreground: var(--primary-foreground); /* 主按钮文字色 */
+  --color-primary: var(--primary);   /* 主按钮色 */
+  
+  /* 弹出层变量映射 */
+  --color-popover-foreground: var(--popover-foreground); /* 弹出层文字色 */
+  --color-popover: var(--popover);   /* 弹出层背景色 */
+  
+  /* 卡片组件变量映射 */
+  --color-card-foreground: var(--card-foreground); /* 卡片文字色 */
+  --color-card: var(--card);         /* 卡片背景色 */
+  
+  /* 圆角系统变量计算 */
+  --radius-sm: calc(var(--radius) - 4px);  /* 小圆角尺寸 */
+  --radius-md: calc(var(--radius) - 2px);  /* 中圆角尺寸 */
+  --radius-lg: var(--radius);              /* 大圆角尺寸（基准值） */
+  --radius-xl: calc(var(--radius) + 4px);  /* 超大圆角尺寸 */
 }
 
 :root {
+  /* 基础圆角大小 (10px) */
   --radius: 0.625rem;
+  
+  /* 基础背景色 - 纯白色 */
   --background: oklch(1 0 0);
+  /* 基础文字色 - 深灰色 */
   --foreground: oklch(0.145 0 0);
+  
+  /* 卡片组件背景色 - 纯白色 */
   --card: oklch(1 0 0);
+  /* 卡片文字色 - 深灰色 */
   --card-foreground: oklch(0.145 0 0);
+  
+  /* 弹出层背景色 - 纯白色 */
   --popover: oklch(1 0 0);
+  /* 弹出层文字色 - 深灰色 */
   --popover-foreground: oklch(0.145 0 0);
+  
+  /* 主色调 - 深灰色 */
   --primary: oklch(0.205 0 0);
+  /* 主色调上的文字色 - 接近白色 */
   --primary-foreground: oklch(0.985 0 0);
+  
+  /* 次级色调 - 浅灰色 */
   --secondary: oklch(0.97 0 0);
+  /* 次级色调上的文字色 - 深灰色 */
   --secondary-foreground: oklch(0.205 0 0);
+  
+  /* 弱化内容背景色 - 浅灰色 */
   --muted: oklch(0.97 0 0);
+  /* 弱化内容文字色 - 中灰色 */
   --muted-foreground: oklch(0.556 0 0);
+  
+  /* 强调色 - 浅灰色 */
   --accent: oklch(0.97 0 0);
+  /* 强调色上的文字色 - 深灰色 */
   --accent-foreground: oklch(0.205 0 0);
+  
+  /* 错误/危险操作颜色 - 红色 */
   --destructive: oklch(0.577 0.245 27.325);
+  
+  /* 通用边框颜色 - 浅灰色 */
   --border: oklch(0.922 0 0);
+  /* 输入框背景色 - 浅灰色 */
   --input: oklch(0.922 0 0);
+  /* 焦点环颜色 - 中灰色 */
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  
+  /* 图表颜色系列 */
+  --chart-1: oklch(0.646 0.222 41.116);  /* 橙色系 */
+  --chart-2: oklch(0.6 0.118 184.704);   /* 蓝色系 */
+  --chart-3: oklch(0.398 0.07 227.392);   /* 紫色系 */
+  --chart-4: oklch(0.828 0.189 84.429);  /* 绿色系 */
+  --chart-5: oklch(0.769 0.188 70.08);    /* 黄色系 */
+  
+  /* 侧边栏相关颜色 */
+  --sidebar: oklch(0.985 0 0);            /* 侧边栏背景色 - 接近白色 */
+  --sidebar-foreground: oklch(0.145 0 0); /* 侧边栏文字色 - 深灰色 */
+  --sidebar-primary: oklch(0.205 0 0);    /* 侧边栏主按钮色 - 深灰色 */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* 侧边栏主按钮文字色 - 接近白色 */
+  --sidebar-accent: oklch(0.97 0 0);      /* 侧边栏强调色 - 浅灰色 */
+  --sidebar-accent-foreground: oklch(0.205 0 0); /* 侧边栏强调色文字 - 深灰色 */
+  --sidebar-border: oklch(0.922 0 0);     /* 侧边栏边框色 - 浅灰色 */
+  --sidebar-ring: oklch(0.708 0 0);       /* 侧边栏焦点环色 - 中灰色 */
 }
 
 .dark {
+  /* 暗黑模式背景色 - 深灰色 */
   --background: oklch(0.145 0 0);
+  /* 暗黑模式文字色 - 接近白色 */
   --foreground: oklch(0.985 0 0);
+  
+  /* 暗黑模式卡片背景色 - 深灰色 */
   --card: oklch(0.205 0 0);
+  /* 暗黑模式卡片文字色 - 接近白色 */
   --card-foreground: oklch(0.985 0 0);
+  
+  /* 暗黑模式弹出层背景色 - 深灰色 */
   --popover: oklch(0.205 0 0);
+  /* 暗黑模式弹出层文字色 - 接近白色 */
   --popover-foreground: oklch(0.985 0 0);
+  
+  /* 暗黑模式主色调 - 接近白色 */
   --primary: oklch(0.922 0 0);
+  /* 暗黑模式主色调文字色 - 深灰色 */
   --primary-foreground: oklch(0.205 0 0);
+  
+  /* 暗黑模式次级色调 - 深灰色 */
   --secondary: oklch(0.269 0 0);
+  /* 暗黑模式次级色调文字色 - 接近白色 */
   --secondary-foreground: oklch(0.985 0 0);
+  
+  /* 暗黑模式弱化内容背景色 - 深灰色 */
   --muted: oklch(0.269 0 0);
+  /* 暗黑模式弱化内容文字色 - 中灰色 */
   --muted-foreground: oklch(0.708 0 0);
+  
+  /* 暗黑模式强调色 - 深灰色 */
   --accent: oklch(0.269 0 0);
+  /* 暗黑模式强调色文字色 - 接近白色 */
   --accent-foreground: oklch(0.985 0 0);
+  
+  /* 暗黑模式错误/危险操作颜色 - 红色 */
   --destructive: oklch(0.704 0.191 22.216);
+  
+  /* 暗黑模式通用边框颜色 - 半透明白色 */
   --border: oklch(1 0 0 / 10%);
+  /* 暗黑模式输入框背景色 - 半透明白色 */
   --input: oklch(1 0 0 / 15%);
+  /* 暗黑模式焦点环颜色 - 中灰色 */
   --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  
+  /* 暗黑模式图表颜色系列 */
+  --chart-1: oklch(0.488 0.243 264.376);  /* 紫色系 */
+  --chart-2: oklch(0.696 0.17 162.48);    /* 蓝色系 */
+  --chart-3: oklch(0.769 0.188 70.08);     /* 黄色系 */
+  --chart-4: oklch(0.627 0.265 303.9);    /* 紫色系 */
+  --chart-5: oklch(0.645 0.246 16.439);    /* 红色系 */
+  
+  /* 暗黑模式侧边栏相关颜色 */
+  --sidebar: oklch(0.205 0 0);            /* 侧边栏背景色 - 深灰色 */
+  --sidebar-foreground: oklch(0.985 0 0);  /* 侧边栏文字色 - 接近白色 */
+  --sidebar-primary: oklch(0.488 0.243 264.376); /* 侧边栏主按钮色 - 紫色 */
+  --sidebar-primary-foreground: oklch(0.985 0 0); /* 侧边栏主按钮文字色 - 接近白色 */
+  --sidebar-accent: oklch(0.269 0 0);      /* 侧边栏强调色 - 深灰色 */
+  --sidebar-accent-foreground: oklch(0.985 0 0); /* 侧边栏强调色文字 - 接近白色 */
+  --sidebar-border: oklch(1 0 0 / 10%);    /* 侧边栏边框色 - 半透明白色 */
+  --sidebar-ring: oklch(0.556 0 0);       /* 侧边栏焦点环色 - 中灰色 */
 }
 
 @layer base {

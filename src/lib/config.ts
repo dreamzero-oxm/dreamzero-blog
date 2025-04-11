@@ -1,12 +1,12 @@
 export const config = {
   site: {
-    title: "Nextjs Blog Template",
-    name: "Nextjs Blog Template",
-    description: "Nextjs Blog Template",
-    keywords: ["Nextjs Blog Template", "AI", "Full Stack Developer"],
-    url: "https://xxx.com",
-    baseUrl: "https://xxx.com",
-    image: "https://xxx.com/og-image.png",
+    title: "Moity Soeoe",
+    name: "Moity Soeoe的博客",
+    description: "Moity Soeoe的博客",
+    keywords: ["Moity Soeoe", "AI", "Full Stack Developer"],
+    url: "https://moity-soeoe.com",
+    baseUrl: "https://moity-soeoe.com",
+    image: "https://moity-soeoe.com/og-image.png",
     favicon: {
       ico: "/favicon.ico",
       png: "/favicon.png",
@@ -15,8 +15,8 @@ export const config = {
     },
     manifest: "/site.webmanifest",
     rss: {
-      title: "Nextjs Blog Template",
-      description: "Thoughts on Full-stack development, AI",
+      title: "Moity Soeoe的博客",
+      description: "Practice of Full Stack Engineer",
       feedLinks: {
         rss2: "/rss.xml",
         json: "/feed.json",
@@ -25,12 +25,12 @@ export const config = {
     },
   },
   author: {
-    name: "Your Name",
-    email: "your.email@example.com",
-    bio: "这是一个 Nextjs 博客模板",
+    name: "Moity Soeoe",
+    email: "ouxiangming_moi@foxmail.com",
+    bio: "Moity Soeoe(XiangMing Ou)",
   },
   social: {
-    github: "https://github.com/xxx",
+    github: "https://github.com/This-MOI",
     x: "https://x.com/xxx",
     xiaohongshu: "https://www.xiaohongshu.com/user/profile/xxx",
     wechat: "https://storage.xxx.com/images/wechat-official-account.png",

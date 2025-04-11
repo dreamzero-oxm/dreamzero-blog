@@ -12,7 +12,9 @@ import { motion } from "framer-motion";
 import { SquareTerminal } from "lucide-react";
 
 export function Header() {
+  // 获取路径
   const pathname = usePathname();
+  // 判断是否为博客页面
   const isBlogPage = pathname.includes("/blog/");
 
   return (
@@ -38,15 +40,15 @@ export function Header() {
 
         {/* Right side buttons */}
         <div className="flex items-center space-x-2 md:space-x-8 mr-4">
-          <Link href="https://github.com/guangzhengli" title="Github">
+          <Link href="https://github.com/This-MOI" title="Github">
             <GithubIcon />
           </Link>
-          <Link href="https://x.com/iguangzhengli" title="X">
+          {/* <Link href="https://x.com/This-MOI" title="X">
             <XIcon />
-          </Link>
-          <Link href="https://www.xiaohongshu.com/user/profile/6076c9a2000000000101e862" title="Xiaohongshu">
+          </Link> */}
+          {/* <Link href="https://www.xiaohongshu.com/" title="Xiaohongshu">
             <XiaohongshuIcon />
-          </Link>
+          </Link> */}
         </div>
       </motion.div>
     </header >
