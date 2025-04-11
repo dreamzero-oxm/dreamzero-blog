@@ -33,24 +33,38 @@ export const config = {
     github: "https://github.com/This-MOI",
     x: "https://x.com/xxx",
     xiaohongshu: "https://www.xiaohongshu.com/user/profile/xxx",
-    wechat: "https://storage.xxx.com/images/wechat-official-account.png",
+    wechat: "https://u.wechat.com/MEJWuTspfYpz_TR8Do3CmKY",
     buyMeACoffee: "https://www.buymeacoffee.com/xxx",
   },
+  // 评论，需要在在 GitHub 上安装 Giscus 应用，暂时不用
   giscus: {
     repo: "guangzhengli/hugo-ladder-exampleSite",
     repoId: "R_kgDOHyVOjg",
     categoryId: "DIC_kwDOHyVOjs4CQsH7",
   },
+  // 配置导航的菜单配置
   navigation: {
     main: [
       { 
         title: "文章", 
         href: "/blog",
       },
+      { 
+        title: "友商", 
+        href: "/blog",
+        submenu: [
+          {
+            title: "友商1",
+            href: "/blog",
+          },
+        ]
+      },
     ],
   },
+  // 配置 SEO 相关的配置
+  // 搜索引擎优化
   seo: {
-    metadataBase: new URL("https://xxx.com"),
+    metadataBase: new URL("https://moity-soeoe.com"),
     alternates: {
       canonical: './',
     },
@@ -60,7 +74,7 @@ export const config = {
     },
     twitter: {
       card: "summary_large_image" as const,
-      creator: "@xxx",
+      creator: "@moity",
     },
   },
 };

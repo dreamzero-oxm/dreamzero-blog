@@ -9,7 +9,7 @@ import matter from 'gray-matter';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const BASE_URL = 'https://xxx.com';
+const BASE_URL = 'https://moity-soeoe.com';
 
 // 获取优先级
 function getPriority(path) {

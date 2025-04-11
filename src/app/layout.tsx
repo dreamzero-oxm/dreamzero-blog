@@ -4,16 +4,23 @@ import { Header } from "@/components/header";
 import { config } from "@/lib/config";
 
 export const metadata: Metadata = {
+  // 标题
   title: config.site.title,
+  // 描述
   description: config.site.description,
+  // 关键字
   keywords: config.site.keywords,
+  // 元数据的基本URL
   metadataBase: config.seo.metadataBase,
+  // 
   alternates: config.seo.alternates,
+  // 图标
   icons: [
     { rel: "icon", url: config.site.favicon.png, sizes: "48x48", type: "image/png" },
     { rel: "icon", url: config.site.favicon.svg, type: "image/svg+xml" },
     { rel: "apple-touch-icon", url: config.site.favicon.appleTouchIcon, sizes: "180x180" },
   ],
+  // 
   openGraph: {
     url: config.site.url,
     type: config.seo.openGraph.type,

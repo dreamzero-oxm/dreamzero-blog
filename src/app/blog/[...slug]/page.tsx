@@ -120,7 +120,7 @@ export default async function BlogPage(props: BlogsPageProps) {
           <MDXRemote source={blog.content} components={components} options={options} />
         </div>
 
-        <GiscusComments />
+        {/* <GiscusComments /> */}
       </div>
       <div className="hidden text-sm xl:block">
         <div className="sticky top-16 -mt-6 h-[calc(100vh-3.5rem)]">

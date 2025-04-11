@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { SquareTerminal } from "lucide-react";
+import Image from 'next/image'
 
 export function Header() {
   // 获取路径
@@ -30,7 +31,14 @@ export function Header() {
 
         {/* Logo */}
         <Link href="/" title="Home" className="flex items-center gap-4 md:order-first">
-          <SquareTerminal className="w-10 h-10" />
+          {/* <SquareTerminal className="w-10 h-10" /> */}
+          <Image
+            src='/favicon.svg'
+            width={10}
+            height={10}
+            alt='logo'
+            className='w-10 h-10'
+          />
         </Link>
 
         {/* Desktop navigation */}

@@ -19,11 +19,11 @@ export default function Home() {
         <div className="flex space-x-2 text-gray-600">
           <Link href={config.social.buyMeACoffee} className="underline underline-offset-4">赞赏</Link>
           <span>·</span>
-          <Link href={config.social.x} className="underline underline-offset-4">X</Link>
-          <span>·</span>
+          {/* <Link href={config.social.x} className="underline underline-offset-4">X</Link> */}
+          {/* <span>·</span> */}
           <Link href={config.social.xiaohongshu} className="underline underline-offset-4">小红书</Link>
           <span>·</span>
-          <Link href={config.social.wechat} className="underline underline-offset-4">微信公众号</Link>
+          <Link href={config.social.wechat} className="underline underline-offset-4">微信</Link>
         </div>
       </div>
 
