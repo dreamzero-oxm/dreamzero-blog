@@ -54,8 +54,8 @@ export const config = {
         href: "/blog",
         submenu: [
           {
-            title: "友商1",
-            href: "/blog",
+            title: "Aimerick",
+            href: "https://www.aimerick.cc/",
           },
         ]
       },
