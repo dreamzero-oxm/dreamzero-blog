@@ -13,7 +13,7 @@ import rehypeKatex from 'rehype-katex'
 import rehypeHighlight from 'rehype-highlight';
 import rehypeSlug from 'rehype-slug';
 import 'highlight.js/styles/github-dark.min.css'
-import GiscusComments from "@/components/giscus-comments"
+// import GiscusComments from "@/components/giscus-comments"
 import { GoToTop } from "@/components/go-to-top"
 import 'katex/dist/katex.min.css';
 import { config } from "@/lib/config";
