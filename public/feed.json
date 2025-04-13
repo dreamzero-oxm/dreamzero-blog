@@ -1,37 +1,25 @@
 {
     "version": "https://jsonfeed.org/version/1",
-    "title": "Your Blog",
-    "home_page_url": "https://xxx.com",
-    "feed_url": "https://xxx.com/feed.json",
-    "description": "Your Blog Description",
-    "icon": "https://xxx.com/favicon.png",
+    "title": "Moity Soeoe's Blog",
+    "home_page_url": "https://moity-soeoe.com",
+    "feed_url": "https://moity-soeoe.com/feed.json",
+    "description": "Moity Soeoe's Blog",
+    "icon": "https://moity-soeoe.com/favicon.png",
     "author": {
-        "name": "Your Name",
-        "url": "https://xxx.com"
+        "name": "moity-soeoe",
+        "url": "https://moity-soeoe.com"
     },
     "items": [
         {
-            "id": "https://xxx.com/blog/hello-world",
-            "content_html": "<p>这篇文章包含markdown语法基本的内容。</p>\n<p>在markdown里可以使用 \\ 对特殊符号进行转义。  </p>\n<h1>1. 标题</h1>\n<p><strong>语法</strong></p>\n<pre><code class=\"language-md\"># This is an &lt;h1&gt; tag\n## This is an &lt;h2&gt; tag\n### This is an &lt;h3&gt; tag\n#### This is an &lt;h4&gt; tag\n</code></pre>\n<p><strong>实例</strong></p>\n<h1>This is an h1 tag</h1>\n<h2>This is an h2 tag</h2>\n<h3>This is an h3 tag</h3>\n<h4>This is an h4 tag</h4>\n<h1>2. 强调和斜体</h1>\n<p><strong>语法</strong></p>\n<pre><code class=\"language-md\">*This text will be italic*\n_This will also be italic_\n\n**This text will be bold**\n__This will also be bold__\n</code></pre>\n<p><strong>实例</strong></p>\n<p><em>This text will be italic</em>\n<em>This will also be italic</em></p>\n<p><strong>This text will be bold</strong>\n<strong>This will also be bold</strong></p>\n<h1>3. 有序列表和无序列表</h1>\n<p><strong>语法</strong></p>\n<pre><code class=\"language-md\">* Item 1\n* Item 2\n* Item 3\n\n1. Item 1\n2. Item 2\n3. Item 3\n</code></pre>\n<p><strong>实例</strong></p>\n<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>\n<ol>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ol>\n<h1>4. 图片</h1>\n<p><strong>语法</strong></p>\n<pre><code>![img-name](img-url)\n</code></pre>\n<p><strong>实例</strong>\n<img src=\"https://storage.guangzhengli.com/images/wechat-official-account.png\" alt=\"微信公众号\"></p>\n<h1>5. 超链接</h1>\n<p><strong>语法</strong></p>\n<pre><code>[link-name](link-url)\n</code></pre>\n<p><strong>实例</strong></p>\n<p><a href=\"https://storage.guangzhengli.com/images/wechat-official-account.png\">微信公众号链接</a></p>\n<h1>6. 引用</h1>\n<p><strong>语法</strong></p>\n<pre><code class=\"language-md\">&gt; 引用本意是引用别人的话之类  \n</code></pre>\n<p><strong>实例</strong></p>\n<blockquote>\n<p>If you please draw me a sheep!<br>不想当将军的士兵, 不是好士兵.  </p>\n</blockquote>\n<h1>7. 单行代码</h1>\n<p><strong>语法</strong></p>\n<pre><code>`This is an inline code.`\n</code></pre>\n<p><strong>实例</strong></p>\n<p><code>同样的单行代码, 我经常用来显示特殊名词</code></p>\n<h1>8. 多行代码</h1>\n<p><strong>语法</strong></p>\n<pre><code class=\"language-md\">​```js\nfor (var i=0; i&lt;100; i++) {\n    console.log(&quot;hello world&quot; + i);\n}\n​```\n</code></pre>\n<p><strong>实例</strong></p>\n<pre><code class=\"language-js\">for (var i=0; i&lt;100; i++) {\n    console.log(&quot;hello world&quot; + i);\n}\n</code></pre>\n<p>也可以通过缩进来显示代码, 下面是示例:  </p>\n<pre><code>console.loe(&quot;Hello_World&quot;);\n</code></pre>\n<h1>9. 表格</h1>\n<h2>Table</h2>\n<table>\n<thead>\n<tr>\n<th>Table Header 1</th>\n<th>Table Header 2</th>\n<th>Table Header 3</th>\n</tr>\n</thead>\n<tbody><tr>\n<td>Division 1</td>\n<td>Division 2</td>\n<td>Division 3</td>\n</tr>\n<tr>\n<td>Division 1</td>\n<td>Division 2</td>\n<td>Division 3</td>\n</tr>\n<tr>\n<td>Division 1</td>\n<td>Division 2</td>\n<td>Division 3</td>\n</tr>\n</tbody></table>\n<h1>参考链接</h1>\n<ul>\n<li><a href=\"https://guides.github.com/features/mastering-markdown/\">https://guides.github.com/features/mastering-markdown/</a>  </li>\n<li><a href=\"https://help.github.com/articles/basic-writing-and-formatting-syntax/\">https://help.github.com/articles/basic-writing-and-formatting-syntax/</a></li>\n</ul>\n",
-            "url": "https://xxx.com/blog/hello-world",
-            "title": "Markdown 基本用法",
-            "summary": "这篇文章包含markdown语法基本的内容。",
-            "date_modified": "2025-04-05T12:10:00.000Z",
+            "id": "https://moity-soeoe.com/blog/MyCurrentSituation",
+            "content_html": "<h1>我的研一现状：学术受挫与技术深耕</h1>\n<h2>学术之路：两战两败的迷茫期</h2>\n<h3>论文投稿的血泪史</h3>\n<ul>\n<li>📑 <strong>AAAI 2025投稿</strong>：BFP-FGMS: A Fine-Grained Mantissa Sharing Approach for Block Floating Point，被拒</li>\n<li>📊 <strong>DAC 2025尝试</strong>：DAC-BMS:Block Mantissa Sharing，硬件加速器设计方向，被拒</li>\n<li>😵 连续被拒的困境：<ul>\n<li>平均每天投入5小时在论文写作</li>\n<li>累计修改32个版本</li>\n<li>却换来&quot;novelty is limited&quot;的扎心评语</li>\n</ul>\n</li>\n</ul>\n<h2>技术栈的进化之路</h2>\n<h3>编程语言版图</h3>\n<pre><code class=\"language-python\"># 当前技能雷达图\nlanguages = {\n    &quot;Java&quot;: {&quot;experience&quot;: &quot;3年&quot;, &quot;项目&quot;: &quot;分布式日志系统&quot;},\n    &quot;Python&quot;: {&quot;框架&quot;: &quot;PyTorch/Flask&quot;, &quot;应用&quot;: &quot;机器学习/Web开发&quot;},\n    &quot;Golang&quot;: {\n        &quot;重点领域&quot;: &quot;并发编程/微服务&quot;,\n        &quot;项目经验&quot;: [&quot;高并发API网关&quot;, &quot;分布式任务调度系统&quot;]\n    },\n    &quot;前端&quot;: [&quot;React&quot;, &quot;Ant Design&quot;]\n}\n</code></pre>\n<h3>Golang深度实践</h3>\n<p>正在开发的<strong>云原生监控系统</strong>技术栈：</p>\n<ol>\n<li>Gin框架构建REST API</li>\n<li>GORM对接PostgreSQL</li>\n<li>NSQ消息队列处理日志</li>\n<li>Docker + Kubernetes部署</li>\n</ol>\n<pre><code class=\"language-go\">package main\n\nimport &quot;github.com/gin-gonic/gin&quot;\n\nfunc main() {\n    r := gin.Default()\n    r.GET(&quot;/health&quot;, func(c *gin.Context) {\n        c.JSON(200, gin.H{&quot;status&quot;: &quot;OK&quot;})\n    })\n    r.Run() // 监听 0.0.0.0:8080\n}\n</code></pre>\n<h2>转型期的深度思考</h2>\n<h3>学术与工程的平衡术</h3>\n<ul>\n<li>✅ 发现更适合工程实践</li>\n<li>❌ 理论突破需要更多积累</li>\n<li>💡 新思路：将工程实践反哺论文<ul>\n<li>计划将云原生监控系统抽象成通用框架</li>\n</ul>\n</li>\n</ul>\n<h3>技术成长路线图</h3>\n<ol>\n<li><p><strong>短期目标</strong>（2024）：</p>\n<ul>\n<li>考取CKA认证</li>\n<li>参与CNCF开源项目</li>\n<li>完善个人技术博客(每月4篇更新)</li>\n</ul>\n</li>\n<li><p><strong>长期规划</strong>：</p>\n<ul>\n<li>成为云原生领域专家</li>\n<li>创建Golang工具库</li>\n<li>实现技术闭环：从开发到部署的完整经验</li>\n</ul>\n</li>\n</ol>\n<h2>致未来的自己</h2>\n<p>虽然学术道路暂时受阻，但代码不会辜负每一个深夜的坚持。或许，通向罗马的路不止论文这一条，保持对技术的热爱，终将在自己擅长的领域绽放光芒。🌟</p>\n<blockquote>\n<p><strong>后记</strong>：最近在参与开源项目时发现，很多优秀的工程实践最终都转化为了顶会论文。或许只需转变思路，把代码写成诗，让论文生长在真实的土壤里。共勉！</p>\n</blockquote>\n",
+            "url": "https://moity-soeoe.com/blog/MyCurrentSituation",
+            "title": "我的研一现状：学术受挫与技术深耕",
+            "summary": "我的研一现状：学术受挫与技术深耕",
+            "date_modified": "2025-04-12T12:10:00.000Z",
             "author": {
-                "name": "Your Name",
-                "url": "https://xxx.com"
-            }
-        },
-        {
-            "id": "https://xxx.com/blog/intro",
-            "content_html": "<p>这是一个 Nextjs 博客模板，本文会介绍这个模板的一些基本用法。</p>\n<p>这个博客模板并没有设计成一个开箱即用的配置型模板，需要用户自行在代码中找到对应的配置。</p>\n<h2>1. 如何编写博客</h2>\n<p>这个仓库的博客文件需要放在 <code>src/content/blog</code> 目录下，可以是 markdown 文件，也可以是 mdx 文件。</p>\n<p>有以下这些元数据需要用户自行根据需要进行配置：</p>\n<ul>\n<li><code>title</code>: 博客标题</li>\n<li><code>date</code>: 博客发布日期</li>\n<li><code>updated</code>: 博客更新日期</li>\n<li><code>keywords</code>: 博客关键词，优化 SEO</li>\n<li><code>featured</code>: 是否放在首页</li>\n<li><code>summary</code>: 博客摘要</li>\n</ul>\n<h2>2. 博客配置</h2>\n",
-            "url": "https://xxx.com/blog/intro",
-            "title": "博客模板介绍",
-            "summary": "这是一个 Nextjs 博客模板，本文会介绍这个模板的一些基本用法",
-            "date_modified": "2025-04-05T12:10:00.000Z",
-            "author": {
-                "name": "Your Name",
-                "url": "https://xxx.com"
+                "name": "moity-soeoe",
+                "url": "https://moity-soeoe.com"
             }
         }
     ]

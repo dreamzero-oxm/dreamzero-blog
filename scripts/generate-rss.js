@@ -80,8 +80,8 @@ async function generateRSSFeed() {
     // 生成Feed
     // 创建一个符合RSS 2.0、Atom和JSON Feed规范的订阅源
     const feed = new Feed({
-      title: "Your Blog",
-      description: "Your Blog Description",
+      title: "Moity Soeoe's Blog",
+      description: "Moity Soeoe's Blog",
       id: BASE_URL,
       link: BASE_URL,
       language: "en",

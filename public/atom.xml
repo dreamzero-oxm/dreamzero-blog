@@ -1,179 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://xxx.com</id>
-    <title>Your Blog</title>
-    <updated>2025-04-05T13:14:31.224Z</updated>
+    <id>https://moity-soeoe.com</id>
+    <title>Moity Soeoe's Blog</title>
+    <updated>2025-04-13T02:21:05.799Z</updated>
     <generator>Feed for Node.js</generator>
     <author>
-        <name>Your Name</name>
-        <email>your.email@example.com</email>
-        <uri>https://xxx.com</uri>
+        <name>moity-soeoe</name>
+        <email>ouxiangming_moi@foxmail.com</email>
+        <uri>https://moity-soeoe.com</uri>
     </author>
-    <link rel="alternate" href="https://xxx.com"/>
-    <link rel="self" href="https://xxx.com/atom.xml"/>
-    <subtitle>Your Blog Description</subtitle>
-    <logo>https://xxx.com/favicon.png</logo>
-    <icon>https://xxx.com/favicon.ico</icon>
+    <link rel="alternate" href="https://moity-soeoe.com"/>
+    <link rel="self" href="https://moity-soeoe.com/atom.xml"/>
+    <subtitle>Moity Soeoe's Blog</subtitle>
+    <logo>https://moity-soeoe.com/favicon.png</logo>
+    <icon>https://moity-soeoe.com/favicon.ico</icon>
     <rights>All rights reserved 2025, Your Name</rights>
     <entry>
-        <title type="html"><![CDATA[Markdown 基本用法]]></title>
-        <id>https://xxx.com/blog/hello-world</id>
-        <link href="https://xxx.com/blog/hello-world"/>
-        <updated>2025-04-05T12:10:00.000Z</updated>
-        <summary type="html"><![CDATA[这篇文章包含markdown语法基本的内容。]]></summary>
-        <content type="html"><![CDATA[<p>这篇文章包含markdown语法基本的内容。</p>
-<p>在markdown里可以使用 \ 对特殊符号进行转义。  </p>
-<h1>1. 标题</h1>
-<p><strong>语法</strong></p>
-<pre><code class="language-md"># This is an &lt;h1&gt; tag
-## This is an &lt;h2&gt; tag
-### This is an &lt;h3&gt; tag
-#### This is an &lt;h4&gt; tag
-</code></pre>
-<p><strong>实例</strong></p>
-<h1>This is an h1 tag</h1>
-<h2>This is an h2 tag</h2>
-<h3>This is an h3 tag</h3>
-<h4>This is an h4 tag</h4>
-<h1>2. 强调和斜体</h1>
-<p><strong>语法</strong></p>
-<pre><code class="language-md">*This text will be italic*
-_This will also be italic_
-
-**This text will be bold**
-__This will also be bold__
-</code></pre>
-<p><strong>实例</strong></p>
-<p><em>This text will be italic</em>
-<em>This will also be italic</em></p>
-<p><strong>This text will be bold</strong>
-<strong>This will also be bold</strong></p>
-<h1>3. 有序列表和无序列表</h1>
-<p><strong>语法</strong></p>
-<pre><code class="language-md">* Item 1
-* Item 2
-* Item 3
-
-1. Item 1
-2. Item 2
-3. Item 3
-</code></pre>
-<p><strong>实例</strong></p>
+        <title type="html"><![CDATA[我的研一现状：学术受挫与技术深耕]]></title>
+        <id>https://moity-soeoe.com/blog/MyCurrentSituation</id>
+        <link href="https://moity-soeoe.com/blog/MyCurrentSituation"/>
+        <updated>2025-04-12T12:10:00.000Z</updated>
+        <summary type="html"><![CDATA[我的研一现状：学术受挫与技术深耕]]></summary>
+        <content type="html"><![CDATA[<h1>我的研一现状：学术受挫与技术深耕</h1>
+<h2>学术之路：两战两败的迷茫期</h2>
+<h3>论文投稿的血泪史</h3>
 <ul>
-<li>Item 1</li>
-<li>Item 2</li>
-<li>Item 3</li>
+<li>📑 <strong>AAAI 2025投稿</strong>：BFP-FGMS: A Fine-Grained Mantissa Sharing Approach for Block Floating Point，被拒</li>
+<li>📊 <strong>DAC 2025尝试</strong>：DAC-BMS:Block Mantissa Sharing，硬件加速器设计方向，被拒</li>
+<li>😵 连续被拒的困境：<ul>
+<li>平均每天投入5小时在论文写作</li>
+<li>累计修改32个版本</li>
+<li>却换来&quot;novelty is limited&quot;的扎心评语</li>
 </ul>
+</li>
+</ul>
+<h2>技术栈的进化之路</h2>
+<h3>编程语言版图</h3>
+<pre><code class="language-python"># 当前技能雷达图
+languages = {
+    &quot;Java&quot;: {&quot;experience&quot;: &quot;3年&quot;, &quot;项目&quot;: &quot;分布式日志系统&quot;},
+    &quot;Python&quot;: {&quot;框架&quot;: &quot;PyTorch/Flask&quot;, &quot;应用&quot;: &quot;机器学习/Web开发&quot;},
+    &quot;Golang&quot;: {
+        &quot;重点领域&quot;: &quot;并发编程/微服务&quot;,
+        &quot;项目经验&quot;: [&quot;高并发API网关&quot;, &quot;分布式任务调度系统&quot;]
+    },
+    &quot;前端&quot;: [&quot;React&quot;, &quot;Ant Design&quot;]
+}
+</code></pre>
+<h3>Golang深度实践</h3>
+<p>正在开发的<strong>云原生监控系统</strong>技术栈：</p>
 <ol>
-<li>Item 1</li>
-<li>Item 2</li>
-<li>Item 3</li>
+<li>Gin框架构建REST API</li>
+<li>GORM对接PostgreSQL</li>
+<li>NSQ消息队列处理日志</li>
+<li>Docker + Kubernetes部署</li>
 </ol>
-<h1>4. 图片</h1>
-<p><strong>语法</strong></p>
-<pre><code>![img-name](img-url)
+<pre><code class="language-go">package main
+
+import &quot;github.com/gin-gonic/gin&quot;
+
+func main() {
+    r := gin.Default()
+    r.GET(&quot;/health&quot;, func(c *gin.Context) {
+        c.JSON(200, gin.H{&quot;status&quot;: &quot;OK&quot;})
+    })
+    r.Run() // 监听 0.0.0.0:8080
+}
 </code></pre>
-<p><strong>实例</strong>
-<img src="https://storage.guangzhengli.com/images/wechat-official-account.png" alt="微信公众号"></p>
-<h1>5. 超链接</h1>
-<p><strong>语法</strong></p>
-<pre><code>[link-name](link-url)
-</code></pre>
-<p><strong>实例</strong></p>
-<p><a href="https://storage.guangzhengli.com/images/wechat-official-account.png">微信公众号链接</a></p>
-<h1>6. 引用</h1>
-<p><strong>语法</strong></p>
-<pre><code class="language-md">&gt; 引用本意是引用别人的话之类  
-</code></pre>
-<p><strong>实例</strong></p>
+<h2>转型期的深度思考</h2>
+<h3>学术与工程的平衡术</h3>
+<ul>
+<li>✅ 发现更适合工程实践</li>
+<li>❌ 理论突破需要更多积累</li>
+<li>💡 新思路：将工程实践反哺论文<ul>
+<li>计划将云原生监控系统抽象成通用框架</li>
+</ul>
+</li>
+</ul>
+<h3>技术成长路线图</h3>
+<ol>
+<li><p><strong>短期目标</strong>（2024）：</p>
+<ul>
+<li>考取CKA认证</li>
+<li>参与CNCF开源项目</li>
+<li>完善个人技术博客(每月4篇更新)</li>
+</ul>
+</li>
+<li><p><strong>长期规划</strong>：</p>
+<ul>
+<li>成为云原生领域专家</li>
+<li>创建Golang工具库</li>
+<li>实现技术闭环：从开发到部署的完整经验</li>
+</ul>
+</li>
+</ol>
+<h2>致未来的自己</h2>
+<p>虽然学术道路暂时受阻，但代码不会辜负每一个深夜的坚持。或许，通向罗马的路不止论文这一条，保持对技术的热爱，终将在自己擅长的领域绽放光芒。🌟</p>
 <blockquote>
-<p>If you please draw me a sheep!<br>不想当将军的士兵, 不是好士兵.  </p>
+<p><strong>后记</strong>：最近在参与开源项目时发现，很多优秀的工程实践最终都转化为了顶会论文。或许只需转变思路，把代码写成诗，让论文生长在真实的土壤里。共勉！</p>
 </blockquote>
-<h1>7. 单行代码</h1>
-<p><strong>语法</strong></p>
-<pre><code>`This is an inline code.`
-</code></pre>
-<p><strong>实例</strong></p>
-<p><code>同样的单行代码, 我经常用来显示特殊名词</code></p>
-<h1>8. 多行代码</h1>
-<p><strong>语法</strong></p>
-<pre><code class="language-md">​```js
-for (var i=0; i&lt;100; i++) {
-    console.log(&quot;hello world&quot; + i);
-}
-​```
-</code></pre>
-<p><strong>实例</strong></p>
-<pre><code class="language-js">for (var i=0; i&lt;100; i++) {
-    console.log(&quot;hello world&quot; + i);
-}
-</code></pre>
-<p>也可以通过缩进来显示代码, 下面是示例:  </p>
-<pre><code>console.loe(&quot;Hello_World&quot;);
-</code></pre>
-<h1>9. 表格</h1>
-<h2>Table</h2>
-<table>
-<thead>
-<tr>
-<th>Table Header 1</th>
-<th>Table Header 2</th>
-<th>Table Header 3</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Division 1</td>
-<td>Division 2</td>
-<td>Division 3</td>
-</tr>
-<tr>
-<td>Division 1</td>
-<td>Division 2</td>
-<td>Division 3</td>
-</tr>
-<tr>
-<td>Division 1</td>
-<td>Division 2</td>
-<td>Division 3</td>
-</tr>
-</tbody></table>
-<h1>参考链接</h1>
-<ul>
-<li><a href="https://guides.github.com/features/mastering-markdown/">https://guides.github.com/features/mastering-markdown/</a>  </li>
-<li><a href="https://help.github.com/articles/basic-writing-and-formatting-syntax/">https://help.github.com/articles/basic-writing-and-formatting-syntax/</a></li>
-</ul>
 ]]></content>
         <author>
-            <name>Your Name</name>
-            <email>your.email@example.com</email>
-            <uri>https://xxx.com</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[博客模板介绍]]></title>
-        <id>https://xxx.com/blog/intro</id>
-        <link href="https://xxx.com/blog/intro"/>
-        <updated>2025-04-05T12:10:00.000Z</updated>
-        <summary type="html"><![CDATA[这是一个 Nextjs 博客模板，本文会介绍这个模板的一些基本用法]]></summary>
-        <content type="html"><![CDATA[<p>这是一个 Nextjs 博客模板，本文会介绍这个模板的一些基本用法。</p>
-<p>这个博客模板并没有设计成一个开箱即用的配置型模板，需要用户自行在代码中找到对应的配置。</p>
-<h2>1. 如何编写博客</h2>
-<p>这个仓库的博客文件需要放在 <code>src/content/blog</code> 目录下，可以是 markdown 文件，也可以是 mdx 文件。</p>
-<p>有以下这些元数据需要用户自行根据需要进行配置：</p>
-<ul>
-<li><code>title</code>: 博客标题</li>
-<li><code>date</code>: 博客发布日期</li>
-<li><code>updated</code>: 博客更新日期</li>
-<li><code>keywords</code>: 博客关键词，优化 SEO</li>
-<li><code>featured</code>: 是否放在首页</li>
-<li><code>summary</code>: 博客摘要</li>
-</ul>
-<h2>2. 博客配置</h2>
-]]></content>
-        <author>
-            <name>Your Name</name>
-            <email>your.email@example.com</email>
-            <uri>https://xxx.com</uri>
+            <name>moity-soeoe</name>
+            <email>ouxiangming_moi@foxmail.com</email>
+            <uri>https://moity-soeoe.com</uri>
         </author>
     </entry>
 </feed>
