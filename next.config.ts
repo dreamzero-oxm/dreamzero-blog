@@ -9,4 +9,9 @@ const nextConfig: NextConfig = {
 const withMDX = createMDX({
 })
 
-export default withContentCollections(withMDX(nextConfig));
+export default withContentCollections(withMDX({
+  ...nextConfig,
+  env: {
+    PORT: '9999',
+  }
+}));
