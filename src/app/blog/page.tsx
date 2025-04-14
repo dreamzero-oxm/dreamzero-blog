@@ -7,7 +7,7 @@ import { config } from "@/lib/config";
 export const metadata: Metadata = {
   title: `Blogs | ${config.site.title}`,
   description: `Blogs of ${config.site.title}`,
-  keywords: `${config.site.title}, blogs, ${config.site.title} blogs, nextjs blog template`,
+  keywords: `${config.site.title}, blogs, ${config.site.title} blogs`,
 };
 
 export default function BlogPage() {
