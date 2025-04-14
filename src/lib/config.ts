@@ -59,6 +59,10 @@ export const config = {
           },
         ]
       },
+      { 
+        title: "Nginx", 
+        href: "/nginx/",
+      },
     ],
   },
   // 配置 SEO 相关的配置
