@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { config } from "@/lib/config";
+import SplashCursor from "@/components/ui/SplashCursor";
+
 
 export const metadata: Metadata = {
   // 标题
@@ -68,6 +70,7 @@ export default function RootLayout({
       </head>
       <body className="min-w-md overflow-x-hidden">
         <Header />
+        <SplashCursor />
         {children}
       </body>
     </html>

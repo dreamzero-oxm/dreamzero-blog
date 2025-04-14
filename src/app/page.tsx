@@ -2,6 +2,7 @@ import { allBlogs } from "content-collections";
 import Link from "next/link";
 import count from 'word-count'
 import { config } from "@/lib/config";
+import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   const blogs = allBlogs
@@ -25,6 +26,29 @@ export default function Home() {
           <span>·</span>
           <Link href={config.social.wechat} className="underline underline-offset-4">微信</Link>
         </div> */}
+        <div className="space-x-4">
+          <Badge variant="secondary">Java</Badge>
+          <Badge variant="secondary">Go</Badge>
+          <Badge variant="secondary">Python</Badge>
+          <Badge variant="secondary">JavaScript</Badge>
+          <Badge variant="secondary">TypeScript</Badge>
+        </div>
+        <div className="space-x-4">
+          <Badge variant="secondary">MySQL</Badge>
+          <Badge variant="secondary">RabbitMQ</Badge>
+          <Badge variant="secondary">Redis</Badge>
+          <Badge variant="secondary">Docker</Badge>
+          <Badge variant="secondary">K8s</Badge>
+        </div>
+        <div className="space-x-4">
+          <Badge variant="secondary">SpringBoot</Badge>
+          <Badge variant="secondary">SpringCloud</Badge>
+          <Badge variant="secondary">SpringSecurity</Badge>
+          <Badge variant="secondary">MyBatis</Badge>
+        </div>
+        <div className="space-x-4">
+          <Badge variant="secondary">React</Badge>
+        </div>
       </div>
 
       <div className="space-y-4">
