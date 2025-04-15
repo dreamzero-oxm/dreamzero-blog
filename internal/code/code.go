@@ -29,6 +29,10 @@ var (
 	ErrTwicePasswordNotMatch = &Errno{Code: 20112, Message: "两次密码输入不一致"}
 	ErrRegisterFailed        = &Errno{Code: 20113, Message: "注册失败"}
 	ErrCreatedUser           = &Errno{Code: 20114, Message: "用户创建失败"}
+
+	// photo errors
+	ErrPhotoUpload = &Errno{Code: 20201, Message: "图片上传失败"}
+	ErrPhotoDelete = &Errno{Code: 20202, Message: "图片删除失败"}
 )
 
 // Errno ...

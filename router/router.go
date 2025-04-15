@@ -2,7 +2,6 @@ package router
 
 import (
 	"blog-server/controller"
-
 	"blog-server/router/api"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -33,7 +32,6 @@ func InitRouter() *Server {
 
 // registerBaseAPI ...
 func registerBaseAPI(server *Server) {
-
 	server.GinEngine.GET("/", controller.Health)
 	server.GinEngine.GET("/version", controller.Version)
 }
