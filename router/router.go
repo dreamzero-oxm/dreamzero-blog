@@ -1,11 +1,12 @@
 package router
 
 import (
+	"blog-server/controller"
+
+	"blog-server/router/api"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"mlm.com/controller"
-	"mlm.com/router/api"
 )
 
 type Server struct {

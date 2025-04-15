@@ -3,9 +3,11 @@ package controller
 import (
 	"net/http"
 
+	"blog-server/internal"
+
+	"blog-server/internal/version"
+
 	"github.com/gin-gonic/gin"
-	"mlm.com/internal"
-	"mlm.com/internal/version"
 )
 
 // Health ...

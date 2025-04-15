@@ -1,10 +1,11 @@
 package config
 
 import (
+	"blog-server/internal/logger"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
-	"mlm.com/internal/logger"
 )
 
 var (

@@ -3,8 +3,9 @@ package internal
 import (
 	"net/http"
 
+	"blog-server/internal/code"
+
 	"github.com/gin-gonic/gin"
-	"mlm.com/internal/code"
 )
 
 // Response ...

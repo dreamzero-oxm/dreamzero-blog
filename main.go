@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"os"
 
+	"blog-server/internal/config"
+
+	"blog-server/internal/logger"
+
+	"blog-server/internal/version"
+
+	"blog-server/router"
+
 	"github.com/urfave/cli"
-	"mlm.com/internal/config"
-	"mlm.com/internal/logger"
-	"mlm.com/internal/version"
-	"mlm.com/router"
 )
 
 //	@title			Swagger Example API
@@ -27,8 +31,8 @@ import (
 // @BasePath	/api/v1
 func main() {
 	app := cli.NewApp()
-	app.Name = "mlm-server"
-	app.Usage = "mlm-server -c config/config_original.json"
+	app.Name = "blog-server"
+	app.Usage = "blog-server -c config/config_original.json"
 	printVersion := false
 
 	app.Flags = []cli.Flag{
@@ -69,7 +73,7 @@ func main() {
 	}
 
 	err := app.Run(os.Args)
-	if err != nil{
+	if err != nil {
 		fmt.Printf("startup service failed, err: %v\n", err)
 	}
 }

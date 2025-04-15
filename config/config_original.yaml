@@ -1,5 +1,5 @@
 app:
-  name: "Medical Large Model System Backend"
+  name: "MOITY Blog Backend"
   run_mode: "local"
   addr: "127.0.0.1"
   port: ":8080"
