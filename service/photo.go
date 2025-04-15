@@ -5,9 +5,7 @@ type UploadPhotoService struct {
 }
 
 func (service *UploadPhotoService) UploadPhoto() ([]string, error) {
-	var photos []string
-	for _, photo := range service.Photos {
-		photos = append(photos, photo)
-	}
+	photos := make([]string, 0, len(service.Photos))
+	photos = append(photos, service.Photos...)
 	return photos, nil
 }

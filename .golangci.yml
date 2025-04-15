@@ -1,18 +1,33 @@
 version: "2"
 linters:
-  enable:     # 设置允许使用的 linter
+  enable:
     - govet
     - staticcheck
-  # disable:    # 禁止使用的 linter
-    # - errcheck
+    - gosec
+    - misspell
+    - unconvert
+    - unparam
+    - errcheck
+    - goconst
+    - gocyclo
+    - gocritic
+    - gocyclo
+    - gosec
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - prealloc
+    - rowserrcheck
+    # - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
 run:
-  timeout: 2m  # 设置运行超时时间
-  skip-dirs:
-    - vendor  # 跳过 vendor 目录
-  skip-files:
-    - .*_test\.go  # 跳过测试文件
-issues:
-  exclude-rules:
-    - linters:
-        - golint
-      text: "don't use underscores in Go names"  # 忽略 golint 的特定规则
+  timeout: 2m
+  modules-download-mode: readonly
+  build-tags:
+    - integration
+  tests: false

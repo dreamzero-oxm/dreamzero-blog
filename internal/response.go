@@ -16,9 +16,9 @@ type Response struct {
 }
 
 // APIResponse ....
-func APIResponse(Ctx *gin.Context, err error, data interface{}) {
+func APIResponse(ctx *gin.Context, err error, data interface{}) {
 	code, message := code.DecodeErr(err)
-	Ctx.JSON(http.StatusOK, Response{
+	ctx.JSON(http.StatusOK, Response{
 		Code: code,
 		Msg:  message,
 		Data: data,

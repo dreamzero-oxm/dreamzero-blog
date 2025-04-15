@@ -10,5 +10,7 @@ func RegisterAPIV1(apiGroup *gin.RouterGroup) {
 	var (
 		photoController *v1.PhotoController
 	)
-	photoController.Init(apiGroup)
+	if err := photoController.Init(apiGroup); err != nil {
+		panic(err)
+	}
 }

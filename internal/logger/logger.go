@@ -92,7 +92,8 @@ func GinRecovery(logger *zap.SugaredLogger, stack bool) gin.HandlerFunc {
 				var brokenPipe bool
 				if ne, ok := err.(*net.OpError); ok {
 					if se, ok := ne.Err.(*os.SyscallError); ok {
-						if strings.Contains(strings.ToLower(se.Error()), "broken pipe") || strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
+						errStr := strings.ToLower(se.Error())
+						if strings.Contains(errStr, "broken pipe") || strings.Contains(errStr, "connection reset by peer") {
 							brokenPipe = true
 						}
 					}
