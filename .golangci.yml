@@ -1,0 +1,18 @@
+version: "2"
+linters:
+  enable:     # 设置允许使用的 linter
+    - govet
+    - staticcheck
+  # disable:    # 禁止使用的 linter
+    # - errcheck
+run:
+  timeout: 2m  # 设置运行超时时间
+  skip-dirs:
+    - vendor  # 跳过 vendor 目录
+  skip-files:
+    - .*_test\.go  # 跳过测试文件
+issues:
+  exclude-rules:
+    - linters:
+        - golint
+      text: "don't use underscores in Go names"  # 忽略 golint 的特定规则
