@@ -70,7 +70,7 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil{
-		fmt.Println("startup service failed, err: %v\n", err)
+		fmt.Printf("startup service failed, err: %v\n", err)
 	}
 }
 

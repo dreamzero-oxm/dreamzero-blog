@@ -64,9 +64,9 @@ func watchConfig() {
 type AppConfig struct {
 	Name      string `json:"name" yaml:"name"`
 	RunMode   string `json:"run_mode" yaml:"run_mode"`
-	Addr      string `json:"addr" yaml:"addr`
-	Port      string `json:"port" yaml:"port`
-	JwtSecret string `json:"jwt_secret" yaml:"jwt_secret`
+	Addr      string `json:"addr" yaml:"addr"`
+	Port      string `json:"port" yaml:"port"`
+	JwtSecret string `json:"jwt_secret" yaml:"jwt_secret"`
 	// JWTExpirationTime day
 	JwtExpirationTime int `json:"jwt_expiration_time" yaml:"jwt_expiration_time"`
 }
