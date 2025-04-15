@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"blog-server/internal/config"
 
@@ -31,8 +32,8 @@ import (
 // @BasePath	/api/v1
 func main() {
 	app := cli.NewApp()
-	app.Name = "blog-server"
-	app.Usage = "blog-server -c config/config_original.json"
+	app.Name = getModuleName("blog-server", "")
+	app.Usage = fmt.Sprintf("%v -c config/config_original.yaml", app.Name)
 	printVersion := false
 
 	app.Flags = []cli.Flag{
@@ -82,4 +83,19 @@ func RegisterLoggerForGin(server *router.Server) {
 	// register
 	server.GinEngine.Use(logger.GinLogger(logger.Logger))
 	server.GinEngine.Use(logger.GinRecovery(logger.Logger, true))
+}
+
+func getModuleName(defaultName string, name string) string {
+	if name != "" {
+		return name
+	}
+	data, err := os.ReadFile("go.mod")
+	if err != nil {
+		return defaultName
+	}
+	firstLine := strings.TrimSpace(strings.Split(string(data), "\n")[0])
+	if strings.HasPrefix(firstLine, "module") {
+		return strings.TrimSpace(strings.TrimPrefix(firstLine, "module"))
+	}
+	return defaultName
 }
