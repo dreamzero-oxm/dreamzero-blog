@@ -1,28 +1,41 @@
+version: 2
+
 linters:
+  default: standard
   enable:
-    - govet
-    - staticcheck
-    - gosec
-    - misspell
-    - unconvert
-    - unparam
     - errcheck
-    - goconst
-    - gocyclo
-    - gocritic
-    - gocyclo
-    - gosec
+    - govet
     - ineffassign
-    - lll
-    - misspell
-    - nakedret
-    - prealloc
-    - rowserrcheck
-    # - typecheck
-    - unconvert
-    - unparam
+    - staticcheck
     - unused
-    - whitespace
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - containedctx
+    - contextcheck
+    - copyloopvar 
+    - decorder
+    - depguard
+    - dogsled 
+    - dupl 
+    - dupword 
+  settings:
+    depguard:
+      rules:
+      # Name of a rule.
+        main:
+          list-mode: lax
+          files:
+            - "!**/*_a _file.go"
+          allow:
+            - $gostd
+            - github.com/urfave/cli
+            - blog-server/internal/config
+            - blog-server/internal/logger
+            - blog-server/internal/version
+            - blog-server/router
 
 run:
   timeout: 2m

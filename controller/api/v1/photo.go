@@ -1,19 +1,19 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-	logger "blog-server/internal/logger"
 	"blog-server/internal"
 	IError "blog-server/internal/code"
+	logger "blog-server/internal/logger"
 	"blog-server/service"
+	"github.com/gin-gonic/gin"
 )
 
-type PhotoController struct{
+type PhotoController struct {
 }
 
 func PhotoTestApi(c *gin.Context) {
 	var serive service.UploadPhotoService
-	if err := c.ShouldBind(&serive); err!= nil {
+	if err := c.ShouldBind(&serive); err != nil {
 		internal.APIResponse(c, IError.ErrBind, err.Error())
 		return
 	}
@@ -25,8 +25,7 @@ func PhotoTestApi(c *gin.Context) {
 	internal.APIResponse(c, IError.OK, data)
 }
 
-
-func (controller *PhotoController) Init(engine *gin.RouterGroup) error{
+func (controller *PhotoController) Init(engine *gin.RouterGroup) error {
 	logger.Logger.Info("init photo controller")
 	engine = engine.Group("/photo")
 	engine.POST("/test", PhotoTestApi)

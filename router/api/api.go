@@ -1,8 +1,8 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	v1 "blog-server/controller/api/v1"
+	"github.com/gin-gonic/gin"
 )
 
 // RegisterAPIV1 ...
