@@ -89,6 +89,16 @@ type PostgresConfig struct {
 	Sslmode  string `json:"sslmode" yaml:"sslmode" mapstructure:"sslmode"`
 }
 
+type GormConfig struct {
+	LogLevel string `json:"debug" yaml:"debug" mapstructure:"debug"`
+	LogOutputDir string `json:"log_output_dir" yaml:"log_output_dir" mapstructure:"log_output_dir"`
+}
+
+type DataBaseConfig struct {
+	Postgres PostgresConfig `json:"postgres" yaml:"postgres" mapstructure:"postgres"`
+	Gorm GormConfig `json:"gorm" yaml:"gorm" mapstructure:"gorm"`
+}
+
 // Config global config
 // include common and biz config
 type Config struct {
@@ -96,6 +106,6 @@ type Config struct {
 	App AppConfig `json:"app" yaml:"app" mapstructure:"app"`
 	// minio
 	Minio MinioConfig `json:"minio" yaml:"minio" mapstructure:"minio"`
-	// postgres
-	Postgres PostgresConfig `json:"postgres" yaml:"postgres" mapstructure:"postgres"`
+	// database
+	DataBase DataBaseConfig `json:"database" yaml:"database" mapstructure:"database"`
 }

@@ -72,7 +72,7 @@ func main() {
 		}
 
 		// init database
-		if err := models.Init(config.Conf.Postgres); err!= nil {
+		if err := models.Init(config.Conf.DataBase); err!= nil {
 			return err
 		}
 

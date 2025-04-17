@@ -12,10 +12,14 @@ minio:
   secret_access_key: "XR6HaglGkF8Y25j777BsNq6hgxzlJ17g5aHn95xu"
   use_ssl: false
   bucket_name: "moity-blog"
-postgres:
-  host: "10.21.23.14"
-  port: "5432"
-  username: "postgres"
-  password: "10130420"
-  db_name: "moity_blog"
-  sslmode: "disable"
+database: 
+  postgres:
+    host: "10.21.23.14"
+    port: "5432"
+    username: "postgres"
+    password: "10130420"
+    db_name: "moity_blog"
+    sslmode: "disable"
+  gorm:
+    log_level: "INFO"
+    log_output_dir: "./logs"
