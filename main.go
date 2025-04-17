@@ -7,6 +7,7 @@ import (
 
 	"blog-server/internal/config"
 	"blog-server/internal/oss"
+	"blog-server/models"
 
 	"blog-server/internal/logger"
 
@@ -67,6 +68,11 @@ func main() {
 
 		// init oss, such as minio
 		if err := oss.InitMinIO(config.Conf.Minio); err!= nil {
+			return err
+		}
+
+		// init database
+		if err := models.Init(config.Conf.Postgres); err!= nil {
 			return err
 		}
 
