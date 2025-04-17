@@ -17,8 +17,12 @@ var (
 	Logger *zap.SugaredLogger
 )
 
-func InitLogger() {
-	initZapLogger()
+func InitLogger() error {
+	_, err := initZapLogger()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 

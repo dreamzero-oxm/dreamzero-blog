@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func initZapLogger() {
+func initZapLogger() (*zap.SugaredLogger, error) {
 	consoleEncoderConfig := zap.NewDevelopmentEncoderConfig()
 	// 添加颜色输出
 	consoleEncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
@@ -48,5 +48,6 @@ func initZapLogger() {
 
 	log := zap.New(core, zap.AddCaller())
 	Logger = log.Sugar()
+	return Logger, nil
 }
 
