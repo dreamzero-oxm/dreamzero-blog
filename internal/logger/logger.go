@@ -18,7 +18,11 @@ import (
 var Logger *zap.SugaredLogger
 
 func InitLogger() {
-	encoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+	consoleEncoderConfig := zap.NewDevelopmentEncoderConfig()
+	// 添加颜色输出
+	consoleEncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	consoleEencoder := zapcore.NewConsoleEncoder(consoleEncoderConfig)
+	fileEencoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 	debugLogger := &lumberjack.Logger{
 		Filename:   "./logs/debug.log",
 		MaxSize:    10,
@@ -46,10 +50,10 @@ func InitLogger() {
 	consoleSyncer := zapcore.AddSync(os.Stdout)
 
 	core := zapcore.NewTee(
-		zapcore.NewCore(encoder, debugWriterSyncer, zapcore.DebugLevel),
-		zapcore.NewCore(encoder, consoleSyncer, zapcore.DebugLevel),
-		zapcore.NewCore(encoder, infoWriterSyncer, zapcore.InfoLevel),
-		zapcore.NewCore(encoder, errorWriterSyncer, zapcore.ErrorLevel),
+		zapcore.NewCore(fileEencoder, debugWriterSyncer, zapcore.DebugLevel),
+		zapcore.NewCore(fileEencoder, infoWriterSyncer, zapcore.InfoLevel),
+		zapcore.NewCore(fileEencoder, errorWriterSyncer, zapcore.ErrorLevel),
+		zapcore.NewCore(consoleEencoder, consoleSyncer, zapcore.DebugLevel),
 	)
 
 	log := zap.New(core, zap.AddCaller())
