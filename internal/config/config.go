@@ -80,6 +80,15 @@ type MinioConfig struct {
 	BucketName      string `json:"bucket_name" yaml:"bucket_name" mapstructure:"bucket_name"`
 }
 
+type PostgresConfig struct {
+	Username string `json:"username" yaml:"username" mapstructure:"username"`
+	Password string `json:"password" yaml:"password" mapstructure:"password"`
+	Host     string `json:"host" yaml:"host" mapstructure:"host"`
+	Port     string `json:"port" yaml:"port" mapstructure:"port"`
+	DBName   string `json:"db_name" yaml:"db_name" mapstructure:"db_name"`
+	Sslmode  string `json:"sslmode" yaml:"sslmode" mapstructure:"sslmode"`
+}
+
 // Config global config
 // include common and biz config
 type Config struct {
@@ -87,4 +96,6 @@ type Config struct {
 	App AppConfig `json:"app" yaml:"app" mapstructure:"app"`
 	// minio
 	Minio MinioConfig `json:"minio" yaml:"minio" mapstructure:"minio"`
+	// postgres
+	Postgres PostgresConfig `json:"postgres" yaml:"postgres" mapstructure:"postgres"`
 }
