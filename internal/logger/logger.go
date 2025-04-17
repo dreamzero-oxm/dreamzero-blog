@@ -54,12 +54,6 @@ func InitLogger() {
 
 	log := zap.New(core, zap.AddCaller())
 	Logger = log.Sugar()
-
-	// -------------------------
-	Logger.Info("testing | info message")
-	Logger.Infof("testing | this is %s, %d", "aaa", 1234)
-	Logger.Error("testing | this is error message")
-	Logger.Info("testing | this is info message")
 }
 
 func GinLogger(logger *zap.SugaredLogger) gin.HandlerFunc {

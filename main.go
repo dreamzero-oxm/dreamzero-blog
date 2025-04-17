@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"blog-server/internal/config"
+	"blog-server/internal/oss"
 
 	"blog-server/internal/logger"
 
@@ -61,6 +62,11 @@ func main() {
 
 		conf := c.String("conf")
 		if err := config.Init(conf); err != nil {
+			return err
+		}
+
+		// init oss, such as minio
+		if err := oss.InitMinIO(config.Conf.Minio); err!= nil {
 			return err
 		}
 

@@ -46,7 +46,7 @@ func initConfig(confPath string) error {
 		return err
 	}
 
-	logger.Logger.Infof("config:(%#v)", Conf)
+	logger.Logger.Infof("config-app:(%#v)", Conf.App)
 	watchConfig()
 
 	return nil
@@ -63,18 +63,28 @@ func watchConfig() {
 
 // AppConfig ...
 type AppConfig struct {
-	Name      string `json:"name" yaml:"name"`
-	RunMode   string `json:"run_mode" yaml:"run_mode"`
-	Addr      string `json:"addr" yaml:"addr"`
-	Port      string `json:"port" yaml:"port"`
-	JwtSecret string `json:"jwt_secret" yaml:"jwt_secret"`
+	Name      string `json:"name" yaml:"name" mapstructure:"name"`
+	RunMode   string `json:"run_mode" yaml:"run_mode" mapstructure:"run_mode"`
+	Addr      string `json:"addr" yaml:"addr" mapstructure:"addr"`
+	Port      string `json:"port" yaml:"port" mapstructure:"port"`
+	JwtSecret string `json:"jwt_secret" yaml:"jwt_secret" mapstructure:"jwt_secret"`
 	// JWTExpirationTime day
-	JwtExpirationTime int `json:"jwt_expiration_time" yaml:"jwt_expiration_time"`
+	JwtExpirationTime int `json:"jwt_expiration_time" yaml:"jwt_expiration_time" mapstructure:"jwt_expiration_time"`
+}
+
+type MinioConfig struct {
+	Endpoint        string `json:"endpoint" yaml:"endpoint" mapstructure:"endpoint"`
+	AccessKeyID     string `json:"access_key_id" yaml:"access_key_id" mapstructure:"access_key_id"`
+	SecretAccessKey string `json:"secret_access_key" yaml:"secret_access_key" mapstructure:"secret_access_key"`
+	UseSSL          bool   `json:"use_ssl" yaml:"use_ssl" mapstructure:"use_ssl"`
+	BucketName      string `json:"bucket_name" yaml:"bucket_name" mapstructure:"bucket_name"`
 }
 
 // Config global config
 // include common and biz config
 type Config struct {
 	// common
-	App AppConfig `json:"app" yaml:"app"`
+	App AppConfig `json:"app" yaml:"app" mapstructure:"app"`
+	// minio
+	Minio MinioConfig `json:"minio" yaml:"minio" mapstructure:"minio"`
 }
