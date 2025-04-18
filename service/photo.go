@@ -10,10 +10,19 @@ import (
 	"gorm.io/gorm"
 )
 
+// UploadPhotoService 上传照片服务
+// @property {[]*multipart.FileHeader} Photos - 照片
+// @property {int} success - 成功数量
+// @property {int} fail - 失败数量
+// @property {error} finalError - 最终错误
 type UploadPhotoService struct {
 	Photos []*multipart.FileHeader `form:"photos" json:"photos" binding:"required"`
 }
 
+// UploadPhoto 上传照片
+// @property {int} success - 成功数量
+// @property {int} fail - 失败数量
+// @property {error} finalError - 最终错误
 func (service *UploadPhotoService) UploadPhoto() (int, int, error) {
 	bucketName := "moity-blog"
 	
@@ -51,4 +60,20 @@ func (service *UploadPhotoService) UploadPhoto() (int, int, error) {
 		})
 	}
 	return success, fail, finalError
+}
+
+// ListPhotoService 列表照片服务
+// @property {[]*models.DailyPhotograph} photos - 照片
+// @property {error} finalError - 最终错误
+type ListPhotoService struct {
+}
+// ListPhoto 列表照片
+// @property {[]*models.DailyPhotograph} photos - 照片
+// @property {error} finalError - 最终错误
+func (service *ListPhotoService) ListPhoto() ([]*models.DailyPhotograph, error) {
+	var photos []*models.DailyPhotograph
+	if err := models.DB.Select("image_url", "title").Find(&photos).Error; err != nil {
+		return nil, err
+	}
+	return photos, nil
 }
