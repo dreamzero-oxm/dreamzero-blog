@@ -11,7 +11,8 @@ minio:
   access_key_id: "***REMOVED***"
   secret_access_key: "***REMOVED***"
   use_ssl: false
-  bucket_name: "moity-blog"
+  bucket_names:
+    - "moity-blog"
   locaiton: "cn-east-1"
 database: 
   postgres:
@@ -22,5 +23,5 @@ database:
     db_name: "moity_blog"
     sslmode: "disable"
   gorm:
-    log_level: "INFO"
+    log_level: "ERROR"
     log_output_dir: "./logs"
