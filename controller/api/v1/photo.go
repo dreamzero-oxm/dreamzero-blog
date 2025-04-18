@@ -5,6 +5,7 @@ import (
 	IError "blog-server/internal/code"
 	logger "blog-server/internal/logger"
 	"blog-server/service"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,15 +13,33 @@ type PhotoController struct {
 }
 
 func PhotoTestApi(c *gin.Context) {
-	var serive service.UploadPhotoService
-	if err := c.ShouldBind(&serive); err != nil {
-		internal.APIResponse(c, IError.ErrBind, err.Error())
+	internal.APIResponse(c, IError.OK, "hello photo")
+}
+
+func UploadPhoto(c *gin.Context) {
+	form, err := c.MultipartForm()
+	if err!= nil {
+		internal.APIResponse(c, IError.ErrPhotoUpload, err.Error())
 		return
 	}
-	data, err := serive.UploadPhoto()
+	files := form.File["photos"]
+	if len(files) == 0 {
+		internal.APIResponse(c, IError.ErrPhotoUpload, "no photo")
+		return
+	}
+	var service service.UploadPhotoService
+	service.Photos = files
+	success, fail, err := service.UploadPhoto()
 	if err != nil {
 		internal.APIResponse(c, IError.ErrPhotoUpload, err.Error())
 		return
+	}
+	data := struct{
+		Success int `json:"success"`
+		Fail    int `json:"fail"`
+	}{
+		Success: success,
+		Fail:    fail,
 	}
 	internal.APIResponse(c, IError.OK, data)
 }
@@ -28,6 +47,7 @@ func PhotoTestApi(c *gin.Context) {
 func (controller *PhotoController) Init(engine *gin.RouterGroup) error {
 	logger.Logger.Info("init photo controller")
 	engine = engine.Group("/photo")
-	engine.POST("/test", PhotoTestApi)
+	engine.GET("/test", PhotoTestApi)
+	engine.POST("/upload", UploadPhoto)
 	return nil
 }

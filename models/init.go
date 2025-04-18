@@ -19,6 +19,16 @@ import (
 var DB *gorm.DB
 
 func Init(databaseConfig config.DataBaseConfig) error {
+	if err := createDB(databaseConfig); err != nil {
+		return err
+	}
+	if err := migrate(); err!= nil {
+		return err
+	}
+	return nil 
+}
+
+func createDB(databaseConfig config.DataBaseConfig) error {
 	postgresConfig := databaseConfig.Postgres
 	DB_DSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Shanghai", 
 	postgresConfig.Host, 
@@ -98,4 +108,11 @@ func getLevelFlag(level string) gormLogger.LogLevel{
 	default:
 		return gormLogger.Info
 	}
+}
+
+func migrate() error {
+	if err := DB.AutoMigrate(&DailyPhotograph{}); err!= nil {
+		return err
+	}
+	return nil
 }

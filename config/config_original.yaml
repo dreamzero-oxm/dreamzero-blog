@@ -8,10 +8,11 @@ app:
   jwt_expiration_time: 7
 minio:
   endpoint: "10.21.23.14:10004"
-  access_key_id: "9M1d3lynPeAlQON5D97s"
-  secret_access_key: "XR6HaglGkF8Y25j777BsNq6hgxzlJ17g5aHn95xu"
+  access_key_id: "cxb944fJZaWvdZrnhB3V"
+  secret_access_key: "mZUASbUjdRXO4zoKnAfmZbbVihPgt7gljPAZ1PrH"
   use_ssl: false
   bucket_name: "moity-blog"
+  locaiton: "cn-east-1"
 database: 
   postgres:
     host: "10.21.23.14"

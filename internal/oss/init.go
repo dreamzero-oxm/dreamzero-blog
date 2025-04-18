@@ -9,7 +9,7 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-var MINIMOBJ *minio.Client
+var MINIMO_CLIENT *minio.Client
 
 func InitMinIO(minioConfig config.MinioConfig) error {
 	minioClient, err := minio.New(minioConfig.Endpoint, &minio.Options{
@@ -19,7 +19,7 @@ func InitMinIO(minioConfig config.MinioConfig) error {
 	if err != nil {
 		return err
 	}
-	MINIMOBJ = minioClient
+	MINIMO_CLIENT = minioClient
 	logger.Logger.Infof("minio endpoint: %v", minioConfig.Endpoint)
 	logger.Logger.Infof("minio bucket: %v", minioConfig.BucketName)
 	logger.Logger.Infof("minio use ssl: %v", minioConfig.UseSSL)
