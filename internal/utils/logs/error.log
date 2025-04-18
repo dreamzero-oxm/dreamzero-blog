@@ -1,0 +1,8 @@
+2025-04-18T14:28:29.878+0800	ERROR	utils/ossUtil.go:24	Minio Create Bucket Error: The Access Key Id you provided does not exist in our records.
+2025-04-18T14:28:29.919+0800	ERROR	utils/ossUtil.go:24	Minio Create Bucket Error: The Access Key Id you provided does not exist in our records.
+2025-04-18T14:28:29.919+0800	ERROR	utils/ossUtil.go:24	Minio Create Bucket Error: Bucket name cannot be empty
+2025-04-18T14:29:04.038+0800	ERROR	utils/ossUtil.go:24	Minio Create Bucket Error: The Access Key Id you provided does not exist in our records.
+2025-04-18T14:29:04.053+0800	ERROR	utils/ossUtil.go:24	Minio Create Bucket Error: The Access Key Id you provided does not exist in our records.
+2025-04-18T14:29:04.053+0800	ERROR	utils/ossUtil.go:24	Minio Create Bucket Error: Bucket name cannot be empty
+2025-04-18T14:30:19.745+0800	ERROR	utils/ossUtil.go:24	Minio Create Bucket Error: Bucket name cannot be empty
+2025-04-18T14:32:51.026+0800	ERROR	utils/ossUtil.go:25	Minio Create Bucket Error: Bucket name cannot be empty

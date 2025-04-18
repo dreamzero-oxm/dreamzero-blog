@@ -78,6 +78,7 @@ type MinioConfig struct {
 	SecretAccessKey string `json:"secret_access_key" yaml:"secret_access_key" mapstructure:"secret_access_key"`
 	UseSSL          bool   `json:"use_ssl" yaml:"use_ssl" mapstructure:"use_ssl"`
 	BucketName      string `json:"bucket_name" yaml:"bucket_name" mapstructure:"bucket_name"`
+	Location        string `json:"location" yaml:"location" mapstructure:"location"`
 }
 
 type PostgresConfig struct {
