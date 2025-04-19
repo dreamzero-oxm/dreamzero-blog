@@ -57,6 +57,10 @@ export const config = {
             title: "Aimerick",
             href: "https://www.aimerick.cc/",
           },
+          {
+            title: "LLH",
+            href: "http://mydream.aimerick.cc:8080/"
+          },
         ]
       },
       { 
@@ -86,3 +90,7 @@ export const config = {
     },
   },
 };
+
+export const apiAddress = '10.21.23.14'
+export const apiPort = '3000'
+export const useSSL = false
