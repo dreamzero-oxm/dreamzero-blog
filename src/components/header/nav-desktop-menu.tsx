@@ -25,7 +25,7 @@ export function NavDesktopMenu() {
               <>
                 <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid h-16 w-[150px] p-2">
+                  <ul className="grid h-auto w-[150px] p-2">
                     {item.submenu.map((subItem) => (
                       <ListItem
                         key={subItem.title}
