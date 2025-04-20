@@ -3,7 +3,7 @@ import "./globals.css";
 import { Header } from "@/components/header";
 import { config } from "@/lib/config";
 import SplashCursor from "@/components/ui/SplashCursor";
-
+import ReactQueryProvider from "@/components/provider/react-query-provider";
 
 export const metadata: Metadata = {
   // 标题
@@ -70,9 +70,11 @@ export default function RootLayout({
         <script defer src="http://10.21.23.14:10000/script.js" data-website-id="f04cae10-5687-49b1-8299-7971ccf122cd"></script>
       </head>
       <body className="min-w-md overflow-x-hidden">
-        <Header />
-        <SplashCursor />
-        {children}
+        <ReactQueryProvider>
+          <Header />
+          <SplashCursor />
+          {children}
+        </ReactQueryProvider>
       </body>
     </html>
   );
