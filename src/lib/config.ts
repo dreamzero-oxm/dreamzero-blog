@@ -91,6 +91,8 @@ export const config = {
   },
 };
 
-export const apiAddress = '10.21.23.14'
-export const apiPort = '3000'
+export const apiAddress = process.env.NODE_ENV === 'development' 
+  ? '127.0.0.1' 
+  : '10.21.23.14'
+export const apiPort = '8080'
 export const useSSL = false

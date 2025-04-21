@@ -2,6 +2,7 @@
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import { useListPhoto } from '@/hooks/photo-hook'
 
 const itemData = [
   {
@@ -55,6 +56,7 @@ const itemData = [
 ];
 
 export default function InformalPhotographs() {
+  const {isLoading, error, photoList} = useListPhoto()
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-4">日常照片</h1>
