@@ -34,6 +34,9 @@ var (
 	ErrPhotoUpload = &Errno{Code: 20201, Message: "图片上传失败"}
 	ErrPhotoDelete = &Errno{Code: 20202, Message: "图片删除失败"}
 	ErrPhotoList   = &Errno{Code: 20203, Message: "图片列表获取失败"}
+
+	// article comment errors
+	ErrArticalCommentCreateFailed = &Errno{Code: 20301, Message: "评论创建失败"}
 )
 
 // Errno ...

@@ -1,4 +1,4 @@
-package api
+package v1
 
 import (
 	"blog-server/internal"
@@ -76,7 +76,7 @@ func ListPhoto(c *gin.Context) {
 	internal.APIResponse(c, IError.OK, photos)
 }
 
-func (controller *PhotoController) Init(engine *gin.RouterGroup) error {
+func (controller *PhotoController) InitRouter(engine *gin.RouterGroup) error {
 	logger.Logger.Info("init photo controller")
 	engine = engine.Group("/photo")
 	engine.GET("/test", PhotoTestApi)
