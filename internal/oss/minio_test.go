@@ -13,10 +13,10 @@ func preInit(t *testing.T) {
 	// init logger
 	logger.InitLogger()
 	// 测试前准备：初始化配置和 minio 客户端
-	if err := config.Init("../../config/config_original.yaml"); err!= nil {
+	if err := config.Init("../../config/config_original.yaml"); err != nil {
 		t.Fatalf("初始化配置文件失败: %v", err)
 	}
-	if err := InitMinIO(config.Conf.Minio); err!= nil {
+	if err := InitMinIO(config.Conf.Minio); err != nil {
 		t.Fatalf("初始化 Minio 客户端失败: %v", err)
 	}
 }
@@ -25,22 +25,22 @@ func TestInitMinIO(t *testing.T) {
 	// init logger
 	logger.InitLogger()
 	tests := []struct {
-		name    	string
-		configPath 	string
-		wantErr    	bool
+		name       string
+		configPath string
+		wantErr    bool
 	}{
 		{
-			name:     "初始化成功",
+			name:       "初始化成功",
 			configPath: "../../config/config_original.yaml",
-			wantErr:     false,
+			wantErr:    false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := config.Init(tt.configPath); err!= nil {
+			if err := config.Init(tt.configPath); err != nil {
 				t.Fatalf("初始化配置文件失败: %v", err)
 			}
-			if err := InitMinIO(config.Conf.Minio); err!= nil {
+			if err := InitMinIO(config.Conf.Minio); err != nil {
 				t.Errorf("InitMinIO() error = %v, wantErr %v", err, tt.wantErr)
 			} else {
 				t.Logf("InitMinIO() success")
@@ -49,7 +49,7 @@ func TestInitMinIO(t *testing.T) {
 	}
 }
 
-func TestInitBucket(t * testing.T){
+func TestInitBucket(t *testing.T) {
 	preInit(t)
 	tests := []struct {
 		name       string
@@ -64,7 +64,7 @@ func TestInitBucket(t * testing.T){
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := InitBucket(tt.bucketName); err!= nil {
+			if err := InitBucket(tt.bucketName); err != nil {
 				t.Errorf("InitBucket() error = %v, wantErr %v", err, tt.wantErr)
 			} else {
 				t.Logf("InitBucket() success")
@@ -72,7 +72,7 @@ func TestInitBucket(t * testing.T){
 			// 测试后清理：删除测试用的桶
 			ctx := context.Background()
 			for _, bucketName := range tt.bucketName {
-				if err := MINIMO_CLIENT.RemoveBucket(ctx, bucketName); err!= nil {
+				if err := MINIMO_CLIENT.RemoveBucket(ctx, bucketName); err != nil {
 					t.Logf("清理测试桶失败: %v", err)
 				}
 			}
@@ -182,7 +182,7 @@ func TestDeleteFileFromBucketMinio(t *testing.T) {
 		},
 	}
 	// 测试前准备：创建测试用的桶和文件
-	if err := MakeBucketMinio("test-bucket"); err!= nil {
+	if err := MakeBucketMinio("test-bucket"); err != nil {
 		t.Fatalf("创建测试桶失败: %v", err)
 	}
 	contentType := "application/octet-stream"
@@ -190,16 +190,16 @@ func TestDeleteFileFromBucketMinio(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// 前期准备
 			file, err := os.Open(fmt.Sprintf("../../test_files/%s", tt.fileName))
-			if err!= nil {
+			if err != nil {
 				t.Fatalf("打开文件失败: %v", err)
 			}
 			defer file.Close()
-			if err = UploadFileMinio(tt.bucketName, tt.fileName, file, contentType); err!= nil {
+			if err = UploadFileMinio(tt.bucketName, tt.fileName, file, contentType); err != nil {
 				t.Fatalf("上传文件失败: %v", err)
 			}
 			// 测试代码
 			err = DeleteFileFromBucketMinio(tt.bucketName, tt.fileName)
-			if (err!= nil)!= tt.wantErr {
+			if (err != nil) != tt.wantErr {
 				t.Errorf("DeleteFileFromBucketMinio() error = %v, wantErr %v", err, tt.wantErr)
 			} else {
 				t.Logf("DeleteFileFromBucketMinio() success")
@@ -208,7 +208,7 @@ func TestDeleteFileFromBucketMinio(t *testing.T) {
 	}
 	// 测试后清理：删除测试用的桶
 	ctx := context.Background()
-	if err := MINIMO_CLIENT.RemoveBucket(ctx, "test-bucket"); err!= nil {
+	if err := MINIMO_CLIENT.RemoveBucket(ctx, "test-bucket"); err != nil {
 		t.Logf("清理测试桶失败: %v", err)
 	}
 }
@@ -229,12 +229,12 @@ func TestClearDeleteBucketMinio(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// 前期准备
-			if err := MakeBucketMinio(tt.bucketName); err!= nil {
+			if err := MakeBucketMinio(tt.bucketName); err != nil {
 				t.Fatalf("创建测试桶失败: %v", err)
 			}
 			// 测试代码
 			err := ClearDeleteBucketMinio(tt.bucketName)
-			if (err!= nil)!= tt.wantErr {
+			if (err != nil) != tt.wantErr {
 				t.Errorf("ClearDeleteBucketMinio() error = %v, wantErr %v", err, tt.wantErr)
 			} else {
 				t.Logf("ClearDeleteBucketMinio() success")
@@ -261,7 +261,7 @@ func TestGeneratePublicURLMinio(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := GeneratePublicURLMinio(tt.bucketName, tt.fileName)
-			if result!= tt.wantResult {
+			if result != tt.wantResult {
 				t.Errorf("GeneratePublicURLMinio() = %v, want %v", result, tt.wantResult)
 			} else {
 				t.Logf("GeneratePublicURLMinio() success")

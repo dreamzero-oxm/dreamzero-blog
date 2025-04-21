@@ -33,7 +33,7 @@ func PhotoTestApi(c *gin.Context) {
 // @Router /photo/upload [post]
 func UploadPhoto(c *gin.Context) {
 	form, err := c.MultipartForm()
-	if err!= nil {
+	if err != nil {
 		internal.APIResponse(c, IError.ErrPhotoUpload, err.Error())
 		return
 	}
@@ -49,7 +49,7 @@ func UploadPhoto(c *gin.Context) {
 		internal.APIResponse(c, IError.ErrPhotoUpload, err.Error())
 		return
 	}
-	data := struct{
+	data := struct {
 		Success int `json:"success"`
 		Fail    int `json:"fail"`
 	}{
@@ -64,12 +64,12 @@ func UploadPhoto(c *gin.Context) {
 // @Tags photo
 // @Accept json
 // @Produce json
-// @Success 200 {object} internal.Response{data=[]model.Photo}
+// @Success 200 {object} internal.Response{data=[]models.DailyPhotograph}
 // @Router /photo/list [get]
 func ListPhoto(c *gin.Context) {
 	var service service.ListPhotoService
 	photos, err := service.ListPhoto()
-	if err!= nil {
+	if err != nil {
 		internal.APIResponse(c, IError.ErrPhotoList, err.Error())
 		return
 	}

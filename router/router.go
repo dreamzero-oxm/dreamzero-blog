@@ -12,7 +12,7 @@ import (
 func InitRouter(server *server.Server) {
 	// 设置模式
 	gin.SetMode(gin.DebugMode)
-	
+
 	// 设置gin-swagger路由
 	server.GinEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

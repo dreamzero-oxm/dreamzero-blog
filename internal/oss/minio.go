@@ -31,7 +31,7 @@ func InitMinIO(minioConfig config.MinioConfig) error {
 	logger.Logger.Infof("minio secret access key: %v", strings.Repeat("*", len(minioConfig.SecretAccessKey)))
 
 	// 初始化bucket
-	if err := InitBucket(minioConfig.BucketNames); err!= nil {
+	if err := InitBucket(minioConfig.BucketNames); err != nil {
 		logger.Logger.Errorf("minio init bucket error: %v", err)
 		return err
 	}
@@ -91,7 +91,7 @@ func UploadFileMinio(bucketName string, objectName string, src io.Reader, conten
 	if _, err := MINIMO_CLIENT.PutObject(ctx, bucketName, objectName, src, -1, minio.PutObjectOptions{
 		ContentType: contentType,
 		UserMetadata: map[string]string{
-			"x-amz-acl": "public-read",  // 设置对象为公开可读
+			"x-amz-acl": "public-read", // 设置对象为公开可读
 		},
 	}); err != nil {
 		logger.Logger.Errorf("Minio Upload File Error: %v", err)
@@ -104,9 +104,9 @@ func UploadFileMinio(bucketName string, objectName string, src io.Reader, conten
 // bucketName: 桶名
 // fileName: 文件名称
 // 返回值: error
-func DeleteFileFromBucketMinio(bucketName string, fileName string) (error) {
+func DeleteFileFromBucketMinio(bucketName string, fileName string) error {
 	ctx := context.Background()
-	if err := MINIMO_CLIENT.RemoveObject(ctx, bucketName, fileName, minio.RemoveObjectOptions{}); err!= nil {
+	if err := MINIMO_CLIENT.RemoveObject(ctx, bucketName, fileName, minio.RemoveObjectOptions{}); err != nil {
 		logger.Logger.Errorf("Minio Delete File Error: %v", err)
 		return err
 	}
@@ -118,17 +118,17 @@ func DeleteFileFromBucketMinio(bucketName string, fileName string) (error) {
 // 返回值: error
 func ClearDeleteBucketMinio(bucketName string) error {
 	ctx := context.Background()
-	for obj := range MINIMO_CLIENT.ListObjects(ctx, bucketName, minio.ListObjectsOptions{}){
-		if obj.Err!= nil {
+	for obj := range MINIMO_CLIENT.ListObjects(ctx, bucketName, minio.ListObjectsOptions{}) {
+		if obj.Err != nil {
 			logger.Logger.Errorf("Minio List Objects Error: %v", obj.Err)
 			return obj.Err
 		}
-		if err := DeleteFileFromBucketMinio(bucketName, obj.Key); err!= nil {
+		if err := DeleteFileFromBucketMinio(bucketName, obj.Key); err != nil {
 			logger.Logger.Errorf("Minio Delete File Error: %v", err)
 			return err
 		}
 	}
-	if err := MINIMO_CLIENT.RemoveBucket(ctx, "test-bucket"); err!= nil {
+	if err := MINIMO_CLIENT.RemoveBucket(ctx, "test-bucket"); err != nil {
 		logger.Logger.Errorf("清理测试桶失败: %v", err)
 	}
 	return nil

@@ -73,12 +73,12 @@ type AppConfig struct {
 }
 
 type MinioConfig struct {
-	Endpoint        string 		`json:"endpoint" yaml:"endpoint" mapstructure:"endpoint"`
-	AccessKeyID     string 		`json:"access_key_id" yaml:"access_key_id" mapstructure:"access_key_id"`
-	SecretAccessKey string 		`json:"secret_access_key" yaml:"secret_access_key" mapstructure:"secret_access_key"`
-	UseSSL          bool   		`json:"use_ssl" yaml:"use_ssl" mapstructure:"use_ssl"`
-	BucketNames     []string	`json:"bucket_names" yaml:"bucket_names" mapstructure:"bucket_names"`
-	Location        string 		`json:"location" yaml:"location" mapstructure:"location"`
+	Endpoint        string   `json:"endpoint" yaml:"endpoint" mapstructure:"endpoint"`
+	AccessKeyID     string   `json:"access_key_id" yaml:"access_key_id" mapstructure:"access_key_id"`
+	SecretAccessKey string   `json:"secret_access_key" yaml:"secret_access_key" mapstructure:"secret_access_key"`
+	UseSSL          bool     `json:"use_ssl" yaml:"use_ssl" mapstructure:"use_ssl"`
+	BucketNames     []string `json:"bucket_names" yaml:"bucket_names" mapstructure:"bucket_names"`
+	Location        string   `json:"location" yaml:"location" mapstructure:"location"`
 }
 
 type PostgresConfig struct {
@@ -91,13 +91,13 @@ type PostgresConfig struct {
 }
 
 type GormConfig struct {
-	LogLevel string `json:"log_level" yaml:"log_level" mapstructure:"log_level"`
+	LogLevel     string `json:"log_level" yaml:"log_level" mapstructure:"log_level"`
 	LogOutputDir string `json:"log_output_dir" yaml:"log_output_dir" mapstructure:"log_output_dir"`
 }
 
 type DataBaseConfig struct {
 	Postgres PostgresConfig `json:"postgres" yaml:"postgres" mapstructure:"postgres"`
-	Gorm GormConfig `json:"gorm" yaml:"gorm" mapstructure:"gorm"`
+	Gorm     GormConfig     `json:"gorm" yaml:"gorm" mapstructure:"gorm"`
 }
 
 // Config global config
