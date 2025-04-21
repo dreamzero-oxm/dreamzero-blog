@@ -17,6 +17,7 @@ import 'highlight.js/styles/github-dark.min.css'
 import { GoToTop } from "@/components/go-to-top"
 import 'katex/dist/katex.min.css';
 import { config } from "@/lib/config";
+import CommentBox from "@/components/comment-box";
 
 type BlogsPageProps = {
   params: Promise<{slug: string[]}>
@@ -120,7 +121,11 @@ export default async function BlogPage(props: BlogsPageProps) {
           <MDXRemote source={blog.content} components={components} options={options} />
         </div>
 
-        {/* <GiscusComments /> */}
+        <div className="w-full h-10 flex justify-center">
+          <div className="w-auto h-full rounded-xl border-1 flex justify-center items-center px-3">
+            <CommentBox title={slug[slug.length-1]}/>
+          </div>
+        </div>
       </div>
       <div className="hidden text-sm xl:block">
         <div className="sticky top-16 -mt-6 h-[calc(100vh-3.5rem)]">

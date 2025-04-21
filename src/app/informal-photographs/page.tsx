@@ -5,8 +5,8 @@ import ImageListItem from '@mui/material/ImageListItem';
 import { useListPhoto } from '@/hooks/photo-hook'
 import { useState, useEffect } from 'react';
 import { PhotoListItem } from '@/interface/photo';
-import { Alert, AlertDescription, AlertTitle } from "@/components/alert";
-import { Skeleton } from "@/components/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import DecryptedText from '@/components/decrypted-text';
 
 export default function InformalPhotographs() {
