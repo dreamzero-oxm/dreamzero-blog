@@ -10,8 +10,8 @@ import (
 func CorsMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		origin := context.Request.Header.Get("Origin")
-		logger.Logger.Infof("[CORS] Request from: %s", origin)
 		if origin != "" {
+			logger.Logger.Debugf("[CORS] Request from: %s", origin)
 			// 允许所有来源
 			context.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		} else {
