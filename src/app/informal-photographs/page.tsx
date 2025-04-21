@@ -10,7 +10,7 @@ import { PhotoListItem } from '@/interface/photo';
 export default function InformalPhotographs() {
   const [list, setList] = useState<PhotoListItem[]>([])
 
-  const {isLoading, error, photoList} = useListPhoto()
+  const {error, photoList} = useListPhoto()
 
   useEffect(() => {
     if (error) {
