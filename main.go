@@ -6,8 +6,10 @@ import (
 	"strings"
 
 	"blog-server/internal/config"
+	"blog-server/internal/middleware"
 	"blog-server/internal/models"
 	"blog-server/internal/oss"
+	"blog-server/internal/server"
 
 	"blog-server/internal/logger"
 
@@ -76,10 +78,20 @@ func main() {
 			return err
 		}
 
-		server := router.InitRouter()
-		RegisterLoggerForGin(server)
+		// init server
+		mainServer := server.NewServer()
 
-		if err := server.GinEngine.Run(config.Conf.App.Port); err != nil {
+		// init middleware
+		if err := middleware.InitMiddleware(mainServer); err!= nil {
+			return err
+		}
+
+		// init router
+		router.InitRouter(mainServer)
+		RegisterLoggerForGin(mainServer)
+
+		// start server
+		if err := mainServer.GinEngine.Run(config.Conf.App.Port); err != nil {
 			return err
 		}
 		return nil
@@ -91,7 +103,7 @@ func main() {
 	}
 }
 
-func RegisterLoggerForGin(server *router.Server) {
+func RegisterLoggerForGin(server *server.Server) {
 	// register
 	server.GinEngine.Use(logger.GinLogger(logger.Logger))
 	server.GinEngine.Use(logger.GinRecovery(logger.Logger, true))
