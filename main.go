@@ -91,7 +91,7 @@ func main() {
 		RegisterLoggerForGin(mainServer)
 
 		// start server
-		if err := mainServer.GinEngine.Run(config.Conf.App.Port); err != nil {
+		if err := mainServer.GinEngine.Run(fmt.Sprintf("%s:%s", config.Conf.App.Addr, config.Conf.App.Port)); err != nil {
 			return err
 		}
 		return nil
