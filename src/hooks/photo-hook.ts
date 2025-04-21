@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { get } from '@/utils/request'
 import api from '@/lib/api'
-import { log } from 'console'
+import type { BaseResponse } from '@/interface/base'
+import { PhotoListItem } from '@/interface/photo';
 
 const {
     // updatePhotos,
@@ -12,8 +13,11 @@ export function useListPhoto() {
     const { isLoading, error, data: photoList } = useQuery({
         queryKey: ['photoList'],
         queryFn: async () => {
-            const res = await get(listPhotos)
-            return res
+            const res: BaseResponse = await get(listPhotos)
+            if (res.code === 0) {
+                return res.data as PhotoListItem[]
+            }
+            throw new Error(`[List photo error] code: ${res.code} | msg: ${res.msg}`)
         }
     })
     return {
