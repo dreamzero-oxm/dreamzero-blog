@@ -9,7 +9,7 @@ import (
 var MINIMO_CLIENT *minio.Client
 
 func InitOSS() error {
-	if err := InitMinIO(config.Conf.Minio); err!= nil {
+	if err := InitMinIO(config.Conf.Minio); err != nil {
 		return err
 	}
 	return nil

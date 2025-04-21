@@ -25,7 +25,7 @@ type UploadPhotoService struct {
 // @property {error} finalError - 最终错误
 func (service *UploadPhotoService) UploadPhoto() (int, int, error) {
 	bucketName := "moity-blog"
-	
+
 	// upload photos
 	success, fail := 0, 0
 	finalError := error(nil)
@@ -67,6 +67,7 @@ func (service *UploadPhotoService) UploadPhoto() (int, int, error) {
 // @property {error} finalError - 最终错误
 type ListPhotoService struct {
 }
+
 // ListPhoto 列表照片
 // @property {[]*models.DailyPhotograph} photos - 照片
 // @property {error} finalError - 最终错误

@@ -1,4 +1,29 @@
 basePath: /api/v1
+definitions:
+  internal.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  models.DailyPhotograph:
+    description: 日常照片
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
 host: petstore.swagger.io:8080
 info:
   contact:
@@ -12,5 +37,73 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Swagger Example API
   version: "1.0"
-paths: {}
+paths:
+  /photo/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取图片列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.DailyPhotograph'
+                  type: array
+              type: object
+      summary: 获取图片列表
+      tags:
+      - photo
+  /photo/test:
+    get:
+      consumes:
+      - application/json
+      description: 测试
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 测试
+      tags:
+      - photo
+  /photo/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传图片
+      parameters:
+      - description: 图片
+        in: formData
+        name: photos
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 上传图片
+      tags:
+      - photo
 swagger: "2.0"

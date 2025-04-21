@@ -4,10 +4,10 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
+	"os"
 	"runtime/debug"
 	"strings"
 	"time"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -24,7 +24,6 @@ func InitLogger() error {
 	}
 	return nil
 }
-
 
 func GinLogger(logger *zap.SugaredLogger) gin.HandlerFunc {
 	return func(c *gin.Context) {

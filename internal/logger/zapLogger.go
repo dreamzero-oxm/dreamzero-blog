@@ -1,10 +1,10 @@
 package logger
 
 import (
-	"os"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"os"
 )
 
 func initZapLogger() (*zap.SugaredLogger, error) {
@@ -50,4 +50,3 @@ func initZapLogger() (*zap.SugaredLogger, error) {
 	Logger = log.Sugar()
 	return Logger, nil
 }
-

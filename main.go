@@ -82,7 +82,7 @@ func main() {
 		mainServer := server.NewServer()
 
 		// init middleware
-		if err := middleware.InitMiddleware(mainServer); err!= nil {
+		if err := middleware.InitMiddleware(mainServer); err != nil {
 			return err
 		}
 
