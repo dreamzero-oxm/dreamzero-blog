@@ -10,13 +10,36 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 // import { SquareTerminal } from "lucide-react";
-import Image from 'next/image'
+import Image from 'next/image';
+import { Switch } from "@/components/ui/switch";
+import { Sun, Moon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function Header() {
-  // 获取路径
   const pathname = usePathname();
-  // 判断是否为博客页面
   const isBlogPage = pathname.includes("/blog/");
+  
+  // 使用函数来初始化状态，避免直接访问 localStorage
+  const [dark, setDark] = useState(false);  // 初始值设为 false
+  
+  // 添加一个新的 useEffect 来处理初始化
+  useEffect(() => {
+    // 在客户端执行时初始化主题
+    const isDark = 
+      localStorage.theme === "dark" || 
+      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    setDark(isDark);
+  }, []);
+  
+  useEffect(() => {
+    if (dark) {
+      localStorage.theme = "dark";
+      document.documentElement.classList.add('dark')
+    } else {
+      localStorage.theme = "light";
+      document.documentElement.classList.remove('dark')
+    }
+  }, [dark])
 
   return (
     <header className="pt-4">
@@ -48,6 +71,17 @@ export function Header() {
 
         {/* Right side buttons */}
         <div className="flex items-center space-x-2 md:space-x-8 mr-4">
+          <div className="flex items-center gap-2">
+            {dark ? <Moon /> : <Sun />}
+            <Switch
+              className="cursor-pointer"
+              checked={dark}  // 添加checked属性来控制开关状态
+              onCheckedChange={(checked) => {
+                console.log(checked);
+                setDark(checked);
+              }}
+            />
+          </div>
           <Link href="https://github.com/This-MOI" title="Github">
             <GithubIcon />
           </Link>
