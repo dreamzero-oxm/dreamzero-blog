@@ -30,6 +30,7 @@ func PhotoTestApi(c *gin.Context) {
 // @Produce json
 // @Param photos formData file true "图片"
 // @Success 200 {object} internal.Response{data=string}
+// @Failure 20201 {object} internal.Response{data=string}
 // @Router /photo/upload [post]
 func UploadPhoto(c *gin.Context) {
 	form, err := c.MultipartForm()
@@ -65,6 +66,7 @@ func UploadPhoto(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} internal.Response{data=[]models.DailyPhotograph}
+// @Failure 20203 {object} internal.Response{data=string}
 // @Router /photo/list [get]
 func ListPhoto(c *gin.Context) {
 	var service service.ListPhotoService

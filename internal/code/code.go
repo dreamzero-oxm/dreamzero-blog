@@ -37,6 +37,7 @@ var (
 
 	// article comment errors
 	ErrArticalCommentCreateFailed = &Errno{Code: 20301, Message: "评论创建失败"}
+	ErrArticalCommentListFailed   = &Errno{Code: 20302, Message: "评论列表获取失败"}
 )
 
 // Errno ...
