@@ -4,6 +4,8 @@ import { Header } from "@/components/header";
 import { config } from "@/lib/config";
 import SplashCursor from "@/components/ui/SplashCursor";
 import ReactQueryProvider from "@/components/provider/react-query-provider";
+import localFont from 'next/font/local'
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   // 标题
@@ -47,22 +49,36 @@ export const metadata: Metadata = {
   },
 };
 
+const lxgwFont = localFont({
+  src: [
+      {
+          path: '../fonts/lxgw-wenkai/LXGWWenKai-Light.ttf',
+          weight: '400',
+          style: 'normal',
+      },
+      {
+          path: '../fonts/lxgw-wenkai/LXGWWenKai-Regular.ttf',
+          weight: '500',
+          style: 'normal',
+      },
+      {
+          path: '../fonts/lxgw-wenkai/LXGWWenKai-Medium.ttf',
+          weight: '600',
+          style: 'normal',
+      },
+  ],
+  variable: '--font-chinese'
+})
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={cn(lxgwFont.className)}>
       <head>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.1.0/style.css" />
-        <style>
-          {`
-            body {
-              font-family: "LXGW WenKai Lite", sans-serif;
-            }
-          `}
-        </style>
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
         <link rel="alternate" type="application/atom+xml" title="Atom" href="/atom.xml" />
         <link rel="alternate" type="application/json" title="JSON" href="/feed.json" />
