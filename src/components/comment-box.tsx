@@ -77,15 +77,19 @@ export default function CommentBox({title}: CommentProps) {
                         className="w-full h-[150px]"
                         disabled={isSubmitting}
                     />
-                    <Button 
-                        onClick={handleSubmit} 
-                        disabled={isSubmitting || !comment.trim()}
-                        className="w-full"
-                    >
-                        {isSubmitting ? '提交中...' : '提交评论'}
-                    </Button>
+                    <div>
+                        <Button 
+                            onClick={handleSubmit} 
+                            disabled={isSubmitting || !comment.trim()}
+                            className="w-full"
+                        >
+                            {isSubmitting ? '提交中...' : '提交评论'}
+                        </Button>
+                    </div>
                     <DrawerClose id="drawer-close-button">
-                        <Button variant="outline" className="w-full">取消</Button>
+                        <div className="w-full h-auto py-1 rounded-xl border-2">
+                            123
+                        </div>
                     </DrawerClose>
                 </DrawerFooter>
             </DrawerContent>

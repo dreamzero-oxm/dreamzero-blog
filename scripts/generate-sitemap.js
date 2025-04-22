@@ -1,15 +1,16 @@
 // scripts/generate-sitemap.js
 import { readdir, readFile } from 'fs/promises';
 import { join, relative } from 'path';
-import { existsSync, promises as fsPromises } from 'fs';
+import { promises as fsPromises } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import matter from 'gray-matter';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+console.log(__dirname);
 
-const BASE_URL = 'https://moity-soeoe.com';
+// const BASE_URL = 'https://moity-soeoe.com';
 
 // 获取优先级
 function getPriority(path) {
@@ -74,7 +75,7 @@ async function scanMarkdownFiles(dir) {
 // 生成 sitemap.ts 文件
 async function generateSitemap() {
   // 检查 src/content 目录是否存在
-  const contentDir = join(process.cwd(), 'src/content');
+  const contentDir = join(process.cwd(), 'src/content/blog');
   
   try {
     // 扫描 Markdown 文件，获取文件的各种信息{url, lastModified, changeFrequency, priority}
@@ -108,7 +109,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // Write the sitemap.ts file
     // 写入 sitemap.ts 文件
-    const outputPath = join(process.cwd(), 'src/app/sitemap.ts');
+    const outputPath = join(process.cwd(), 'src/app/(main)/sitemap.ts');
     await fsPromises.writeFile(outputPath, tsContent);
 
     console.log(`Generated sitemap with ${sitemapItems.length} items`);

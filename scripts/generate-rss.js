@@ -15,6 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 // dirname() ：返回路径的目录名
 // 例如：/Users/mac/code/frontend/nextjs-blog-template/scripts
 const __dirname = dirname(__filename);
+console.log(__dirname);
 
 // 网站域名
 const BASE_URL = 'https://moity-soeoe.com';

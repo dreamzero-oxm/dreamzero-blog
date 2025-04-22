@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import { Header } from "@/components/header";
+import "@/app/globals.css";
 import { config } from "@/lib/config";
-import SplashCursor from "@/components/ui/SplashCursor";
 import ReactQueryProvider from "@/components/provider/react-query-provider";
 import localFont from 'next/font/local'
 import { cn } from "@/lib/utils";
@@ -87,8 +85,6 @@ export default function RootLayout({
       </head>
       <body className="min-w-md overflow-x-hidden">
         <ReactQueryProvider>
-          <Header />
-          <div className="hidden md:block"><SplashCursor /></div>
           {children}
         </ReactQueryProvider>
       </body>

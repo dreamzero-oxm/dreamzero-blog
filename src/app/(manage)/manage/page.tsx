@@ -1,7 +1,7 @@
 export default function Page() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-        
+    <div className="w-full h-full ">
+        123
     </div>
   )
 }
