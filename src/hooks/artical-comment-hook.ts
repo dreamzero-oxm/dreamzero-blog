@@ -20,14 +20,10 @@ export function useSubmitComment() {
             // fetch 会自动设置正确的 Content-Type 和边界
             return post<BaseResponse>(submitArticleComment, {
                 data: formData,
-                // headers: {
-                //     'Content-Type': 'multipart/form-data',
-                // }
             });
         },
-        onSuccess(data, variables, context) {
+        onSuccess(data) {
             if (data.code !== 0) {
-                console.log(variables);
                 // 如果返回的 code 不为 0，则抛出错误
                 throw new Error(data.msg || '评论提交失败');
             }

@@ -6,7 +6,7 @@ export const apiHost = 'api/v1'
 export const photoHost = `photo`
 export const articalComment = `artical_comment`
 
-export default {
+const api = {
     // photo
     updatePhotos: `${baseUrl}/${apiHost}/${photoHost}/upload`,
     listPhotos: `${baseUrl}/${apiHost}/${photoHost}/list`, 
@@ -14,3 +14,5 @@ export default {
     submitArticleComment: `${baseUrl}/${apiHost}/${articalComment}/add`,
     // others   
 }
+
+export default api;

@@ -15,7 +15,6 @@ import { useEffect, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import type { CreateArticleComment } from "@/interface/article-comment"
 import { useSubmitComment } from "@/hooks/artical-comment-hook"
-import { set } from "@content-collections/core"
 
 interface CommentProps {
     // 文章title
