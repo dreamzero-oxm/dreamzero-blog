@@ -11,17 +11,38 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
+import type { CreateArticleComment } from "@/interface/article-comment"
+import { useSubmitComment } from "@/hooks/artical-comment-hook"
+import { set } from "@content-collections/core"
 
 interface CommentProps {
     // 文章title
-    title: string
+    title: string[]
 }
 
 export default function CommentBox({title}: CommentProps) {
     const [comment, setComment] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const { isPending, error, mutate: mutateAddComment } = useSubmitComment()
+
+    useEffect(() => {
+        if (isSubmitting && isPending) {
+            return
+        }else if (isSubmitting && !isPending) {
+            setIsSubmitting(false)
+            if (error === null) {
+                // 成功后关闭抽屉
+                document.getElementById('drawer-close-button')?.click()
+            }
+        }else if (!isSubmitting && isPending) {
+            // 不应该出现这种情况
+            return
+        }else {
+            return
+        }
+    }, [isPending, isSubmitting, error]);
 
     // 提交评论
     const handleSubmit = async () => {
@@ -29,17 +50,14 @@ export default function CommentBox({title}: CommentProps) {
         
         try {
             setIsSubmitting(true)
-            // TODO: 提交评论
-            console.log(comment)
-            console.log(title)
+            mutateAddComment({
+                comment: comment,
+                articleTitle: title
+            } as CreateArticleComment)
             setComment("")
-            // 成功后关闭抽屉
-            document.getElementById('drawer-close-button')?.click()
         } catch (error) {
             console.error('提交评论失败:', error)
-        } finally {
-            setIsSubmitting(false)
-        }
+        } 
     }
 
     return (

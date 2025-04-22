@@ -13,7 +13,7 @@ export function useListPhoto() {
     const { isLoading, error, data: photoList } = useQuery({
         queryKey: ['photoList'],
         queryFn: async () => {
-            const res: BaseResponse = await get(listPhotos)
+            const res = await get<BaseResponse>(listPhotos)
             if (res.code === 0) {
                 return res.data as PhotoListItem[]
             }
