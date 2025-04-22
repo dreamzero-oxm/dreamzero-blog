@@ -72,7 +72,7 @@ export default function RootLayout({
       <body className="min-w-md overflow-x-hidden">
         <ReactQueryProvider>
           <Header />
-          <SplashCursor />
+          <div className="hidden md:block"><SplashCursor /></div>
           {children}
         </ReactQueryProvider>
       </body>

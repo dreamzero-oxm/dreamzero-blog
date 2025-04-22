@@ -80,11 +80,12 @@ export default function CommentBox({title}: CommentProps) {
                     <Button 
                         onClick={handleSubmit} 
                         disabled={isSubmitting || !comment.trim()}
+                        className="w-full"
                     >
                         {isSubmitting ? '提交中...' : '提交评论'}
                     </Button>
                     <DrawerClose id="drawer-close-button">
-                        <Button variant="outline">取消</Button>
+                        <Button variant="outline" className="w-full">取消</Button>
                     </DrawerClose>
                 </DrawerFooter>
             </DrawerContent>
