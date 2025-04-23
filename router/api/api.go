@@ -9,13 +9,13 @@ import (
 // RegisterAPIV1 ...
 func RegisterAPIV1(apiGroup *gin.RouterGroup) {
 	var (
-		photoController *v1.PhotoController
+		photoController          *v1.PhotoController
 		articalCommentController *v1.ArticalCommentController
 	)
 	if err := photoController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
-	if err := articalCommentController.InitRouter(apiGroup); err!= nil {
+	if err := articalCommentController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
 }

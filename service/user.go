@@ -49,18 +49,18 @@ type LoginUserService struct {
 func (service *LoginUserService) Login() (*models.User, string, error) {
 	postgreDB := models.DB
 	var user models.User
-	if postgreDB.Where("user_name = ? OR email = ? OR phone = ?", service.Account, service.Account, service.Account).First(&user).Error!= nil {
+	if postgreDB.Where("user_name = ? OR email = ? OR phone = ?", service.Account, service.Account, service.Account).First(&user).Error != nil {
 		return nil, "", code.ErrUserNotFound
 	}
 	// TODO: 可以用Redis存储Lock信息，防止用户频繁登录
 	if user.IsLocked && user.LockUntil.After(time.Now()) {
 		user.LastFailedLogin = time.Now()
 		user.LastFailedReason = "user locked"
-		if postgreDB.Save(&user).Error!= nil {
+		if postgreDB.Save(&user).Error != nil {
 			return nil, "", code.ErrDatabase
 		}
 		return nil, "", code.ErrUserLocked
-	}else if user.IsLocked && user.LockUntil.Before(time.Now()) {
+	} else if user.IsLocked && user.LockUntil.Before(time.Now()) {
 		user.IsLocked = false
 		user.LockUntil = time.Now()
 	}
@@ -74,13 +74,13 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 			user.IsLocked = true
 			user.LockUntil = time.Now().Add((time.Duration(user.FailedLoginCount - 5)) * time.Minute)
 		}
-		if postgreDB.Save(&user).Error!= nil {
+		if postgreDB.Save(&user).Error != nil {
 			return nil, "", code.ErrDatabase
 		}
 		return nil, "", code.ErrPasswordIncorrect
 	}
 	// 验证用户是否被封号
-	switch user.Status{
+	switch user.Status {
 	case "suspended":
 		return nil, "", code.ErrUserSuspended
 	case "inactive":
@@ -100,7 +100,7 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 	user.LastLogin = time.Now()
 	user.LoginCount++
 	// 更新用户的信息
-	if postgreDB.Save(&user).Error!= nil {
+	if postgreDB.Save(&user).Error != nil {
 		return nil, "jwt", code.ErrDatabase
 	}
 	return &user, "jwt", nil

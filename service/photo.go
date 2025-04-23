@@ -78,4 +78,3 @@ func (service *ListPhotoService) ListPhoto() ([]*models.DailyPhotograph, error) 
 	}
 	return photos, nil
 }
-

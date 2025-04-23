@@ -64,7 +64,7 @@ func main() {
 		logger.InitLogger()
 
 		conf := c.String("conf")
-		if err := ConfigInit(conf); err!= nil {
+		if err := ConfigInit(conf); err != nil {
 			return err
 		}
 

@@ -1,6 +1,5 @@
 package utils
 
-
 import (
 	"regexp"
 )
@@ -25,10 +24,9 @@ func ValidatePassword(password, userName string) bool {
 		return false
 	}
 	// 密码不能包含用户名
-	if userName != "" && regexp.MustCompile(`(?i)` + userName).MatchString(password) {
+	if userName != "" && regexp.MustCompile(`(?i)`+userName).MatchString(password) {
 		return false
 	}
-
 
 	// 使用正则表达式检查密码要求
 	hasUpperCase := regexp.MustCompile(`[A-Z]`).MatchString(password)
@@ -40,7 +38,6 @@ func ValidatePassword(password, userName string) bool {
 	return hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar
 }
 
-
 // ValidateEmail 验证邮箱格式是否正确
 // 规则：
 // 1. 用户名部分可以包含：字母、数字、点号(.)、下划线(_)、百分号(%)、加号(+)、减号(-)
@@ -49,11 +46,10 @@ func ValidatePassword(password, userName string) bool {
 func ValidateEmail(email string) bool {
 	// 邮箱正则表达式模式
 	pattern := `^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$`
-	
+
 	// 编译正则表达式
 	reg := regexp.MustCompile(pattern)
-	
+
 	// 返回匹配结果
 	return reg.MatchString(email)
 }
-

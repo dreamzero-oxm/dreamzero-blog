@@ -67,7 +67,7 @@ func TestLogin(t *testing.T) {
 		{
 			name: "login fail",
 			service: &LoginUserService{
-				Account: "test",
+				Account:  "test",
 				Password: "test",
 			},
 			wantErr: true,
@@ -75,7 +75,7 @@ func TestLogin(t *testing.T) {
 		{
 			name: "login success",
 			service: &LoginUserService{
-				Account: "test",
+				Account:  "test",
 				Password: "123456789@qweASD",
 			},
 			wantErr: false,
@@ -84,9 +84,9 @@ func TestLogin(t *testing.T) {
 	for _, tt := range test {
 		t.Run(tt.name, func(t *testing.T) {
 			_, jwt, err := tt.service.Login()
-			if (err!= nil)!= tt.wantErr {
+			if (err != nil) != tt.wantErr {
 				t.Errorf("Login() error = %v, wantErr %v", err, tt.wantErr)
-			}else{
+			} else {
 				t.Logf("Login JWT: %v", jwt)
 			}
 		})

@@ -8,12 +8,23 @@ definitions:
       msg:
         type: string
     type: object
+  models.ArticleComment:
+    properties:
+      article_title:
+        type: string
+      content:
+        type: string
+      is_notify:
+        type: boolean
+      is_pass:
+        type: boolean
+      is_read:
+        type: boolean
+    type: object
   models.DailyPhotograph:
     description: 日常照片
     properties:
       created_at:
-        type: string
-      deleted_at:
         type: string
       id:
         type: integer
@@ -23,6 +34,18 @@ definitions:
         type: string
       updated_at:
         type: string
+    type: object
+  service.AddCommentService:
+    properties:
+      artical_title:
+        items:
+          type: string
+        type: array
+      comment:
+        type: string
+    required:
+    - artical_title
+    - comment
     type: object
 host: petstore.swagger.io:8080
 info:
@@ -38,6 +61,108 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /artical_comment/add:
+    post:
+      consumes:
+      - application/json
+      description: 添加评论
+      parameters:
+      - description: 评论内容
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/service.AddCommentService'
+      - description: 文章标题列表
+        in: body
+        name: artical_title
+        required: true
+        schema:
+          $ref: '#/definitions/service.AddCommentService'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20301":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 添加评论
+      tags:
+      - artical_comment
+  /artical_comment/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取评论列表
+      parameters:
+      - description: 文章标题列表
+        in: query
+        name: artical_title
+        type: string
+      - description: 是否通知
+        in: query
+        name: is_notify
+        type: boolean
+      - description: 是否已读
+        in: query
+        name: is_read
+        type: boolean
+      - description: 是否通过审核
+        in: query
+        name: is_pass
+        type: boolean
+      - description: 通知排序
+        in: query
+        name: notify_desc
+        type: boolean
+      - description: 已读排序
+        in: query
+        name: read_desc
+        type: boolean
+      - description: 通过审核排序
+        in: query
+        name: pass_desc
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ArticleComment'
+                  type: array
+              type: object
+        "20302":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 获取评论列表
+      tags:
+      - artical_comment
   /photo/list:
     get:
       consumes:
@@ -56,6 +181,15 @@ paths:
                   items:
                     $ref: '#/definitions/models.DailyPhotograph'
                   type: array
+              type: object
+        "20203":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
               type: object
       summary: 获取图片列表
       tags:
@@ -96,6 +230,15 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20201":
+          description: ""
           schema:
             allOf:
             - $ref: '#/definitions/internal.Response'
