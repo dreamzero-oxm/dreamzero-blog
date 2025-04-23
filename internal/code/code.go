@@ -31,6 +31,9 @@ var (
 	ErrRegisterFailed        = &Errno{Code: 20113, Message: "注册失败"}
 	ErrCreatedUser           = &Errno{Code: 20114, Message: "用户创建失败"}
 	ErrEmailValidation		 = &Errno{Code: 20116, Message: "邮箱格式不正确"}
+	ErrUserLocked			 = &Errno{Code: 20117, Message: "用户已被锁定"}
+	ErrUserInactive			 = &Errno{Code: 20118, Message: "用户未激活"}
+	ErrUserSuspended		 = &Errno{Code: 20119, Message: "用户已被封禁"}
 
 	// photo errors
 	ErrPhotoUpload = &Errno{Code: 20201, Message: "图片上传失败"}
