@@ -31,21 +31,21 @@ func (ac *AddCommentService) AddComment() error {
 
 type ListCommentService struct {
 	// 评论ID
-	CommentID    int      `json:"comment_id" form:"comment_id"`
+	CommentID int `json:"comment_id" form:"comment_id"`
 	// 文章标题数组
 	ArticalTitle []string `json:"artical_title" form:"artical_title"`
 	// 相关内容
-	Content      string   `json:"content" form:"content"`
+	Content string `json:"content" form:"content"`
 	// 是否通知
-	IsNotify     bool     `json:"is_notify" form:"is_notify"`
+	IsNotify bool `json:"is_notify" form:"is_notify"`
 	// 是否已读
-	IsRead       bool     `json:"is_read" form:"is_read"`
+	IsRead bool `json:"is_read" form:"is_read"`
 	// 是否通过审核
-	IsPass       bool     `json:"is_pass" form:"is_pass"`
+	IsPass bool `json:"is_pass" form:"is_pass"`
 	// 排序
-	NotifyDesc   bool     `json:"notify_desc" form:"notify_desc"`
-	ReadDesc     bool     `json:"read_desc" form:"read_desc"`
-	PassDesc     bool     `json:"pass_desc" form:"pass_desc"`
+	NotifyDesc bool `json:"notify_desc" form:"notify_desc"`
+	ReadDesc   bool `json:"read_desc" form:"read_desc"`
+	PassDesc   bool `json:"pass_desc" form:"pass_desc"`
 }
 
 func (lc *ListCommentService) ListComment() ([]models.ArticleComment, error) {

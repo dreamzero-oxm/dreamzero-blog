@@ -2,8 +2,8 @@ package v1
 
 import (
 	"blog-server/internal"
-	"blog-server/service"
 	IError "blog-server/internal/code"
+	"blog-server/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -51,10 +51,11 @@ func AddComment(c *gin.Context) {
 func ListComment(c *gin.Context) {
 	var service service.ListCommentService
 	if err := c.ShouldBind(&service); err == nil {
-		if res, err := service.ListComment(); err!= nil {
+		if res, err := service.ListComment(); err != nil {
 			internal.APIResponse(c, IError.ErrArticalCommentListFailed, err.Error())
 		} else {
-			internal.APIResponse(c, IError.OK, res)}
+			internal.APIResponse(c, IError.OK, res)
+		}
 	}
 }
 

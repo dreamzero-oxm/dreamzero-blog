@@ -18,6 +18,179 @@
     "host": "petstore.swagger.io:8080",
     "basePath": "/api/v1",
     "paths": {
+        "/artical_comment/add": {
+            "post": {
+                "description": "添加评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artical_comment"
+                ],
+                "summary": "添加评论",
+                "parameters": [
+                    {
+                        "description": "评论内容",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.AddCommentService"
+                        }
+                    },
+                    {
+                        "description": "文章标题列表",
+                        "name": "artical_title",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.AddCommentService"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20301": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/artical_comment/list": {
+            "get": {
+                "description": "获取评论列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artical_comment"
+                ],
+                "summary": "获取评论列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "文章标题列表",
+                        "name": "artical_title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否通知",
+                        "name": "is_notify",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已读",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否通过审核",
+                        "name": "is_pass",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "通知排序",
+                        "name": "notify_desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "已读排序",
+                        "name": "read_desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "通过审核排序",
+                        "name": "pass_desc",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.ArticleComment"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20302": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/photo/list": {
             "get": {
                 "description": "获取图片列表",
@@ -47,6 +220,24 @@
                                             "items": {
                                                 "$ref": "#/definitions/models.DailyPhotograph"
                                             }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20203": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -131,6 +322,24 @@
                                 }
                             ]
                         }
+                    },
+                    "20201": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
                 }
             }
@@ -149,14 +358,31 @@
                 }
             }
         },
+        "models.ArticleComment": {
+            "type": "object",
+            "properties": {
+                "article_title": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "is_notify": {
+                    "type": "boolean"
+                },
+                "is_pass": {
+                    "type": "boolean"
+                },
+                "is_read": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.DailyPhotograph": {
             "description": "日常照片",
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
-                },
-                "deleted_at": {
                     "type": "string"
                 },
                 "id": {
@@ -169,6 +395,24 @@
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.AddCommentService": {
+            "type": "object",
+            "required": [
+                "artical_title",
+                "comment"
+            ],
+            "properties": {
+                "artical_title": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "comment": {
                     "type": "string"
                 }
             }
