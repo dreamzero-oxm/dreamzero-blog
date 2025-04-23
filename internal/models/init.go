@@ -117,5 +117,8 @@ func migrate() error {
 	if err := DB.AutoMigrate(&ArticleComment{}); err!= nil {
 		return err
 	}
+	if err := DB.AutoMigrate(&User{}); err!= nil {
+		return err
+	}
 	return nil
 }

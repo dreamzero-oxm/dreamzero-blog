@@ -15,6 +15,7 @@ var (
 	ErrDatabase           = &Errno{Code: 20002, Message: "Database error."}
 	ErrToken              = &Errno{Code: 20003, Message: "Error occurred while signing the JSON web token."}
 	ErrInvalidTransaction = &Errno{Code: 20004, Message: "invalid transaction."}
+	ErrPasswordValidation = &Errno{Code: 20005, Message: "密码格式校验失败"}		
 
 	// user errors
 	ErrEncrypt               = &Errno{Code: 20101, Message: "密码加密错误"}
@@ -29,6 +30,7 @@ var (
 	ErrTwicePasswordNotMatch = &Errno{Code: 20112, Message: "两次密码输入不一致"}
 	ErrRegisterFailed        = &Errno{Code: 20113, Message: "注册失败"}
 	ErrCreatedUser           = &Errno{Code: 20114, Message: "用户创建失败"}
+	ErrEmailValidation		 = &Errno{Code: 20116, Message: "邮箱格式不正确"}
 
 	// photo errors
 	ErrPhotoUpload = &Errno{Code: 20201, Message: "图片上传失败"}
@@ -38,6 +40,7 @@ var (
 	// article comment errors
 	ErrArticalCommentCreateFailed = &Errno{Code: 20301, Message: "评论创建失败"}
 	ErrArticalCommentListFailed   = &Errno{Code: 20302, Message: "评论列表获取失败"}
+
 )
 
 // Errno ...
