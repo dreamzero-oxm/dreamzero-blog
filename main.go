@@ -64,17 +64,7 @@ func main() {
 		logger.InitLogger()
 
 		conf := c.String("conf")
-		if err := config.Init(conf); err != nil {
-			return err
-		}
-
-		// init oss, such as minio
-		if err := oss.InitMinIO(config.Conf.Minio); err != nil {
-			return err
-		}
-
-		// init database
-		if err := models.Init(config.Conf.DataBase); err != nil {
+		if err := ConfigInit(conf); err!= nil {
 			return err
 		}
 
@@ -101,6 +91,23 @@ func main() {
 	if err != nil {
 		fmt.Printf("startup service failed, err: %v\n", err)
 	}
+}
+
+func ConfigInit(conf string) error {
+	if err := config.Init(conf); err != nil {
+		return err
+	}
+
+	// init oss, such as minio
+	if err := oss.InitMinIO(config.Conf.Minio); err != nil {
+		return err
+	}
+
+	// init database
+	if err := models.Init(config.Conf.DataBase); err != nil {
+		return err
+	}
+	return nil
 }
 
 func RegisterLoggerForGin(server *server.Server) {
