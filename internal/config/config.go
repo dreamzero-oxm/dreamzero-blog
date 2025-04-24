@@ -70,6 +70,7 @@ type AppConfig struct {
 	JwtExpirationTime int `json:"jwt_expiration_time" yaml:"jwt_expiration_time" mapstructure:"jwt_expiration_time"`
 	RsaPrivateKeyPath string `json:"rsa_private_key_path" yaml:"rsa_private_key_path" mapstructure:"rsa_private_key_path"`
 	RsaPublicKeyPath string `json:"rsa_public_key_path" yaml:"rsa_public_key_path" mapstructure:"rsa_public_key_path"`
+	LogOutputDir string `json:"log_output_dir" yaml:"log_output_dir" mapstructure:"log_output_dir"`
 }
 
 type MinioConfig struct {

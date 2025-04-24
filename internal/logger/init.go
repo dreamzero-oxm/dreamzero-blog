@@ -17,8 +17,8 @@ var (
 	Logger *zap.SugaredLogger
 )
 
-func InitLogger() error {
-	_, err := initZapLogger()
+func InitLogger(baseDir string) error {
+	_, err := initZapLogger(baseDir)
 	if err != nil {
 		return err
 	}

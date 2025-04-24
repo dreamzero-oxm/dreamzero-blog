@@ -11,7 +11,7 @@ import (
 
 func preInit(t *testing.T) {
 	// init logger
-	logger.InitLogger()
+	logger.InitLogger("../../logs")
 	// 测试前准备：初始化配置和 minio 客户端
 	if err := config.Init("../../config/config_original.yaml"); err != nil {
 		t.Fatalf("初始化配置文件失败: %v", err)
@@ -23,7 +23,7 @@ func preInit(t *testing.T) {
 
 func TestInitMinIO(t *testing.T) {
 	// init logger
-	logger.InitLogger()
+	preInit(t)
 	tests := []struct {
 		name       string
 		configPath string
