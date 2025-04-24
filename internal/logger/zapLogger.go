@@ -1,34 +1,47 @@
 package logger
 
 import (
-	"github.com/natefinch/lumberjack"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"os"
+    "os"
+    "path/filepath"
+
+    "github.com/natefinch/lumberjack"
+    "go.uber.org/zap"
+    "go.uber.org/zap/zapcore"
 )
 
-func initZapLogger() (*zap.SugaredLogger, error) {
-	consoleEncoderConfig := zap.NewDevelopmentEncoderConfig()
+func initZapLogger(baseDir string) (*zap.SugaredLogger, error) {
 	// 添加颜色输出
+	consoleEncoderConfig := zap.NewDevelopmentEncoderConfig()
 	consoleEncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	consoleEencoder := zapcore.NewConsoleEncoder(consoleEncoderConfig)
+	// 日志文件不需要颜色
 	fileEencoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+
+	// 检查并创建日志输出目录
+	if _, err := os.Stat(baseDir); os.IsNotExist(err) {
+	    if err := os.MkdirAll(baseDir, 0755); err != nil {
+	        return nil, err
+	    }
+	}else if err != nil {
+	    return nil, err
+	}
+
 	debugLogger := &lumberjack.Logger{
-		Filename:   "./logs/debug.log",
+		Filename:   filepath.Join(baseDir, "debug.log"),
 		MaxSize:    10,
 		MaxBackups: 5,
 		MaxAge:     30,
 		Compress:   false,
 	}
 	infoLogger := &lumberjack.Logger{
-		Filename:   "./logs/info.log",
+		Filename:   filepath.Join(baseDir, "info.log"),
 		MaxSize:    10,
 		MaxBackups: 5,
 		MaxAge:     30,
 		Compress:   false,
 	}
 	errorLogger := &lumberjack.Logger{
-		Filename:   "./logs/error.log",
+		Filename:   filepath.Join(baseDir, "error.log"),
 		MaxSize:    10,
 		MaxBackups: 5,
 		MaxAge:     30,

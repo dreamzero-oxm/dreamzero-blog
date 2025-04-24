@@ -8,7 +8,7 @@ import (
 )
 
 func initTestEnv() {
-	if err := logger.InitLogger(); err != nil {
+	if err := logger.InitLogger("../logs"); err != nil {
 		panic(err)
 	}
 	if err := config.Init("../config/config_original.yaml"); err != nil {

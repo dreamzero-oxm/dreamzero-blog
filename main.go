@@ -59,7 +59,7 @@ func main() {
 		}
 
 		// init zap logger
-		logger.InitLogger()
+		logger.InitLogger(config.Conf.App.LogOutputDir)
 
 		// init config
 		conf := c.String("conf")

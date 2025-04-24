@@ -6,6 +6,7 @@ app:
   jwt_expiration_time: 1  # 1 hour
   rsa_private_key_path: "./config/rsa_private_key.pem"
   rsa_public_key_path: "./config/rsa_public_key.pem"
+  log_output_dir: "./logs"
 minio:
   endpoint: "10.21.23.14:10004"
   access_key_id: "***REMOVED***"
