@@ -58,12 +58,14 @@ func main() {
 			return nil
 		}
 
-		// init zap logger
-		logger.InitLogger(config.Conf.App.LogOutputDir)
-
 		// init config
 		conf := c.String("conf")
-		if err := ConfigInit(conf); err != nil {
+		if err := config.Init(conf); err != nil {
+			return err
+		}
+
+		// init zap logger
+		if err := logger.InitLogger(config.Conf.App.LogOutputDir); err!= nil {
 			return err
 		}
 
@@ -74,6 +76,16 @@ func main() {
 			// 将密钥保存到全局变量中
 			rsa.PrivateKey = privateKey
 			rsa.PublicKey = publicKey
+		}
+
+		// init oss, such as minio
+		if err := oss.InitMinIO(config.Conf.Minio); err != nil {
+			return err
+		}
+
+		// init database
+		if err := models.Init(config.Conf.DataBase); err != nil {
+			return err
 		}
 		
 		// init server
@@ -99,23 +111,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("startup service failed, err: %v\n", err)
 	}
-}
-
-func ConfigInit(conf string) error {
-	if err := config.Init(conf); err != nil {
-		return err
-	}
-
-	// init oss, such as minio
-	if err := oss.InitMinIO(config.Conf.Minio); err != nil {
-		return err
-	}
-
-	// init database
-	if err := models.Init(config.Conf.DataBase); err != nil {
-		return err
-	}
-	return nil
 }
 
 func RegisterLoggerForGin(server *server.Server) {

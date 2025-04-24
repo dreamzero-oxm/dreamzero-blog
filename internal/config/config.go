@@ -1,9 +1,7 @@
 package config
 
 import (
-	"blog-server/internal/logger"
-
-	"github.com/fsnotify/fsnotify"
+	// "github.com/fsnotify/fsnotify"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
@@ -46,7 +44,6 @@ func initConfig(confPath string) error {
 		return err
 	}
 
-	logger.Logger.Infof("config-app:(%#v)", Conf.App)
 	watchConfig()
 
 	return nil
@@ -56,9 +53,9 @@ func initConfig(confPath string) error {
 // 监听配置文件是否改变, 用于热更新
 func watchConfig() {
 	viper.WatchConfig()
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		logger.Logger.Infof("Config file changed: %s", e.Name)
-	})
+	// viper.OnConfigChange(func(e fsnotify.Event) {
+	// 	logger.Logger.Infof("Config file changed: %s", e.Name)
+	// })
 }
 
 // AppConfig ...
