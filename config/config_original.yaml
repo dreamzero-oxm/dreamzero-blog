@@ -3,9 +3,9 @@ app:
   run_mode: "local"
   addr: "0.0.0.0"
   port: "9997"
-  jwt_secret: "123456"
-  # 7 days
-  jwt_expiration_time: 7
+  jwt_expiration_time: 1  # 1 hour
+  rsa_private_key_path: "./config/rsa_private_key.pem"
+  rsa_public_key_path: "./config/rsa_public_key.pem"
 minio:
   endpoint: "10.21.23.14:10004"
   access_key_id: "cxb944fJZaWvdZrnhB3V"

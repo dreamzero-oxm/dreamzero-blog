@@ -10,13 +10,10 @@ import (
 	"blog-server/internal/models"
 	"blog-server/internal/oss"
 	"blog-server/internal/server"
-
 	"blog-server/internal/logger"
-
 	"blog-server/internal/version"
-
 	"blog-server/router"
-
+	"blog-server/internal/rsa"
 	"github.com/urfave/cli"
 )
 
@@ -64,11 +61,21 @@ func main() {
 		// init zap logger
 		logger.InitLogger()
 
+		// init config
 		conf := c.String("conf")
 		if err := ConfigInit(conf); err != nil {
 			return err
 		}
 
+		// init RSA keys
+		if privateKey, publicKey, err := rsa.InitRSAKeys(config.Conf.App.RsaPrivateKeyPath, config.Conf.App.RsaPublicKeyPath); err != nil {
+			return err
+		}else {
+			// 将密钥保存到全局变量中
+			rsa.PrivateKey = privateKey
+			rsa.PublicKey = publicKey
+		}
+		
 		// init server
 		mainServer := server.NewServer()
 

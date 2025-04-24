@@ -2,8 +2,13 @@ package service
 
 import (
 	"blog-server/internal/code"
+	"blog-server/internal/config"
 	"blog-server/internal/models"
+	"blog-server/internal/rsa"
+	"blog-server/internal/utils"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type RegisterUserService struct {
@@ -96,14 +101,26 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 		user.LastFailedLogin = time.Now()
 	}
 	// TODO:生成JWT
+	// 生成JWT
+	claims := jwt.MapClaims{
+		"iss": "moity",
+		"sub": user.ID,
+		"exp": time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Hour).Unix(),
+		"nbf": time.Now().Unix(),
+		"iat": time.Now().Unix(),
+	}
+	jwtToken, err := utils.GenerateJWT(claims, rsa.PrivateKey)
+	if err != nil {
+		return nil, "jwt", code.ErrGenerateJWT
+	}
 	// 更新用户的登录记录
 	user.LastLogin = time.Now()
 	user.LoginCount++
 	// 更新用户的信息
 	if postgreDB.Save(&user).Error != nil {
-		return nil, "jwt", code.ErrDatabase
+		return nil, "", code.ErrDatabase
 	}
-	return &user, "jwt", nil
+	return &user, jwtToken, nil
 }
 
 func generateDefualtUser() *models.User {
