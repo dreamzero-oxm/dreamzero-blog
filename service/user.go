@@ -19,7 +19,7 @@ func (service *RegisterUserService) Register() error {
 		return code.ErrDatabase
 	}
 	if count > 0 {
-		return code.ErrUserExistBefor
+		return code.ErrUserExistBefore
 	}
 	user := generateDefualtUser()
 	user.UserName = service.UserName

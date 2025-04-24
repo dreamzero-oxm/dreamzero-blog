@@ -20,20 +20,21 @@ import (
 	"github.com/urfave/cli"
 )
 
-//	@title			Swagger Example API
+//	@title			Blog-server
 //	@version		1.0
-//	@description	This is a sample server Petstore server.
+//	@description	This is a sample blog server.
 //	@termsOfService	http://swagger.io/terms/
 
-//	@contact.name	API Support
-//	@contact.url	http://www.swagger.io/support
-//	@contact.email	support@swagger.io
+//	@contact.name	MOITY
+//	@contact.url	http://www.moity-soeoe.com
+//	@contact.email	ouxiangming_moi@foxmail.com
 
 //	@license.name	Apache 2.0
 //	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host		petstore.swagger.io:8080
-// @BasePath	/api/v1
+// 	@host			127.0.0.1:9997
+// 	@BasePath		/api/v1
+
 func main() {
 	app := cli.NewApp()
 	app.Name = getModuleName("blog-server", "")

@@ -80,9 +80,14 @@ func ListPhoto(c *gin.Context) {
 
 func (controller *PhotoController) InitRouter(engine *gin.RouterGroup) error {
 	logger.Logger.Info("init photo controller")
-	engine = engine.Group("/photo")
-	engine.GET("/test", PhotoTestApi)
-	engine.POST("/upload", UploadPhoto)
-	engine.GET("/list", ListPhoto)
+
+	photoGroup := engine.Group("/photo")
+	// --------------------无需认证-------------------------
+	photoGroup.GET("/test", PhotoTestApi)
+	photoGroup.GET("/list", ListPhoto)
+	// --------------------需要认证-------------------------
+	authPhotoGroup := photoGroup.Group("")
+	authPhotoGroup.POST("/upload", UploadPhoto)
+
 	return nil
 }
