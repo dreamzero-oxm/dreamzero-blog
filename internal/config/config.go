@@ -67,9 +67,9 @@ type AppConfig struct {
 	RunMode   string `json:"run_mode" yaml:"run_mode" mapstructure:"run_mode"`
 	Addr      string `json:"addr" yaml:"addr" mapstructure:"addr"`
 	Port      string `json:"port" yaml:"port" mapstructure:"port"`
-	JwtSecret string `json:"jwt_secret" yaml:"jwt_secret" mapstructure:"jwt_secret"`
-	// JWTExpirationTime day
 	JwtExpirationTime int `json:"jwt_expiration_time" yaml:"jwt_expiration_time" mapstructure:"jwt_expiration_time"`
+	RsaPrivateKeyPath string `json:"rsa_private_key_path" yaml:"rsa_private_key_path" mapstructure:"rsa_private_key_path"`
+	RsaPublicKeyPath string `json:"rsa_public_key_path" yaml:"rsa_public_key_path" mapstructure:"rsa_public_key_path"`
 }
 
 type MinioConfig struct {
