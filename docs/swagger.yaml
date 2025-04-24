@@ -47,18 +47,18 @@ definitions:
     - artical_title
     - comment
     type: object
-host: petstore.swagger.io:8080
+host: 127.0.0.1:9997
 info:
   contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: This is a sample server Petstore server.
+    email: ouxiangming_moi@foxmail.com
+    name: MOITY
+    url: http://www.moity-soeoe.com
+  description: This is a sample blog server.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
+  title: Blog-server
   version: "1.0"
 paths:
   /artical_comment/add:
@@ -249,4 +249,116 @@ paths:
       summary: 上传图片
       tags:
       - photo
+  /user/login:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 用户登录
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20104":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20114":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20115":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20116":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 用户登录
+      tags:
+      - user
+  /user/register:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 用户注册
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20105":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20106":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 用户注册
+      tags:
+      - user
 swagger: "2.0"

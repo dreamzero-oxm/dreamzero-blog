@@ -60,8 +60,8 @@ func ListComment(c *gin.Context) {
 }
 
 func (controller *ArticalCommentController) InitRouter(router *gin.RouterGroup) error {
-	router = router.Group("/artical_comment")
-	router.POST("/add", AddComment)
-	router.GET("/list", ListComment)
+	articalCommentGroup := router.Group("/artical_comment")
+	articalCommentGroup.POST("/add", AddComment)
+	articalCommentGroup.GET("/list", ListComment)
 	return nil
 }
