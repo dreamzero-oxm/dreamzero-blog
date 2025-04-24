@@ -1,0 +1,28 @@
+app:
+  name: "MOITY Blog Backend"
+  run_mode: "local"
+  addr: "0.0.0.0"
+  port: "9997"
+  jwt_expiration_time: 1  # 1 hour
+  rsa_private_key_path: "/etc/moity-blog/rsa_private_key.pem"
+  rsa_public_key_path: "/etc/moity-blog/rsa_public_key.pem"
+  log_output_dir: "/var/log/moity_blog_backend"
+minio:
+  endpoint: "10.21.23.14:10004"
+  access_key_id: "***REMOVED***"
+  secret_access_key: "***REMOVED***"
+  use_ssl: false
+  bucket_names:
+    - "moity-blog"
+  locaiton: "cn-east-1"
+database: 
+  postgres:
+    host: "10.21.23.14"
+    port: "5432"
+    username: "postgres"
+    password: "***REMOVED***"
+    db_name: "moity_blog"
+    sslmode: "disable"
+  gorm:
+    log_level: "ERROR"
+    log_output_dir: "/var/log/moity_blog_backend"
