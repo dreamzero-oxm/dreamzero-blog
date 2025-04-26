@@ -1,6 +1,7 @@
 import { Shell } from "lucide-react";
 import LoginForm from "@/components/login-form";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Page() {
     return (
@@ -21,7 +22,7 @@ export default function Page() {
                 </div>
             </div>
             <div className="relative hidden bg-muted lg:block ">
-                <img src="/images/loginBanner.jpeg"
+                <Image src="/images/loginBanner.jpeg"
                     alt="loginBanner" 
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6] dark:grayscale"
                 />

@@ -8,6 +8,7 @@ import { PhotoListItem } from '@/interface/photo';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import DecryptedText from '@/components/decrypted-text';
+import Image from 'next/image'
 
 export default function InformalPhotographs() {
   const [list, setList] = useState<PhotoListItem[]>([])
@@ -65,9 +66,10 @@ export default function InformalPhotographs() {
           <ImageList variant='masonry' cols={3} gap={8}>
           {list.map((item) => (
             <ImageListItem key={item.ID} className='rounded-lg overflow-hidden'>
-              <img
-                srcSet={`${item.image_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                src={`${item.image_url}?w=248&fit=crop&auto=format`}
+              <Image
+                src={item.image_url}
+                width={248}
+                className='object-cover w-[248px] aspect-auto'
                 alt={item.title}
                 loading="lazy"
               />

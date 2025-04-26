@@ -26,7 +26,7 @@ export function useUserLogin() {
             }else {
                 const response: UserLoginResponse = data.data;
                 if (response.success) {
-                    localStorage.setItem("token", response?.token!);
+                    localStorage.setItem("token", response?.token ?? "");
                     window.location.href = "/";
                 }else{
                     throw new Error(data.msg);
