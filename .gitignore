@@ -42,4 +42,5 @@ next-env.d.ts
 
 .content-collections
 
-nohup.out
+# blog file
+./content/blog/**/*
