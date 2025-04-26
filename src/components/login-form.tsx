@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useUserLogin } from "@/hooks/user-hook"
 import { FormEvent, useEffect } from "react"
+import { toast } from "sonner"
+import { KeyRound } from "lucide-react"
 
 export default function LoginForm({
   className,
@@ -24,7 +26,17 @@ export default function LoginForm({
 
   useEffect(() => {
     if (error) {
-      console.log(error)
+      toast.error("「登录失败」", {
+        description: (
+          <span className="text-sm text-popover-foreground">{error.message}</span>
+        ),
+        duration: 5000,
+        icon: <KeyRound/>,
+        action: {
+          label: "关闭",
+          onClick: () => toast.dismiss(),
+        }
+      })
     }
   }, [error])
 
@@ -39,7 +51,14 @@ export default function LoginForm({
       <div className="grid gap-6">
         <div className="grid gap-2">
           <Label htmlFor="email">邮箱</Label>
-          <Input name="email" id="email" type="email" placeholder="mail@example.com" required />
+          <Input 
+            name="email" 
+            id="email" 
+            type="email" 
+            placeholder="mail@example.com" 
+            className="bg-primary"
+            required 
+          />
         </div>
         <div className="grid gap-2">
           <div className="flex items-center">
@@ -51,7 +70,13 @@ export default function LoginForm({
               忘记了你的密码?
             </a>
           </div>
-          <Input name="password" id="password" type="password" required />
+          <Input 
+            name="password" 
+            id="password" 
+            type="password" 
+            required
+            className="bg-primary"
+            />
         </div>
         <Button type="submit" disabled={isPending} className="w-full">
           登录

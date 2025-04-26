@@ -4,6 +4,7 @@ import { config } from "@/lib/config";
 import ReactQueryProvider from "@/components/provider/react-query-provider";
 import localFont from 'next/font/local'
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   // 标题
@@ -85,7 +86,10 @@ export default function RootLayout({
       </head>
       <body className="min-w-md overflow-x-hidden">
         <ReactQueryProvider>
-          {children}
+          <main>
+            {children}
+            <Toaster expand={true}/>
+          </main>
         </ReactQueryProvider>
       </body>
     </html>

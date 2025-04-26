@@ -29,17 +29,24 @@ export function Header() {
       localStorage.theme === "dark" || 
       (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
     setDark(isDark);
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
   }, []);
-  
-  useEffect(() => {
-    if (dark) {
+
+  const handleSwitchTheme = (isDark: boolean) => {
+    setDark(isDark);
+    if (isDark) {
       localStorage.theme = "dark";
       document.documentElement.classList.add('dark')
     } else {
       localStorage.theme = "light";
       document.documentElement.classList.remove('dark')
     }
-  }, [dark])
+  }
+
 
   return (
     <header className="pt-4">
@@ -76,10 +83,7 @@ export function Header() {
             <Switch
               className="cursor-pointer"
               checked={dark}  // 添加checked属性来控制开关状态
-              onCheckedChange={(checked) => {
-                console.log(checked);
-                setDark(checked);
-              }}
+              onCheckedChange={handleSwitchTheme}
             />
           </div>
           <Link href="/login" title="Login">

@@ -23,7 +23,7 @@ export default function Page() {
             <div className="relative hidden bg-muted lg:block ">
                 <img src="/images/loginBanner.jpeg"
                     alt="loginBanner" 
-                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6]"
+                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6] dark:grayscale"
                 />
             </div>
         </div>
