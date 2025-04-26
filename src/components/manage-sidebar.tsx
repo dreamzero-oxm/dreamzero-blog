@@ -9,6 +9,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
+  SidebarMenuAction,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 
 // Menu items.
@@ -44,6 +47,17 @@ export default function ManageSidebar() {
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton >
+                <div className="flex flex-1 items-center justify-between">
+                  <span>管理</span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
         <SidebarGroup>
           <SidebarGroupLabel>文章</SidebarGroupLabel>
           <SidebarGroupContent>

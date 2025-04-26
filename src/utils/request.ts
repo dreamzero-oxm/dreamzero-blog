@@ -2,7 +2,7 @@ import type { BaseResponse } from "@/interface/base";
 
 interface RequestParams {
   params?: Record<string, any>;  // URL 查询参数
-  data?: any;                    // 请求体数据
+  body?: any;                    // 请求体数据
   headers?: Record<string, any>; // 自定义请求头
 }
 
@@ -44,7 +44,7 @@ export async function post<T = BaseResponse>(url: string, options: RequestParams
     
     const response = await fetch(`${url}${queryParams}`, {
       method: 'POST',
-      headers: options.data instanceof FormData ? {
+      headers: options.body instanceof FormData ? {
         'Accept': 'application/json',
         ...options.headers,
       } : {
@@ -52,7 +52,7 @@ export async function post<T = BaseResponse>(url: string, options: RequestParams
         'Accept': 'application/json',
         ...options.headers,
       },
-      body: options.data instanceof FormData ? options.data : options.data? JSON.stringify(options.data) : undefined,
+      body: options.body instanceof FormData ? options.body : options.body? JSON.stringify(options.body) : undefined,
     });
 
     if (!response.ok) {
@@ -75,7 +75,7 @@ export async function put<T = BaseResponse>(url: string, options: RequestParams 
     
       const response = await fetch(`${url}${queryParams}`, {
         method: 'PUT',
-        headers: options.data instanceof FormData ? {
+        headers: options.body instanceof FormData ? {
           'Accept': 'application/json',
           ...options.headers,
         } : {
@@ -83,7 +83,7 @@ export async function put<T = BaseResponse>(url: string, options: RequestParams 
           'Accept': 'application/json',
           ...options.headers,
         },
-        body: options.data instanceof FormData ? options.data : options.data? JSON.stringify(options.data) : undefined,
+        body: options.body instanceof FormData ? options.body : options.body? JSON.stringify(options.body) : undefined,
       });
 
     if (!response.ok) {
@@ -106,7 +106,7 @@ export async function del<T = BaseResponse>(url: string, options: RequestParams 
     
       const response = await fetch(`${url}${queryParams}`, {
         method: 'DELETE',
-        headers: options.data instanceof FormData ? {
+        headers: options.body instanceof FormData ? {
           'Accept': 'application/json',
           ...options.headers,
         } : {
@@ -114,7 +114,7 @@ export async function del<T = BaseResponse>(url: string, options: RequestParams 
           'Accept': 'application/json',
           ...options.headers,
         },
-        body: options.data instanceof FormData ? options.data : options.data? JSON.stringify(options.data) : undefined,
+        body: options.body instanceof FormData ? options.body : options.body? JSON.stringify(options.body) : undefined,
       });
 
     if (!response.ok) {

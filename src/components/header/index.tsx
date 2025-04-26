@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 // import { SquareTerminal } from "lucide-react";
 import Image from 'next/image';
 import { Switch } from "@/components/ui/switch";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Fingerprint } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function Header() {
@@ -82,6 +82,9 @@ export function Header() {
               }}
             />
           </div>
+          <Link href="/login" title="Login">
+            <Fingerprint />
+          </Link>
           <Link href="https://github.com/This-MOI" title="Github">
             <GithubIcon />
           </Link>

@@ -5,6 +5,7 @@ export const apiHost = 'api/v1'
 
 export const photoHost = `photo`
 export const articalComment = `artical_comment`
+export const user = `user`
 
 const api = {
     // photo
@@ -12,6 +13,10 @@ const api = {
     listPhotos: `${baseUrl}/${apiHost}/${photoHost}/list`, 
     // article comment
     submitArticleComment: `${baseUrl}/${apiHost}/${articalComment}/add`,
+    listAriticleComment: `${baseUrl}/${apiHost}/${articalComment}/list`,
+    // user
+    userLogin: `${baseUrl}/${apiHost}/${user}/login`,
+    userRegister: `${baseUrl}/${apiHost}/${user}/register`,
     // others   
 }
 

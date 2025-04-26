@@ -19,7 +19,7 @@ export function useSubmitComment() {
             });
             // fetch 会自动设置正确的 Content-Type 和边界
             return post<BaseResponse>(submitArticleComment, {
-                data: formData,
+                body: formData,
             });
         },
         onSuccess(data) {
