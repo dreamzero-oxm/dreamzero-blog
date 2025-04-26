@@ -56,7 +56,6 @@ export default function LoginForm({
             id="email" 
             type="email" 
             placeholder="mail@example.com" 
-            className="bg-primary"
             required 
           />
         </div>
@@ -75,7 +74,6 @@ export default function LoginForm({
             id="password" 
             type="password" 
             required
-            className="bg-primary"
             />
         </div>
         <Button type="submit" disabled={isPending} className="w-full">
