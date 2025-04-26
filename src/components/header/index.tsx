@@ -10,10 +10,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 // import { SquareTerminal } from "lucide-react";
-import Image from 'next/image';
 import { Switch } from "@/components/ui/switch";
 import { Sun, Moon, Fingerprint } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 
 export function Header() {
   const pathname = usePathname();
@@ -62,13 +63,17 @@ export function Header() {
         {/* Logo */}
         <Link href="/" title="Home" className="flex items-center gap-4 md:order-first">
           {/* <SquareTerminal className="w-10 h-10" /> */}
-          <Image
+          {/* <Image
             src='/favicon.svg'
             width={10}
             height={10}
             alt='logo'
             className='w-10 h-10'
-          />
+          /> */}
+          <Avatar>
+            <AvatarImage src="/avatar.jpg" />
+            <AvatarFallback>XM</AvatarFallback>
+          </Avatar>
         </Link>
 
         {/* Desktop navigation */}

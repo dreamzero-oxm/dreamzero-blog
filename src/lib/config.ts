@@ -9,9 +9,9 @@ export const config = {
     image: "https://moity-soeoe.com/og-image.png",
     favicon: {
       ico: "/favicon.ico",
-      png: "/favicon.jpg",
+      png: "/favicon.png",
       svg: "/favicon.svg",
-      appleTouchIcon: "/favicon.jpg",
+      appleTouchIcon: "/favicon.png",
     },
     manifest: "/site.webmanifest",
     rss: {
