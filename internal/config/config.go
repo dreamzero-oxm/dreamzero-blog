@@ -4,6 +4,7 @@ import (
 	// "github.com/fsnotify/fsnotify"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"time"
 )
 
 var (
@@ -60,14 +61,14 @@ func watchConfig() {
 
 // AppConfig ...
 type AppConfig struct {
-	Name      string `json:"name" yaml:"name" mapstructure:"name"`
-	RunMode   string `json:"run_mode" yaml:"run_mode" mapstructure:"run_mode"`
-	Addr      string `json:"addr" yaml:"addr" mapstructure:"addr"`
-	Port      string `json:"port" yaml:"port" mapstructure:"port"`
-	JwtExpirationTime int `json:"jwt_expiration_time" yaml:"jwt_expiration_time" mapstructure:"jwt_expiration_time"`
+	Name              string `json:"name" yaml:"name" mapstructure:"name"`
+	RunMode           string `json:"run_mode" yaml:"run_mode" mapstructure:"run_mode"`
+	Addr              string `json:"addr" yaml:"addr" mapstructure:"addr"`
+	Port              string `json:"port" yaml:"port" mapstructure:"port"`
+	JwtExpirationTime int    `json:"jwt_expiration_time" yaml:"jwt_expiration_time" mapstructure:"jwt_expiration_time"`
 	RsaPrivateKeyPath string `json:"rsa_private_key_path" yaml:"rsa_private_key_path" mapstructure:"rsa_private_key_path"`
-	RsaPublicKeyPath string `json:"rsa_public_key_path" yaml:"rsa_public_key_path" mapstructure:"rsa_public_key_path"`
-	LogOutputDir string `json:"log_output_dir" yaml:"log_output_dir" mapstructure:"log_output_dir"`
+	RsaPublicKeyPath  string `json:"rsa_public_key_path" yaml:"rsa_public_key_path" mapstructure:"rsa_public_key_path"`
+	LogOutputDir      string `json:"log_output_dir" yaml:"log_output_dir" mapstructure:"log_output_dir"`
 }
 
 type MinioConfig struct {
@@ -98,6 +99,39 @@ type DataBaseConfig struct {
 	Gorm     GormConfig     `json:"gorm" yaml:"gorm" mapstructure:"gorm"`
 }
 
+type KafkaConfig struct {
+    Brokers           []string `json:"brokers" yaml:"brokers" mapstructure:"brokers"`                         // Kafka broker地址列表
+    Version           string   `json:"version" yaml:"version" mapstructure:"version"`                         // Kafka版本
+    ClientID          string   `json:"client_id" yaml:"client_id" mapstructure:"client_id"`                  // 客户端ID
+    
+    // TLS配置
+    TLS struct {
+        Enable bool   `json:"enable" yaml:"enable" mapstructure:"enable"`                     // 是否启用TLS
+        CaFile string `json:"ca_file" yaml:"ca_file" mapstructure:"ca_file"`                 // CA证书文件路径
+        CertFile string `json:"cert_file" yaml:"cert_file" mapstructure:"cert_file"`         // 客户端证书文件路径
+        KeyFile string `json:"key_file" yaml:"key_file" mapstructure:"key_file"`             // 客户端私钥文件路径
+        SkipVerify bool `json:"skip_verify" yaml:"skip_verify" mapstructure:"skip_verify"`   // 是否跳过服务器证书验证
+    } `json:"tls" yaml:"tls" mapstructure:"tls"`
+    
+    // 生产者配置
+    Producer struct {
+        RetryMax      int           `json:"retry_max" yaml:"retry_max" mapstructure:"retry_max"`             // 最大重试次数
+        RetryBackoff  int           `json:"retry_backoff" yaml:"retry_backoff" mapstructure:"retry_backoff"` // 重试间隔（毫秒）
+        RequiredAcks  string        `json:"required_acks" yaml:"required_acks" mapstructure:"required_acks"` // 确认机制
+        Timeout       time.Duration `json:"timeout" yaml:"timeout" mapstructure:"timeout"`                   // 超时时间
+        Compression   string        `json:"compression" yaml:"compression" mapstructure:"compression"`        // 压缩方式
+    } `json:"producer" yaml:"producer" mapstructure:"producer"`
+    
+    // 消费者配置
+    Consumer struct {
+        GroupID           string        `json:"group_id" yaml:"group_id" mapstructure:"group_id"`                     // 消费者组ID
+        AutoOffsetReset   string        `json:"auto_offset_reset" yaml:"auto_offset_reset" mapstructure:"auto_offset_reset"` // 偏移量重置策略
+        SessionTimeout    time.Duration `json:"session_timeout" yaml:"session_timeout" mapstructure:"session_timeout"`       // 会话超时时间
+        HeartbeatInterval time.Duration `json:"heartbeat_interval" yaml:"heartbeat_interval" mapstructure:"heartbeat_interval"` // 心跳间隔
+        RebalanceTimeout  time.Duration `json:"rebalance_timeout" yaml:"rebalance_timeout" mapstructure:"rebalance_timeout"`   // 重平衡超时时间
+    } `json:"consumer" yaml:"consumer" mapstructure:"consumer"`
+}
+
 // Config global config
 // include common and biz config
 type Config struct {
@@ -107,4 +141,6 @@ type Config struct {
 	Minio MinioConfig `json:"minio" yaml:"minio" mapstructure:"minio"`
 	// database
 	DataBase DataBaseConfig `json:"database" yaml:"database" mapstructure:"database"`
+	// kafka
+	Kafka KafkaConfig `json:"kafka" yaml:"kafka" mapstructure:"kafka"`
 }
