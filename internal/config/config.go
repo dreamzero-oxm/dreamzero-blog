@@ -132,6 +132,17 @@ type KafkaConfig struct {
     } `json:"consumer" yaml:"consumer" mapstructure:"consumer"`
 }
 
+// RedisConfig ...
+type RedisConfig struct {
+	Addr         string 			`json:"addr"`
+	Password     string 			`json:"password"`
+	DB           int    			`json:"db"`
+	DialTimeout  time.Duration		`json:"dial_timeout"`
+	ReadTimeout  time.Duration    	`json:"read_timeout"`
+	WriteTimeout time.Duration    	`json:"write_timeout"`
+	PoolSize     int		    	`json:"pool_size"`
+}
+
 // Config global config
 // include common and biz config
 type Config struct {
@@ -143,4 +154,6 @@ type Config struct {
 	DataBase DataBaseConfig `json:"database" yaml:"database" mapstructure:"database"`
 	// kafka
 	Kafka KafkaConfig `json:"kafka" yaml:"kafka" mapstructure:"kafka"`
+	// redis
+	Redis RedisConfig `json:"redis" yaml:"redis" mapstructure:"redis"`
 }

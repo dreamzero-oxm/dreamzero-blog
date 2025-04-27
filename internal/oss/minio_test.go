@@ -72,7 +72,7 @@ func TestInitBucket(t *testing.T) {
 			// 测试后清理：删除测试用的桶
 			ctx := context.Background()
 			for _, bucketName := range tt.bucketName {
-				if err := MINIMO_CLIENT.RemoveBucket(ctx, bucketName); err != nil {
+				if err := GetMinioClient().RemoveBucket(ctx, bucketName); err != nil {
 					t.Logf("清理测试桶失败: %v", err)
 				}
 			}
@@ -117,7 +117,7 @@ func TestMakeBucket(t *testing.T) {
 
 	// 测试后清理：删除测试用的桶
 	ctx := context.Background()
-	if err := MINIMO_CLIENT.RemoveBucket(ctx, "test-bucket"); err != nil {
+	if err := GetMinioClient().RemoveBucket(ctx, "test-bucket"); err != nil {
 		t.Logf("清理测试桶失败: %v", err)
 	}
 }
@@ -161,7 +161,7 @@ func TestUploadFile(t *testing.T) {
 
 	// 测试后清理：删除测试用的桶
 	ctx := context.Background()
-	if err := MINIMO_CLIENT.RemoveBucket(ctx, "test-bucket"); err != nil {
+	if err := GetMinioClient().RemoveBucket(ctx, "test-bucket"); err != nil {
 		t.Logf("清理测试桶失败: %v", err)
 	}
 }
@@ -208,7 +208,7 @@ func TestDeleteFileFromBucketMinio(t *testing.T) {
 	}
 	// 测试后清理：删除测试用的桶
 	ctx := context.Background()
-	if err := MINIMO_CLIENT.RemoveBucket(ctx, "test-bucket"); err != nil {
+	if err := GetMinioClient().RemoveBucket(ctx, "test-bucket"); err != nil {
 		t.Logf("清理测试桶失败: %v", err)
 	}
 }

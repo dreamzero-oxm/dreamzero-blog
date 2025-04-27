@@ -122,3 +122,11 @@ func migrate() error {
 	}
 	return nil
 }
+
+func Close() {
+	sqlDB, err := DB.DB()
+	if err!= nil {
+		logger.Logger.Errorf("Failed to close DB! [Error]: %v", err)
+	}
+	sqlDB.Close()
+}
