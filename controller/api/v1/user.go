@@ -28,11 +28,14 @@ func Login(c *gin.Context) {
 	if err := c.ShouldBind(&service); err == nil {
 		user, jwt, err := service.Login()
 		if err != nil {
-			internal.APIResponse(c, err, nil)
+			internal.APIResponse(c, err, gin.H{
+				"success": false,
+			})
 		}else{
 			internal.APIResponse(c, nil, gin.H{
+				"success": true,
 				"user": user,
-				"jwt": jwt,
+				"token": jwt,
 			})
 		}
 	} else {

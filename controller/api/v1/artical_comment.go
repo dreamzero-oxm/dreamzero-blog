@@ -25,7 +25,7 @@ func AddComment(c *gin.Context) {
 	var service service.AddCommentService
 	if err := c.ShouldBind(&service); err == nil {
 		if res := service.AddComment(); res != nil {
-			internal.APIResponse(c, IError.ErrArticalCommentCreateFailed, err.Error())
+			internal.APIResponse(c, IError.ErrArticalCommentCreateFailed, res.Error())
 		}
 		internal.APIResponse(c, IError.OK, nil)
 	} else {
