@@ -49,3 +49,11 @@ kafka:
     cert_file: "/path/to/client-cert.pem"
     key_file: "/path/to/client-key.pem"
     skip_verify: false
+redis:
+  addr: "10.21.23.14:6379"
+  password: "moity10130420"
+  db: 0
+  dial_timeout: 10s
+  read_timeout: 10s
+  write_timeout: 10s
+  pool_size: 10

@@ -6,14 +6,16 @@ import (
 	"strings"
 
 	"blog-server/internal/config"
+	"blog-server/internal/logger"
 	"blog-server/internal/middleware"
 	"blog-server/internal/models"
 	"blog-server/internal/oss"
+	"blog-server/internal/redis"
+	"blog-server/internal/rsa"
 	"blog-server/internal/server"
-	"blog-server/internal/logger"
 	"blog-server/internal/version"
 	"blog-server/router"
-	"blog-server/internal/rsa"
+
 	"github.com/urfave/cli"
 )
 
@@ -87,6 +89,13 @@ func main() {
 		if err := models.Init(config.Conf.DataBase); err != nil {
 			return err
 		}
+		defer models.Close()
+
+		// init redis
+		if err := redis.Init(config.Conf.Redis); err!= nil {
+			return err
+		}
+		defer redis.Close()
 		
 		// init server
 		mainServer := server.NewServer()
