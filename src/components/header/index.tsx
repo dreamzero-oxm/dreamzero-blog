@@ -4,16 +4,20 @@ import Link from "next/link";
 import { NavDesktopMenu } from "./nav-desktop-menu";
 import { NavMobileMenu } from "./nav-mobile-menu";
 import GithubIcon from "@/components/icons/github";
-// import XiaohongshuIcon from "@/components/icons/xiaohongshu";
-// import XIcon from "@/components/icons/x";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-// import { SquareTerminal } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Sun, Moon, Fingerprint } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 
 
 export function Header() {
@@ -62,14 +66,6 @@ export function Header() {
 
         {/* Logo */}
         <Link href="/" title="Home" className="flex items-center gap-4 md:order-first">
-          {/* <SquareTerminal className="w-10 h-10" /> */}
-          {/* <Image
-            src='/favicon.svg'
-            width={10}
-            height={10}
-            alt='logo'
-            className='w-10 h-10'
-          /> */}
           <Avatar>
             <AvatarImage src="/avatar.jpg" />
             <AvatarFallback>XM</AvatarFallback>
@@ -83,26 +79,43 @@ export function Header() {
 
         {/* Right side buttons */}
         <div className="flex items-center space-x-2 md:space-x-8 mr-4">
-          <div className="flex items-center gap-2">
-            {dark ? <Moon /> : <Sun />}
-            <Switch
-              className="cursor-pointer"
-              checked={dark}  // 添加checked属性来控制开关状态
-              onCheckedChange={handleSwitchTheme}
-            />
-          </div>
-          <Link href="/login" title="Login">
-            <Fingerprint />
-          </Link>
-          <Link href="https://github.com/This-MOI" title="Github">
-            <GithubIcon />
-          </Link>
-          {/* <Link href="https://x.com/This-MOI" title="X">
-            <XIcon />
-          </Link> */}
-          {/* <Link href="https://www.xiaohongshu.com/" title="Xiaohongshu">
-            <XiaohongshuIcon />
-          </Link> */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className="flex items-center gap-2">
+                  {dark ? <Moon /> : <Sun />}
+                  <Switch
+                    className="cursor-pointer"
+                    checked={dark}  // 添加checked属性来控制开关状态
+                    onCheckedChange={handleSwitchTheme}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>明亮切换</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Link href="/login" title="Login">
+                  <Fingerprint />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>登录</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Link href="https://github.com/This-MOI" title="Github">
+                  <GithubIcon />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Github</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </motion.div>
     </header >
