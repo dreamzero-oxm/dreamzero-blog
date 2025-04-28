@@ -57,3 +57,12 @@ redis:
   read_timeout: 10s
   write_timeout: 10s
   pool_size: 10
+  key_prefix: "moity-blog:"
+email:
+  smtp_host: "smtp.qq.com"
+  smtp_port: 465
+  smtp_username: "1322832250@qq.com"
+  smtp_password: "pseukvusbbrubadf"
+  sender_name: "MOITY"
+  sender_email: "ouxiangming_moi@foxmail.com"
+  email_template: "public/email_template.html"

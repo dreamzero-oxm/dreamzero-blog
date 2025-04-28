@@ -134,13 +134,24 @@ type KafkaConfig struct {
 
 // RedisConfig ...
 type RedisConfig struct {
-	Addr         string 			`json:"addr"`
-	Password     string 			`json:"password"`
-	DB           int    			`json:"db"`
-	DialTimeout  time.Duration		`json:"dial_timeout"`
-	ReadTimeout  time.Duration    	`json:"read_timeout"`
-	WriteTimeout time.Duration    	`json:"write_timeout"`
-	PoolSize     int		    	`json:"pool_size"`
+	Addr         string 			`json:"addr" yaml:"addr" mapstructure:"addr"`
+	Password     string 			`json:"password" yaml:"password" mapstructure:"password"`
+	DB           int    			`json:"db" yaml:"db" mapstructure:"db"`
+	DialTimeout  time.Duration		`json:"dial_timeout" yaml:"dial_timeout" mapstructure:"dial_timeout"`
+	ReadTimeout  time.Duration    	`json:"read_timeout" yaml:"read_timeout" mapstructure:"read_timeout"`
+	WriteTimeout time.Duration    	`json:"write_timeout" yaml:"write_timeout" mapstructure:"write_timeout"`
+	PoolSize     int		    	`json:"pool_size" yaml:"pool_size" mapstructure:"pool_size"`
+	KeyPrifex    string 			`json:"key_prefix" yaml:"key_prefix" mapstructure:"key_prefix"`
+}
+
+type EmailConfig struct {
+	SmtpUsername    string `json:"smtp_username" yaml:"smtp_username" mapstructure:"smtp_username"`
+	SmtpPassword 	string `json:"smtp_password" yaml:"smtp_password" mapstructure:"smtp_password"`
+	SmtpHost     	string `json:"smtp_host" yaml:"smtp_host" mapstructure:"smtp_host"`
+	SmtpPort     	int	   `json:"smtp_port" yaml:"smtp_port" mapstructure:"smtp_port"`
+	SenderName   	string `json:"sender_name" yaml:"sender_name" mapstructure:"sender_name"`
+	SenderEmail  	string `json:"sender_email" yaml:"sender_email" mapstructure:"sender_email"`
+	EmailTemplate 	string `json:"email_template" yaml:"email_template" mapstructure:"email_template"`
 }
 
 // Config global config
@@ -156,4 +167,6 @@ type Config struct {
 	Kafka KafkaConfig `json:"kafka" yaml:"kafka" mapstructure:"kafka"`
 	// redis
 	Redis RedisConfig `json:"redis" yaml:"redis" mapstructure:"redis"`
+	// email
+	Email EmailConfig `json:"email" yaml:"email" mapstructure:"email"`
 }

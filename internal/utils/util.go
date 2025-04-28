@@ -2,6 +2,9 @@ package utils
 
 import (
 	"regexp"
+	"math/big"
+	"time"
+	"crypto/rand"
 )
 
 // ValidatePassword 验证密码强度
@@ -52,4 +55,25 @@ func ValidateEmail(email string) bool {
 
 	// 返回匹配结果
 	return reg.MatchString(email)
+}
+
+func GenerateVerificationCode() string {
+	// 生成6位随机数字验证码
+	const charset = "0123456789"
+	const codeLength = 6
+	
+	// 使用 crypto/rand 包来生成安全的随机数
+	code := make([]byte, codeLength)
+	for i := range code {
+		// 生成随机索引
+		randomIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
+		if err != nil {
+			// 如果生成随机数失败，使用当前时间的纳秒作为备选方案
+			randomIndex = big.NewInt(time.Now().UnixNano() % int64(len(charset)))
+		}
+		// 从字符集中选择一个字符
+		code[i] = charset[randomIndex.Int64()]
+	}
+	
+	return string(code)
 }
