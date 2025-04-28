@@ -57,3 +57,4 @@ redis:
   read_timeout: 10s
   write_timeout: 10s
   pool_size: 10
+  key_prefix: "moity_blog:"

@@ -66,10 +66,23 @@ func Register(c *gin.Context) {
 	}
 }
 
+func GetEmailVerificationCode(c *gin.Context) {
+	var service service.EmailVerificationCodeService
+	if err := c.ShouldBind(&service); err == nil {
+		if err := service.SendEmailVerificationCode(); err!= nil {
+			internal.APIResponse(c, err, nil)
+		}else{
+			internal.APIResponse(c, code.OK, nil)
+		}
+	}else{
+		internal.APIResponse(c, code.ErrBind, nil)
+	}
+}
+
 func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	userGroup := router.Group("/user")
 	// --------------------无需认证-------------------------
-	
+	userGroup.POST("/emailVerificationCode", GetEmailVerificationCode)
 	// --------------------需要认证-------------------------
 	authGroup := userGroup.Group("")
 	authGroup.POST("/login", Login)

@@ -3,24 +3,49 @@ package service
 import (
 	"blog-server/internal/code"
 	"blog-server/internal/config"
+	"blog-server/internal/logger"
 	"blog-server/internal/models"
+	"blog-server/internal/redis"
 	"blog-server/internal/rsa"
 	"blog-server/internal/utils"
+	"blog-server/internal/email"
+	"context"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type RegisterUserService struct {
-	UserName string `json:"user_name" form:"user_name" binding:"required"`
-	Password string `json:"password" form:"password" binding:"required"`
-	Email    string `json:"email" form:"email" binding:"required"`
+	UserName 			string `json:"user_name" form:"user_name" binding:"required"`
+	Password 			string `json:"password" form:"password" binding:"required"`
+	Email    			string `json:"email" form:"email" binding:"required"`
+	VerificationCode 	string `json:"verification_code" form:"verification_code" binding:"required"`
 }
 
 func (service *RegisterUserService) Register() error {
 	postgreDB := models.DB
 	var count int64
-	if postgreDB.Model(&models.User{}).Where("user_name = ?", service.UserName).Count(&count).Error != nil {
+	if len(service.VerificationCode) != 6 {
+		return code.ErrVerificationCodeLength
+	}else {
+		// 验证验证码
+		redisClient := redis.GetRedisClient()
+		if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email).Result(); err!= nil {
+			logger.Logger.Errorf("redis get verification code failed: %v", err)
+			return code.ErrVerificationCodeInvalid
+		}else{
+			if v != service.VerificationCode {
+				return code.ErrVerificationCodeInvalid
+			}
+			// 验证成功，删除验证码
+			if err := redisClient.Del(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email).Err(); err!= nil {
+				logger.Logger.Errorf("redis delete verification code failed: %v", err)
+				return code.ErrVerificationCodeInvalid
+			}
+		}
+	}
+	if err := postgreDB.Model(&models.User{}).Where("user_name = ?", service.UserName).Count(&count).Error; err != nil {
+		logger.Logger.Errorf("check user failed: %v", err)
 		return code.ErrDatabase
 	}
 	if count > 0 {
@@ -36,11 +61,13 @@ func (service *RegisterUserService) Register() error {
 	}
 	// 加密密码
 	if err := user.GenerateEncryptedPassword(); err != nil {
+		logger.Logger.Errorf("generate encrypted password failed: %v", err)
 		return err
 	}
 	// TODO: 邮箱验证+发送邮件(使用消息队列)
 	user.Role = "user"
-	if postgreDB.Create(&user).Error != nil {
+	if err := postgreDB.Create(&user).Error; err != nil {
+		logger.Logger.Errorf("create user failed: %v", err)
 		return code.ErrUserCreate
 	}
 	return nil
@@ -100,27 +127,42 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 		user.FailedLoginCount = 0
 		user.LastFailedLogin = time.Now()
 	}
-	// TODO:生成JWT
-	// 生成JWT
-	claims := jwt.MapClaims{
-		"iss": "moity",
-		"sub": user.ID,
-		"exp": time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Hour).Unix(),
-		"nbf": time.Now().Unix(),
-		"iat": time.Now().Unix(),
+
+	var token string
+	redisClient := redis.GetRedisClient()
+	if  v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex + ":user_token:" + user.Email).Result(); err == nil {
+		token = v
+	} else {
+		// TODO:生成JWT
+		// 生成JWT
+		claims := jwt.MapClaims{
+			"iss": "moity",
+			"sub": user.ID,
+			"exp": time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Hour).Unix(),
+			"nbf": time.Now().Unix(),
+			"iat": time.Now().Unix(),
+		}
+		jwtToken, err := utils.GenerateJWT(claims, rsa.PrivateKey)
+		if err != nil {
+			return nil, "jwt", code.ErrGenerateJWT
+		}
+		token = jwtToken
+		// 将JWT存入Redis
+		if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex + ":user_token:" + user.Email, jwtToken, time.Duration(config.Conf.App.JwtExpirationTime) * time.Hour).Err(); err!= nil {
+			logger.Logger.Errorf("redis set user token failed: %v", err)
+			return nil, "", err
+		}
 	}
-	jwtToken, err := utils.GenerateJWT(claims, rsa.PrivateKey)
-	if err != nil {
-		return nil, "jwt", code.ErrGenerateJWT
-	}
+
 	// 更新用户的登录记录
 	user.LastLogin = time.Now()
 	user.LoginCount++
 	// 更新用户的信息
-	if postgreDB.Save(&user).Error != nil {
+	if err := postgreDB.Save(&user).Error; err != nil {
+		logger.Logger.Errorf("update user failed: %v", err)
 		return nil, "", code.ErrDatabase
 	}
-	return &user, jwtToken, nil
+	return &user, token, nil
 }
 
 func generateDefualtUser() *models.User {
@@ -145,4 +187,35 @@ func generateDefualtUser() *models.User {
 		DeletedReason:    "",
 		IsActive:         false,
 	}
+}
+
+type EmailVerificationCodeService struct {
+	Email string `json:"email" form:"email" binding:"required"`
+}
+func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
+	var verificationCode string
+	// 验证邮箱
+	if !utils.ValidateEmail(service.Email) {
+		return code.ErrEmailValidation
+	}
+	// 检查验证码是否存在
+	redisClient := redis.GetRedisClient()
+	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email).Result(); err == nil {
+		verificationCode = v
+	} else {
+		// 生成验证码
+		verificationCode = utils.GenerateVerificationCode()
+		// 存在redis中，缓存时间为5分钟
+		redisClient := redis.GetRedisClient()
+		if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email, verificationCode, time.Minute * 5).Err(); err!= nil {
+			logger.Logger.Errorf("redis set verification code failed: %v", err)
+			return code.ErrSendEmailVerificationCode
+		}	
+	}
+	// 发送邮件
+	if err := email.SentVerifyCode(service.Email, verificationCode); err!= nil {
+		logger.Logger.Errorf("send email verification code failed: %v", err)
+		return code.ErrSendEmailVerificationCode
+	}
+	return nil
 }

@@ -21,22 +21,25 @@ var (
 	ErrRsaPublicKeyPathError  	= &Errno{Code: 20008, Message: "RSA公钥路径错误"}
 
 	// user errors
-	ErrEncrypt               = &Errno{Code: 20101, Message: "密码加密错误"}
-	ErrUserNotFound          = &Errno{Code: 20102, Message: "用户不存在"}
-	ErrTokenInvalid          = &Errno{Code: 20103, Message: "Token错误"}
-	ErrPasswordIncorrect     = &Errno{Code: 20104, Message: "密码错误"}
-	ErrUserExistBefore       = &Errno{Code: 20105, Message: "用户已存在"}
-	ErrUserCreate            = &Errno{Code: 20106, Message: "用户创建错误"}
-	ErrSendSMSTooMany        = &Errno{Code: 20107, Message: "已超出当日限制，请明天再试"}
-	ErrVerifyCode            = &Errno{Code: 20108, Message: "验证码错误"}
-	ErrEmailOrPassword       = &Errno{Code: 20109, Message: "邮箱或密码错误"}
-	ErrTwicePasswordNotMatch = &Errno{Code: 20110, Message: "两次密码输入不一致"}
-	ErrRegisterFailed        = &Errno{Code: 20111, Message: "注册失败"}
-	ErrCreatedUser           = &Errno{Code: 20112, Message: "用户创建失败"}
-	ErrEmailValidation       = &Errno{Code: 20113, Message: "邮箱格式不正确"}
-	ErrUserLocked            = &Errno{Code: 20114, Message: "用户已被锁定"}
-	ErrUserInactive          = &Errno{Code: 20115, Message: "用户未激活"}
-	ErrUserSuspended         = &Errno{Code: 20116, Message: "用户已被封禁"}
+	ErrEncrypt               		= &Errno{Code: 20101, Message: "密码加密错误"}
+	ErrUserNotFound          		= &Errno{Code: 20102, Message: "用户不存在"}
+	ErrTokenInvalid          		= &Errno{Code: 20103, Message: "Token错误"}
+	ErrPasswordIncorrect     		= &Errno{Code: 20104, Message: "密码错误"}
+	ErrUserExistBefore       		= &Errno{Code: 20105, Message: "用户已存在"}
+	ErrUserCreate            		= &Errno{Code: 20106, Message: "用户创建错误"}
+	ErrSendSMSTooMany        		= &Errno{Code: 20107, Message: "已超出当日限制，请明天再试"}
+	ErrVerifyCode            		= &Errno{Code: 20108, Message: "验证码错误"}
+	ErrEmailOrPassword       		= &Errno{Code: 20109, Message: "邮箱或密码错误"}
+	ErrTwicePasswordNotMatch 		= &Errno{Code: 20110, Message: "两次密码输入不一致"}
+	ErrRegisterFailed        		= &Errno{Code: 20111, Message: "注册失败"}
+	ErrCreatedUser           		= &Errno{Code: 20112, Message: "用户创建失败"}
+	ErrEmailValidation       		= &Errno{Code: 20113, Message: "邮箱格式不正确"}
+	ErrUserLocked            		= &Errno{Code: 20114, Message: "用户已被锁定"}
+	ErrUserInactive          		= &Errno{Code: 20115, Message: "用户未激活"}
+	ErrUserSuspended         		= &Errno{Code: 20116, Message: "用户已被封禁"}
+	ErrVerificationCodeInvalid 		= &Errno{Code: 20117, Message: "验证码无效"}
+	ErrVerificationCodeLength 		= &Errno{Code: 20118, Message: "验证码长度不正确"}
+	ErrSendEmailVerificationCode 	= &Errno{Code: 20119, Message: "发送邮件验证码失败"}
 
 	// photo errors
 	ErrPhotoUpload = &Errno{Code: 20201, Message: "图片上传失败"}

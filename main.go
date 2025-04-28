@@ -15,6 +15,7 @@ import (
 	"blog-server/internal/server"
 	"blog-server/internal/version"
 	"blog-server/router"
+	"blog-server/internal/email"
 
 	"github.com/urfave/cli"
 )
@@ -96,6 +97,12 @@ func main() {
 			return err
 		}
 		defer redis.Close()
+
+		// init email
+		if err := email.InitEmail(); err!= nil {
+			return err
+		}
+		
 		
 		// init server
 		mainServer := server.NewServer()
