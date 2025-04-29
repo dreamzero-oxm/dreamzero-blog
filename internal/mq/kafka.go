@@ -357,7 +357,7 @@ func (p *KafkaAsyncProducer) handleAsyncResults() {
 		select {
 		case success := <-p.producer.Successes():
 			if success != nil {
-				logger.Logger.Infof("异步消息发送成功: topic=%s, partition=%d, offset=%d",
+				logger.Logger.Debugf("异步消息发送成功: topic=%s, partition=%d, offset=%d",
 					success.Topic, success.Partition, success.Offset)
 			}
 		case err := <-p.producer.Errors():
@@ -369,7 +369,7 @@ func (p *KafkaAsyncProducer) handleAsyncResults() {
 }
 
 // SendMessageAsync 异步发送消息到指定的topic
-func (p *KafkaAsyncProducer) SendMessageAsync(ctx context.Context, topic string, key string, value []byte) error {
+func (p *KafkaAsyncProducer) SendMessage(ctx context.Context, topic string, key string, value []byte) error {
 	p.mutex.RLock()
 	if p.closed {
 		p.mutex.RUnlock()

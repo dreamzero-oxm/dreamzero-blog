@@ -9,6 +9,7 @@ import (
 	"blog-server/internal/redis"
 	"blog-server/internal/rsa"
 	"blog-server/internal/utils"
+	"blog-server/internal/dto"
 	"context"
 	"time"
 	"encoding/json"
@@ -193,11 +194,6 @@ func generateDefualtUser() *models.User {
 type EmailVerificationCodeService struct {
 	Email string `json:"email" form:"email" binding:"required"`
 }
-type EmailVerificationMessage struct {
-	Email            string `json:"email"`
-	VerificationCode string `json:"verification_code"`
-}
-
 func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 	var verificationCode string
 	// 验证邮箱
@@ -220,11 +216,11 @@ func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 	}
 	// TODO: 用消息队列发送邮件
 	// 发送邮件
-	if producer, err := mq.NewSyncKafkaProducer(); err!= nil {
+	if producer, err := mq.NewKafkaAsyncProducer(); err!= nil {
 		logger.Logger.Errorf("new kafka producer failed: %v", err)
 		return code.ErrSendEmailVerificationCode
 	}else{
-		message := EmailVerificationMessage{
+		message := dto.EmailVerificationMessage{
 			Email:            service.Email,
 			VerificationCode: verificationCode,
 		}

@@ -103,7 +103,11 @@ func main() {
 			return err
 		}
 		
-		
+		// init email consumer
+		if err := email.InitEmailConsumer(); err!= nil {
+			return err
+		}
+
 		// init server
 		mainServer := server.NewServer()
 
