@@ -30,8 +30,8 @@ type KafkaProducer struct {
 	mutex    sync.RWMutex
 }
 
-// NewKafkaProducer 创建一个新的Kafka生产者（单例模式）
-func NewKafkaProducer() (*KafkaProducer, error) {
+// NewSyncKafkaProducer 创建一个新的Kafka生产者（单例模式）
+func NewSyncKafkaProducer() (*KafkaProducer, error) {
 	var err error
 	once.Do(func() {
 		instance, err = initKafkaProducer()
@@ -175,7 +175,7 @@ func (p *KafkaProducer) SendMessage(ctx context.Context, topic string, key strin
 		return fmt.Errorf("发送消息失败: %w", err)
 	}
 
-	logger.Logger.Infof("消息发送成功: topic=%s, partition=%d, offset=%d, key=%s",
+	logger.Logger.Debugf("消息发送成功: topic=%s, partition=%d, offset=%d, key=%s",
 		topic, partition, offset, key)
 	return nil
 }
@@ -244,39 +244,39 @@ func NewKafkaAsyncProducer() (*KafkaAsyncProducer, error) {
 
 // initKafkaAsyncProducer 初始化异步生产者
 func initKafkaAsyncProducer() (*KafkaAsyncProducer, error) {
-    // 创建Kafka配置
-    config := sarama.NewConfig()
+	// 创建Kafka配置
+	config := sarama.NewConfig()
 
-    // TLS配置
-    if serverConfig.Conf.Kafka.TLS.Enable {
-        config.Net.TLS.Enable = true
-        tlsConfig := &tls.Config{
-            InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
-        }
+	// TLS配置
+	if serverConfig.Conf.Kafka.TLS.Enable {
+		config.Net.TLS.Enable = true
+		tlsConfig := &tls.Config{
+			InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
+		}
 
-        if serverConfig.Conf.Kafka.TLS.CaFile != "" {
-            caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
-            if err != nil {
-                return nil, fmt.Errorf("读取CA证书失败: %w", err)
-            }
-            caCertPool := x509.NewCertPool()
-            caCertPool.AppendCertsFromPEM(caCert)
-            tlsConfig.RootCAs = caCertPool
-        }
+		if serverConfig.Conf.Kafka.TLS.CaFile != "" {
+			caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
+			if err != nil {
+				return nil, fmt.Errorf("读取CA证书失败: %w", err)
+			}
+			caCertPool := x509.NewCertPool()
+			caCertPool.AppendCertsFromPEM(caCert)
+			tlsConfig.RootCAs = caCertPool
+		}
 
-        if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
-            cert, err := tls.LoadX509KeyPair(
-                serverConfig.Conf.Kafka.TLS.CertFile,
-                serverConfig.Conf.Kafka.TLS.KeyFile,
-            )
-            if err != nil {
-                return nil, fmt.Errorf("加载客户端证书失败: %w", err)
-            }
-            tlsConfig.Certificates = []tls.Certificate{cert}
-        }
+		if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
+			cert, err := tls.LoadX509KeyPair(
+				serverConfig.Conf.Kafka.TLS.CertFile,
+				serverConfig.Conf.Kafka.TLS.KeyFile,
+			)
+			if err != nil {
+				return nil, fmt.Errorf("加载客户端证书失败: %w", err)
+			}
+			tlsConfig.Certificates = []tls.Certificate{cert}
+		}
 
-        config.Net.TLS.Config = tlsConfig
-    }
+		config.Net.TLS.Config = tlsConfig
+	}
 
 	// 版本设置
 	version, err := sarama.ParseKafkaVersion(serverConfig.Conf.Kafka.Version)
@@ -479,68 +479,68 @@ func NewKafkaConsumer(groupID string, topics []string) (*KafkaConsumer, error) {
 
 // initConsumer 初始化消费者
 func initConsumer(groupID string, topics []string) (*KafkaConsumer, error) {
-    config := sarama.NewConfig()
+	config := sarama.NewConfig()
 
-    // TLS配置
-    if serverConfig.Conf.Kafka.TLS.Enable {
-        config.Net.TLS.Enable = true
-        tlsConfig := &tls.Config{
-            InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
-        }
+	// TLS配置
+	if serverConfig.Conf.Kafka.TLS.Enable {
+		config.Net.TLS.Enable = true
+		tlsConfig := &tls.Config{
+			InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
+		}
 
-        if serverConfig.Conf.Kafka.TLS.CaFile != "" {
-            caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
-            if err != nil {
-                return nil, fmt.Errorf("读取CA证书失败: %w", err)
-            }
-            caCertPool := x509.NewCertPool()
-            caCertPool.AppendCertsFromPEM(caCert)
-            tlsConfig.RootCAs = caCertPool
-        }
+		if serverConfig.Conf.Kafka.TLS.CaFile != "" {
+			caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
+			if err != nil {
+				return nil, fmt.Errorf("读取CA证书失败: %w", err)
+			}
+			caCertPool := x509.NewCertPool()
+			caCertPool.AppendCertsFromPEM(caCert)
+			tlsConfig.RootCAs = caCertPool
+		}
 
-        if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
-            cert, err := tls.LoadX509KeyPair(
-                serverConfig.Conf.Kafka.TLS.CertFile,
-                serverConfig.Conf.Kafka.TLS.KeyFile,
-            )
-            if err != nil {
-                return nil, fmt.Errorf("加载客户端证书失败: %w", err)
-            }
-            tlsConfig.Certificates = []tls.Certificate{cert}
-        }
+		if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
+			cert, err := tls.LoadX509KeyPair(
+				serverConfig.Conf.Kafka.TLS.CertFile,
+				serverConfig.Conf.Kafka.TLS.KeyFile,
+			)
+			if err != nil {
+				return nil, fmt.Errorf("加载客户端证书失败: %w", err)
+			}
+			tlsConfig.Certificates = []tls.Certificate{cert}
+		}
 
-        config.Net.TLS.Config = tlsConfig
-    }
+		config.Net.TLS.Config = tlsConfig
+	}
 
-    // 版本设置
-    version, err := sarama.ParseKafkaVersion(serverConfig.Conf.Kafka.Version)
-    if err != nil {
-        return nil, fmt.Errorf("解析Kafka版本失败: %w", err)
-    }
-    config.Version = version
+	// 版本设置
+	version, err := sarama.ParseKafkaVersion(serverConfig.Conf.Kafka.Version)
+	if err != nil {
+		return nil, fmt.Errorf("解析Kafka版本失败: %w", err)
+	}
+	config.Version = version
 
-    // 设置客户端ID
-    config.ClientID = serverConfig.Conf.Kafka.ClientID
+	// 设置客户端ID
+	config.ClientID = serverConfig.Conf.Kafka.ClientID
 
-    // 消费者配置
-    config.Consumer.Group.Rebalance.Strategy = sarama.NewBalanceStrategyRoundRobin()
-    
-    // 设置偏移量重置策略
-    switch serverConfig.Conf.Kafka.Consumer.AutoOffsetReset {
-    case "earliest":
-        config.Consumer.Offsets.Initial = sarama.OffsetOldest
-    default:
-        config.Consumer.Offsets.Initial = sarama.OffsetNewest
-    }
+	// 消费者配置
+	config.Consumer.Group.Rebalance.Strategy = sarama.NewBalanceStrategyRoundRobin()
 
-    // 自动提交配置
-    config.Consumer.Offsets.AutoCommit.Enable = true
-    config.Consumer.Offsets.AutoCommit.Interval = serverConfig.Conf.Kafka.Consumer.HeartbeatInterval
+	// 设置偏移量重置策略
+	switch serverConfig.Conf.Kafka.Consumer.AutoOffsetReset {
+	case "earliest":
+		config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	default:
+		config.Consumer.Offsets.Initial = sarama.OffsetNewest
+	}
 
-    // 会话超时和心跳间隔
-    config.Consumer.Group.Session.Timeout = serverConfig.Conf.Kafka.Consumer.SessionTimeout
-    config.Consumer.Group.Heartbeat.Interval = serverConfig.Conf.Kafka.Consumer.HeartbeatInterval
-    config.Consumer.Group.Rebalance.Timeout = serverConfig.Conf.Kafka.Consumer.RebalanceTimeout
+	// 自动提交配置
+	config.Consumer.Offsets.AutoCommit.Enable = true
+	config.Consumer.Offsets.AutoCommit.Interval = serverConfig.Conf.Kafka.Consumer.HeartbeatInterval
+
+	// 会话超时和心跳间隔
+	config.Consumer.Group.Session.Timeout = serverConfig.Conf.Kafka.Consumer.SessionTimeout
+	config.Consumer.Group.Heartbeat.Interval = serverConfig.Conf.Kafka.Consumer.HeartbeatInterval
+	config.Consumer.Group.Rebalance.Timeout = serverConfig.Conf.Kafka.Consumer.RebalanceTimeout
 
 	// 创建消费者组
 	group, err := sarama.NewConsumerGroup(serverConfig.Conf.Kafka.Brokers, groupID, config)

@@ -18,17 +18,17 @@ func initTestEnv() {
 func TestNewKafkaProducer(t *testing.T) {
 	initTestEnv()
 	test := []struct {
-		name string
+		name    string
 		wantErr bool
 	}{
 		{
-			name: "测试创建kafka生产者",
+			name:    "测试创建kafka生产者",
 			wantErr: false,
 		},
 	}
 	for _, tt := range test {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := NewKafkaProducer()
+			_, err := NewSyncKafkaProducer()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewKafkaProducer() error = %v, wantErr %v", err, tt.wantErr)
 			}
