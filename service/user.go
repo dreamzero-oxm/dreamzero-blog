@@ -5,21 +5,22 @@ import (
 	"blog-server/internal/config"
 	"blog-server/internal/logger"
 	"blog-server/internal/models"
+	"blog-server/internal/mq"
 	"blog-server/internal/redis"
 	"blog-server/internal/rsa"
 	"blog-server/internal/utils"
-	"blog-server/internal/email"
 	"context"
 	"time"
+	"encoding/json"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type RegisterUserService struct {
-	UserName 			string `json:"user_name" form:"user_name" binding:"required"`
-	Password 			string `json:"password" form:"password" binding:"required"`
-	Email    			string `json:"email" form:"email" binding:"required"`
-	VerificationCode 	string `json:"verification_code" form:"verification_code" binding:"required"`
+	UserName         string `json:"user_name" form:"user_name" binding:"required"`
+	Password         string `json:"password" form:"password" binding:"required"`
+	Email            string `json:"email" form:"email" binding:"required"`
+	VerificationCode string `json:"verification_code" form:"verification_code" binding:"required"`
 }
 
 func (service *RegisterUserService) Register() error {
@@ -27,18 +28,18 @@ func (service *RegisterUserService) Register() error {
 	var count int64
 	if len(service.VerificationCode) != 6 {
 		return code.ErrVerificationCodeLength
-	}else {
+	} else {
 		// 验证验证码
 		redisClient := redis.GetRedisClient()
-		if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email).Result(); err!= nil {
+		if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex+":verification_code:"+service.Email).Result(); err != nil {
 			logger.Logger.Errorf("redis get verification code failed: %v", err)
 			return code.ErrVerificationCodeInvalid
-		}else{
+		} else {
 			if v != service.VerificationCode {
 				return code.ErrVerificationCodeInvalid
 			}
 			// 验证成功，删除验证码
-			if err := redisClient.Del(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email).Err(); err!= nil {
+			if err := redisClient.Del(context.Background(), config.Conf.Redis.KeyPrifex+":verification_code:"+service.Email).Err(); err != nil {
 				logger.Logger.Errorf("redis delete verification code failed: %v", err)
 				return code.ErrVerificationCodeInvalid
 			}
@@ -130,7 +131,7 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 
 	var token string
 	redisClient := redis.GetRedisClient()
-	if  v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex + ":user_token:" + user.Email).Result(); err == nil {
+	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex+":user_token:"+user.Email).Result(); err == nil {
 		token = v
 	} else {
 		// TODO:生成JWT
@@ -148,7 +149,7 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 		}
 		token = jwtToken
 		// 将JWT存入Redis
-		if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex + ":user_token:" + user.Email, jwtToken, time.Duration(config.Conf.App.JwtExpirationTime) * time.Hour).Err(); err!= nil {
+		if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex+":user_token:"+user.Email, jwtToken, time.Duration(config.Conf.App.JwtExpirationTime)*time.Hour).Err(); err != nil {
 			logger.Logger.Errorf("redis set user token failed: %v", err)
 			return nil, "", err
 		}
@@ -192,6 +193,11 @@ func generateDefualtUser() *models.User {
 type EmailVerificationCodeService struct {
 	Email string `json:"email" form:"email" binding:"required"`
 }
+type EmailVerificationMessage struct {
+	Email            string `json:"email"`
+	VerificationCode string `json:"verification_code"`
+}
+
 func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 	var verificationCode string
 	// 验证邮箱
@@ -200,22 +206,40 @@ func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 	}
 	// 检查验证码是否存在
 	redisClient := redis.GetRedisClient()
-	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email).Result(); err == nil {
+	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex+":verification_code:"+service.Email).Result(); err == nil {
 		verificationCode = v
 	} else {
 		// 生成验证码
 		verificationCode = utils.GenerateVerificationCode()
 		// 存在redis中，缓存时间为5分钟
 		redisClient := redis.GetRedisClient()
-		if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex + ":verification_code:" + service.Email, verificationCode, time.Minute * 5).Err(); err!= nil {
+		if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex+":verification_code:"+service.Email, verificationCode, time.Minute*5).Err(); err != nil {
 			logger.Logger.Errorf("redis set verification code failed: %v", err)
 			return code.ErrSendEmailVerificationCode
-		}	
+		}
 	}
+	// TODO: 用消息队列发送邮件
 	// 发送邮件
-	if err := email.SentVerifyCode(service.Email, verificationCode); err!= nil {
-		logger.Logger.Errorf("send email verification code failed: %v", err)
+	if producer, err := mq.NewSyncKafkaProducer(); err!= nil {
+		logger.Logger.Errorf("new kafka producer failed: %v", err)
 		return code.ErrSendEmailVerificationCode
+	}else{
+		message := EmailVerificationMessage{
+			Email:            service.Email,
+			VerificationCode: verificationCode,
+		}
+		// 将message转换为JSON字符串
+		messageJSON, err := json.Marshal(message)
+		if err != nil {
+			logger.Logger.Errorf("marshal message failed: %v", err)
+			return code.ErrSendEmailVerificationCode
+		}
+		// 设置email为key，使同一个邮箱都到同一个分区中
+		producer.SendMessage(context.Background(), "email_verification", service.Email, messageJSON)
 	}
+	// if err := email.SentVerifyCode(service.Email, verificationCode); err != nil {
+	// 	logger.Logger.Errorf("send email verification code failed: %v", err)
+	// 	return code.ErrSendEmailVerificationCode
+	// }
 	return nil
 }
