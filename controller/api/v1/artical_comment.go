@@ -3,6 +3,7 @@ package v1
 import (
 	"blog-server/internal"
 	IError "blog-server/internal/code"
+	"blog-server/internal/middleware"
 	"blog-server/service"
 
 	"github.com/gin-gonic/gin"
@@ -63,5 +64,8 @@ func (controller *ArticalCommentController) InitRouter(router *gin.RouterGroup) 
 	articalCommentGroup := router.Group("/artical_comment")
 	articalCommentGroup.POST("/add", AddComment)
 	articalCommentGroup.GET("/list", ListComment)
+
+	authGroup := router.Group("")
+	authGroup.Use(middleware.JWTAuthMiddleware())
 	return nil
 }
