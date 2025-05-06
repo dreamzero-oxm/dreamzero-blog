@@ -138,10 +138,15 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 		// TODO:生成JWT
 		// 生成JWT
 		claims := jwt.MapClaims{
+			// 发行者
 			"iss": "moity",
+			// 用户ID
 			"sub": user.ID,
+			// 过期时间
 			"exp": time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Hour).Unix(),
+			// 生效时间
 			"nbf": time.Now().Unix(),
+			// 签发时间
 			"iat": time.Now().Unix(),
 		}
 		jwtToken, err := utils.GenerateJWT(claims, rsa.PrivateKey)

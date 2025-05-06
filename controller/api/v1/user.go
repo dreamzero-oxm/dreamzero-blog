@@ -4,6 +4,7 @@ import (
 	"blog-server/internal"
 	"blog-server/internal/code"
 	"blog-server/service"
+	"blog-server/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -66,6 +67,16 @@ func Register(c *gin.Context) {
 	}
 }
 
+// @Summary 获取邮箱验证码
+// @Description 获取邮箱验证码
+// @Tags user
+// @Accept multipart/form-data
+// @Produce json
+// @Success 200 {object} internal.Response{data=string}
+// @Failure 20002 {object} internal.Response{data=string}
+// @Failure 20107 {object} internal.Response{data=string}
+// @Failure 20108 {object} internal.Response{data=string}
+// @Router /user/emailVerificationCode [post]
 func GetEmailVerificationCode(c *gin.Context) {
 	var service service.EmailVerificationCodeService
 	if err := c.ShouldBind(&service); err == nil {
@@ -83,9 +94,10 @@ func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	userGroup := router.Group("/user")
 	// --------------------无需认证-------------------------
 	userGroup.POST("/emailVerificationCode", GetEmailVerificationCode)
+	userGroup.POST("/login", Login)
+	userGroup.POST("/register", Register)	
 	// --------------------需要认证-------------------------
 	authGroup := userGroup.Group("")
-	authGroup.POST("/login", Login)
-	authGroup.POST("/register", Register)	
+	authGroup.Use(middleware.JWTAuthMiddleware())
 	return nil
 }

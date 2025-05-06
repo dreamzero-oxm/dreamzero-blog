@@ -11,19 +11,25 @@ var (
 	ErrParam            = &Errno{Code: 10003, Message: "参数有误"}
 	ErrSignParam        = &Errno{Code: 10004, Message: "签名参数有误"}
 
-	ErrValidation         		= &Errno{Code: 20001, Message: "Validation failed."}
-	ErrDatabase           		= &Errno{Code: 20002, Message: "Database error."}
-	ErrToken              		= &Errno{Code: 20003, Message: "Error occurred while signing the JSON web token."}
-	ErrInvalidTransaction 		= &Errno{Code: 20004, Message: "invalid transaction."}
-	ErrPasswordValidation 		= &Errno{Code: 20005, Message: "密码格式校验失败"}
-	ErrGenerateJWT        		= &Errno{Code: 20006, Message: "生成JWT错误"}
-	ErrRsaPrivateKeyPathError 	= &Errno{Code: 20007, Message: "RSA密钥路径错误"}
-	ErrRsaPublicKeyPathError  	= &Errno{Code: 20008, Message: "RSA公钥路径错误"}
+	ErrValidation         			= &Errno{Code: 20001, Message: "Validation failed."}
+	ErrDatabase           			= &Errno{Code: 20002, Message: "Database error."}
+	ErrToken              			= &Errno{Code: 20003, Message: "Error occurred while signing the JSON web token."}
+	ErrInvalidTransaction 			= &Errno{Code: 20004, Message: "invalid transaction."}
+	ErrPasswordValidation 			= &Errno{Code: 20005, Message: "密码格式校验失败"}
+	ErrRsaPrivateKeyPathError 		= &Errno{Code: 20006, Message: "RSA密钥路径错误"}
+	ErrRsaPublicKeyPathError  		= &Errno{Code: 20007, Message: "RSA公钥路径错误"}
+	
+	// jwt errors
+	ErrAuthorizationNotExist 		= &Errno{Code: 20008, Message: "Authorization不存在"}
+	ErrGenerateJWT        			= &Errno{Code: 20006, Message: "生成JWT错误"}
+	ErrTokenInvalid          		= &Errno{Code: 20103, Message: "Token错误"}
+	ErrTokenExpired          		= &Errno{Code: 20104, Message: "Token已过期"}
+	ErrTokenIssError         		= &Errno{Code: 20105, Message: "Token签发错误"}
+	ErrTokenNbfError         		= &Errno{Code: 20106, Message: "Token生效时间错误"}
 
 	// user errors
 	ErrEncrypt               		= &Errno{Code: 20101, Message: "密码加密错误"}
 	ErrUserNotFound          		= &Errno{Code: 20102, Message: "用户不存在"}
-	ErrTokenInvalid          		= &Errno{Code: 20103, Message: "Token错误"}
 	ErrPasswordIncorrect     		= &Errno{Code: 20104, Message: "密码错误"}
 	ErrUserExistBefore       		= &Errno{Code: 20105, Message: "用户已存在"}
 	ErrUserCreate            		= &Errno{Code: 20106, Message: "用户创建错误"}

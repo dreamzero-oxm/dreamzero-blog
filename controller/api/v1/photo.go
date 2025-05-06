@@ -5,6 +5,7 @@ import (
 	IError "blog-server/internal/code"
 	logger "blog-server/internal/logger"
 	"blog-server/service"
+	"blog-server/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -87,6 +88,7 @@ func (controller *PhotoController) InitRouter(engine *gin.RouterGroup) error {
 	photoGroup.GET("/list", ListPhoto)
 	// --------------------需要认证-------------------------
 	authPhotoGroup := photoGroup.Group("")
+	authPhotoGroup.Use(middleware.JWTAuthMiddleware())
 	authPhotoGroup.POST("/upload", UploadPhoto)
 
 	return nil
