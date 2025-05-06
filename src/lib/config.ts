@@ -64,8 +64,8 @@ export const config = {
         ]
       },
       { 
-        title: "Nginx", 
-        href: "/nginx/",
+        title: "TV", 
+        href: "http://10.21.23.14:8096/",
       },
       {
         title: "日常",
