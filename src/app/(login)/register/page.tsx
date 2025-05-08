@@ -1,7 +1,7 @@
 "use client"
 import Stepper, { Step } from '@/components/Stepper';
 import { Input } from "@/components/ui/input"
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import debounce from 'lodash/debounce';
 
 export default function Page() {
@@ -19,19 +19,9 @@ export default function Page() {
     const passwordError = useMemo(() => {
         return lengthErr || spaceErr || userNameErr || upperCaseErr || lowerCaseErr || numberErr || specialCharErr;
     },[lengthErr, spaceErr, userNameErr, upperCaseErr, lowerCaseErr, numberErr, specialCharErr]);
-
-    useEffect(() => {
-        // 初始化时检查密码是否符合要求
-        if (password) {
-            console.log('password', password);
-        }
-    }, [password]);
-    useEffect(() => {
-        // 初始化时检查密码是否符合要求
-        if (passwordError != undefined) {
-            console.log('passwordErr', passwordError);
-        }
-    }, [password]);
+    const disabled = useMemo(() => {
+        return emailError || passwordError || email === '' || password === '';
+    },[emailError, passwordError, email, password]);
 
     // 邮箱验证函数
     const validateEmail = (email: string) => {
@@ -121,7 +111,7 @@ export default function Page() {
                 nextButtonText="下一步"
                 stepCircleContainerClassName="border-primary-500"
                 nextButtonProps={{
-                    disabled: passwordError || emailError
+                    disabled: disabled,
                 }}
                 >
                 <Step>
