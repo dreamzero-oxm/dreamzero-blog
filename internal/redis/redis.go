@@ -16,6 +16,8 @@ var (
 	once sync.Once
 )
 
+const Nil = redis.Nil
+
 func GetRedisClient() *redis.Client {
 	return redisClient
 }
