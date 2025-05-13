@@ -19,7 +19,7 @@ func RegisterAPIV1(apiGroup *gin.RouterGroup) {
 	if err := articalCommentController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
-	if err := userController.InitRouter(apiGroup); err!= nil {
+	if err := userController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
 }

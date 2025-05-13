@@ -1,13 +1,13 @@
 package logger
 
 import (
-    "os"
-    "path/filepath"
 	"fmt"
+	"os"
+	"path/filepath"
 
-    "github.com/natefinch/lumberjack"
-    "go.uber.org/zap"
-    "go.uber.org/zap/zapcore"
+	"github.com/natefinch/lumberjack"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 func initZapLogger(baseDir string) (*zap.SugaredLogger, error) {
@@ -38,7 +38,7 @@ func initZapLogger(baseDir string) (*zap.SugaredLogger, error) {
 			}
 		}
 	}
-	
+
 	debugLogger := &lumberjack.Logger{
 		Filename:   filepath.Join(baseDir, "debug.log"),
 		MaxSize:    10,

@@ -6,66 +6,66 @@ import (
 	"context"
 	"io"
 	"strings"
-	"time"
 	"sync"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
 var (
-    minioClient *minio.Client
-    once        sync.Once
+	minioClient *minio.Client
+	once        sync.Once
 )
 
 // GetMinioClient 获取MinIO客户端实例（单例模式）
 func GetMinioClient() *minio.Client {
-    return minioClient
+	return minioClient
 }
 
 // InitMinIO 初始化minio客户端
 // minioConfig: minio配置
 // 返回值: error
 func InitMinIO(minioConfig config.MinioConfig) error {
-    var initErr error
-    once.Do(func() {
-        client, err := minio.New(minioConfig.Endpoint, &minio.Options{
-            Creds:  credentials.NewStaticV4(minioConfig.AccessKeyID, minioConfig.SecretAccessKey, ""),
-            Secure: minioConfig.UseSSL,
-        })
-        if err != nil {
-            initErr = err
-            return
-        }
-        minioClient = client
-        logger.Logger.Infof("minio endpoint: %v", minioConfig.Endpoint)
-        logger.Logger.Infof("minio bucket: %v", minioConfig.BucketNames)
-        logger.Logger.Infof("minio use ssl: %v", minioConfig.UseSSL)
-        logger.Logger.Infof("minio access key id: %v", strings.Repeat("*", len(minioConfig.AccessKeyID)))
-        logger.Logger.Infof("minio secret access key: %v", strings.Repeat("*", len(minioConfig.SecretAccessKey)))
-
-        // 初始化bucket
-        if err := InitBucket(minioConfig.BucketNames); err != nil {
-            logger.Logger.Errorf("minio init bucket error: %v", err)
+	var initErr error
+	once.Do(func() {
+		client, err := minio.New(minioConfig.Endpoint, &minio.Options{
+			Creds:  credentials.NewStaticV4(minioConfig.AccessKeyID, minioConfig.SecretAccessKey, ""),
+			Secure: minioConfig.UseSSL,
+		})
+		if err != nil {
 			initErr = err
-            return
-        }
+			return
+		}
+		minioClient = client
+		logger.Logger.Infof("minio endpoint: %v", minioConfig.Endpoint)
+		logger.Logger.Infof("minio bucket: %v", minioConfig.BucketNames)
+		logger.Logger.Infof("minio use ssl: %v", minioConfig.UseSSL)
+		logger.Logger.Infof("minio access key id: %v", strings.Repeat("*", len(minioConfig.AccessKeyID)))
+		logger.Logger.Infof("minio secret access key: %v", strings.Repeat("*", len(minioConfig.SecretAccessKey)))
 
-        logger.Logger.Info("minio client init success")
-    })
-    
-    if initErr != nil {
-        return initErr
-    }
+		// 初始化bucket
+		if err := InitBucket(minioConfig.BucketNames); err != nil {
+			logger.Logger.Errorf("minio init bucket error: %v", err)
+			initErr = err
+			return
+		}
 
-    // 初始化bucket
-    if err := InitBucket(minioConfig.BucketNames); err != nil {
-        logger.Logger.Errorf("minio init bucket error: %v", err)
-        return err
-    }
+		logger.Logger.Info("minio client init success")
+	})
 
-    logger.Logger.Info("minio client init success")
-    return nil
+	if initErr != nil {
+		return initErr
+	}
+
+	// 初始化bucket
+	if err := InitBucket(minioConfig.BucketNames); err != nil {
+		logger.Logger.Errorf("minio init bucket error: %v", err)
+		return err
+	}
+
+	logger.Logger.Info("minio client init success")
+	return nil
 }
 
 // InitBucket 初始化bucket

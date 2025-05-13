@@ -14,13 +14,13 @@ func GetCallerInfo(skip int) string {
 	if !ok {
 		return "unknown"
 	}
-	
+
 	// 获取文件的短名称（去掉路径）
 	shortFile := file
 	if idx := strings.LastIndexByte(file, '/'); idx >= 0 {
 		shortFile = file[idx+1:]
 	}
-	
+
 	return fmt.Sprintf("%s:%d", shortFile, line)
 }
 
@@ -32,18 +32,18 @@ func GetFullCallerInfo(skip int) string {
 	if !ok {
 		return "unknown"
 	}
-	
+
 	// 获取文件的短名称
 	shortFile := file
 	if idx := strings.LastIndexByte(file, '/'); idx >= 0 {
 		shortFile = file[idx+1:]
 	}
-	
+
 	// 获取函数名
 	funcName := runtime.FuncForPC(pc).Name()
 	if idx := strings.LastIndexByte(funcName, '.'); idx >= 0 {
 		funcName = funcName[idx+1:]
 	}
-	
+
 	return fmt.Sprintf("%s:%d in function %s", shortFile, line, funcName)
 }

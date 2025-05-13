@@ -3,13 +3,13 @@ package v1
 import (
 	"blog-server/internal"
 	"blog-server/internal/code"
-	"blog-server/service"
 	"blog-server/internal/middleware"
+	"blog-server/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-type UserController struct{
+type UserController struct {
 }
 
 // @Summary 用户登录
@@ -32,11 +32,11 @@ func Login(c *gin.Context) {
 			internal.APIResponse(c, err, gin.H{
 				"success": false,
 			})
-		}else{
+		} else {
 			internal.APIResponse(c, nil, gin.H{
 				"success": true,
-				"user": user,
-				"token": jwt,
+				"user":    user,
+				"token":   jwt,
 			})
 		}
 	} else {
@@ -57,12 +57,12 @@ func Login(c *gin.Context) {
 func Register(c *gin.Context) {
 	var service service.RegisterUserService
 	if err := c.ShouldBind(&service); err == nil {
-		if err := service.Register(); err!= nil {
+		if err := service.Register(); err != nil {
 			internal.APIResponse(c, err, nil)
-		}else{
+		} else {
 			internal.APIResponse(c, code.OK, nil)
 		}
-	}else{
+	} else {
 		internal.APIResponse(c, code.ErrBind, nil)
 	}
 }
@@ -77,12 +77,12 @@ func Register(c *gin.Context) {
 func GetEmailVerificationCode(c *gin.Context) {
 	var service service.EmailVerificationCodeService
 	if err := c.ShouldBind(&service); err == nil {
-		if err := service.SendEmailVerificationCode(); err!= nil {
+		if err := service.SendEmailVerificationCode(); err != nil {
 			internal.APIResponse(c, err, nil)
-		}else{
+		} else {
 			internal.APIResponse(c, code.OK, nil)
 		}
-	}else{
+	} else {
 		internal.APIResponse(c, code.ErrBind, nil)
 	}
 }
@@ -97,12 +97,12 @@ func GetEmailVerificationCode(c *gin.Context) {
 func VerifyEmailVerificationCode(c *gin.Context) {
 	var service service.VerifyEmailVerificationCodeService
 	if err := c.ShouldBind(&service); err == nil {
-		if err := service.VerifyEmailVerificationCode(); err!= nil {
+		if err := service.VerifyEmailVerificationCode(); err != nil {
 			internal.APIResponse(c, err, nil)
-		}else{
+		} else {
 			internal.APIResponse(c, code.OK, nil)
 		}
-	}else {
+	} else {
 		internal.APIResponse(c, code.ErrBind, nil)
 	}
 }
@@ -117,9 +117,9 @@ func VerifyEmailVerificationCode(c *gin.Context) {
 func CheckUserName(c *gin.Context) {
 	var service service.UserNameService
 	if err := c.ShouldBind(&service); err == nil {
-		if err := service.CheckUserName(); err!= nil {
+		if err := service.CheckUserName(); err != nil {
 			internal.APIResponse(c, err, nil)
-		}else{
+		} else {
 			internal.APIResponse(c, code.OK, nil)
 		}
 	}
@@ -135,9 +135,9 @@ func CheckUserName(c *gin.Context) {
 func CheckUserEmail(c *gin.Context) {
 	var service service.UserEmailService
 	if err := c.ShouldBind(&service); err == nil {
-		if err := service.CheckUserEmail(); err!= nil {
+		if err := service.CheckUserEmail(); err != nil {
 			internal.APIResponse(c, err, nil)
-		}else{
+		} else {
 			internal.APIResponse(c, code.OK, nil)
 		}
 	}
@@ -147,7 +147,7 @@ func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	userGroup := router.Group("/user")
 	// --------------------无需认证-------------------------
 	userGroup.POST("/login", Login)
-	userGroup.POST("/register", Register)	
+	userGroup.POST("/register", Register)
 	userGroup.GET("/emailVerificationCode", GetEmailVerificationCode)
 	userGroup.POST("/verifyEmailVerificationCode", VerifyEmailVerificationCode)
 	userGroup.GET("/checkUserName", CheckUserName)

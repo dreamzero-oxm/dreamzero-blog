@@ -3,16 +3,16 @@ package service
 import (
 	"blog-server/internal/code"
 	"blog-server/internal/config"
+	"blog-server/internal/dto"
 	"blog-server/internal/logger"
 	"blog-server/internal/models"
 	"blog-server/internal/mq"
 	"blog-server/internal/redis"
 	"blog-server/internal/rsa"
 	"blog-server/internal/utils"
-	"blog-server/internal/dto"
 	"context"
-	"time"
 	"encoding/json"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -204,6 +204,7 @@ func generateDefualtUser() *models.User {
 type EmailVerificationCodeService struct {
 	Email string `json:"email" form:"email" binding:"required"`
 }
+
 func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 	var verificationCode string
 	// 验证邮箱
@@ -226,10 +227,10 @@ func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 	}
 	// TODO: 用消息队列发送邮件
 	// 发送邮件
-	if producer, err := mq.NewKafkaAsyncProducer(); err!= nil {
+	if producer, err := mq.NewKafkaAsyncProducer(); err != nil {
 		logger.Logger.Errorf("new kafka producer failed: %v", err)
 		return code.ErrSendEmailVerificationCode
-	}else{
+	} else {
 		message := dto.EmailVerificationMessage{
 			Email:            service.Email,
 			VerificationCode: verificationCode,
@@ -251,9 +252,10 @@ func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 }
 
 type VerifyEmailVerificationCodeService struct {
-	Email string `json:"email" form:"email" binding:"required"`
+	Email            string `json:"email" form:"email" binding:"required"`
 	VerificationCode string `json:"verification_code" form:"verification_code" binding:"required"`
 }
+
 func (service *VerifyEmailVerificationCodeService) VerifyEmailVerificationCode() error {
 	// 验证邮箱
 	if !utils.ValidateEmail(service.Email) {
@@ -265,9 +267,9 @@ func (service *VerifyEmailVerificationCodeService) VerifyEmailVerificationCode()
 	logger.Logger.Infof("verification code: %s", service.VerificationCode)
 	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex+":verification_code:"+service.Email).Result(); err != nil {
 		return code.ErrVerificationCodeInvalid
-	}else if v!= service.VerificationCode {
+	} else if v != service.VerificationCode {
 		return code.ErrVerificationCodeInvalid
-	}else{
+	} else {
 		return nil
 	}
 }
@@ -275,10 +277,11 @@ func (service *VerifyEmailVerificationCodeService) VerifyEmailVerificationCode()
 type UserNameService struct {
 	UserName string `json:"user_name" form:"user_name" binding:"required"`
 }
+
 func (service *UserNameService) CheckUserName() error {
 	postgreDB := models.DB
 	var count int64
-	if err := postgreDB.Model(&models.User{}).Where("user_name =?", service.UserName).Count(&count).Error; err!= nil {
+	if err := postgreDB.Model(&models.User{}).Where("user_name =?", service.UserName).Count(&count).Error; err != nil {
 		logger.Logger.Errorf("check user failed: %v", err)
 		return code.ErrDatabase
 	}
@@ -291,10 +294,11 @@ func (service *UserNameService) CheckUserName() error {
 type UserEmailService struct {
 	Email string `json:"email" form:"email" binding:"required"`
 }
+
 func (service *UserEmailService) CheckUserEmail() error {
 	postgreDB := models.DB
 	var count int64
-	if err := postgreDB.Model(&models.User{}).Where("email =?", service.Email).Count(&count).Error; err!= nil {
+	if err := postgreDB.Model(&models.User{}).Where("email =?", service.Email).Count(&count).Error; err != nil {
 		logger.Logger.Debugf("check user email failed: %v", err)
 		return code.ErrDatabase
 	}

@@ -13,7 +13,7 @@ import (
 	"github.com/IBM/sarama"
 )
 
-func InitEmailConsumer() error  {
+func InitEmailConsumer() error {
 	consumer, err := mq.NewKafkaConsumer("email-group", []string{"email_verification"})
 	if err != nil {
 		return fmt.Errorf("[%v]init consumer failed, err: %v", utils.GetFullCallerInfo(0), err)
@@ -21,7 +21,7 @@ func InitEmailConsumer() error  {
 	consumer.RegisterHandler("email_verification", func(message *sarama.ConsumerMessage) error {
 		var emailMessage dto.EmailVerificationMessage
 		err := json.Unmarshal(message.Value, &emailMessage)
-		if err!= nil {
+		if err != nil {
 			return fmt.Errorf("[%v]unmarshal message failed, err: %v", utils.GetFullCallerInfo(0), err)
 		}
 		// 发送邮件
