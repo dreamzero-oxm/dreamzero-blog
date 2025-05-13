@@ -27,10 +27,10 @@ type RegisterUserService struct {
 func (service *RegisterUserService) Register() error {
 	postgreDB := models.DB
 	var count int64
+	// 验证验证码
 	if len(service.VerificationCode) != 6 {
 		return code.ErrVerificationCodeLength
 	} else {
-		// 验证验证码
 		redisClient := redis.GetRedisClient()
 		if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex+":verification_code:"+service.Email).Result(); err != nil {
 			logger.Logger.Errorf("redis get verification code failed: %v", err)
@@ -46,6 +46,7 @@ func (service *RegisterUserService) Register() error {
 			}
 		}
 	}
+	// 查询该用户的用户名是否已经存在
 	if err := postgreDB.Model(&models.User{}).Where("user_name = ?", service.UserName).Count(&count).Error; err != nil {
 		logger.Logger.Errorf("check user failed: %v", err)
 		return code.ErrDatabase
@@ -53,6 +54,7 @@ func (service *RegisterUserService) Register() error {
 	if count > 0 {
 		return code.ErrUserExistBefore
 	}
+	// 建立用户信息
 	user := generateDefualtUser()
 	user.UserName = service.UserName
 	user.Password = service.Password
@@ -66,8 +68,11 @@ func (service *RegisterUserService) Register() error {
 		logger.Logger.Errorf("generate encrypted password failed: %v", err)
 		return err
 	}
-	// TODO: 邮箱验证+发送邮件(使用消息队列)
+	// 设置用户角色, 以及激活信息
 	user.Role = "user"
+	user.Status = "active"
+	user.IsActive = true
+	// 创建用户
 	if err := postgreDB.Create(&user).Error; err != nil {
 		logger.Logger.Errorf("create user failed: %v", err)
 		return code.ErrUserCreate
@@ -242,5 +247,59 @@ func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 	// 	logger.Logger.Errorf("send email verification code failed: %v", err)
 	// 	return code.ErrSendEmailVerificationCode
 	// }
+	return nil
+}
+
+type VerifyEmailVerificationCodeService struct {
+	Email string `json:"email" form:"email" binding:"required"`
+	VerificationCode string `json:"verification_code" form:"verification_code" binding:"required"`
+}
+func (service *VerifyEmailVerificationCodeService) VerifyEmailVerificationCode() error {
+	// 验证邮箱
+	if !utils.ValidateEmail(service.Email) {
+		return code.ErrEmailValidation
+	}
+	// 验证验证码
+	redisClient := redis.GetRedisClient()
+	logger.Logger.Infof("email: %s", service.Email)
+	logger.Logger.Infof("verification code: %s", service.VerificationCode)
+	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex+":verification_code:"+service.Email).Result(); err != nil {
+		return code.ErrVerificationCodeInvalid
+	}else if v!= service.VerificationCode {
+		return code.ErrVerificationCodeInvalid
+	}else{
+		return nil
+	}
+}
+
+type UserNameService struct {
+	UserName string `json:"user_name" form:"user_name" binding:"required"`
+}
+func (service *UserNameService) CheckUserName() error {
+	postgreDB := models.DB
+	var count int64
+	if err := postgreDB.Model(&models.User{}).Where("user_name =?", service.UserName).Count(&count).Error; err!= nil {
+		logger.Logger.Errorf("check user failed: %v", err)
+		return code.ErrDatabase
+	}
+	if count > 0 {
+		return code.ErrUserExistBefore
+	}
+	return nil
+}
+
+type UserEmailService struct {
+	Email string `json:"email" form:"email" binding:"required"`
+}
+func (service *UserEmailService) CheckUserEmail() error {
+	postgreDB := models.DB
+	var count int64
+	if err := postgreDB.Model(&models.User{}).Where("email =?", service.Email).Count(&count).Error; err!= nil {
+		logger.Logger.Debugf("check user email failed: %v", err)
+		return code.ErrDatabase
+	}
+	if count > 0 {
+		return code.ErrEmailExistBefore
+	}
 	return nil
 }

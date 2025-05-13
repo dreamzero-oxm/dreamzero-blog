@@ -73,9 +73,6 @@ func Register(c *gin.Context) {
 // @Accept multipart/form-data
 // @Produce json
 // @Success 200 {object} internal.Response{data=string}
-// @Failure 20002 {object} internal.Response{data=string}
-// @Failure 20107 {object} internal.Response{data=string}
-// @Failure 20108 {object} internal.Response{data=string}
 // @Router /user/emailVerificationCode [post]
 func GetEmailVerificationCode(c *gin.Context) {
 	var service service.EmailVerificationCodeService
@@ -90,12 +87,71 @@ func GetEmailVerificationCode(c *gin.Context) {
 	}
 }
 
+// @Summary 验证邮箱验证码
+// @Description 验证邮箱验证码
+// @Tags user
+// @Accept multipart/form-data
+// @Produce json
+// @Success 200 {object} internal.Response{data=string}
+// @Router /user/verifyEmailVerificationCode [post]
+func VerifyEmailVerificationCode(c *gin.Context) {
+	var service service.VerifyEmailVerificationCodeService
+	if err := c.ShouldBind(&service); err == nil {
+		if err := service.VerifyEmailVerificationCode(); err!= nil {
+			internal.APIResponse(c, err, nil)
+		}else{
+			internal.APIResponse(c, code.OK, nil)
+		}
+	}else {
+		internal.APIResponse(c, code.ErrBind, nil)
+	}
+}
+
+// @Summary 验证用户名是否存在
+// @Description 验证用户名是否存在
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} internal.Response{data=string}
+// @Router /user/checkUserName [get]
+func CheckUserName(c *gin.Context) {
+	var service service.UserNameService
+	if err := c.ShouldBind(&service); err == nil {
+		if err := service.CheckUserName(); err!= nil {
+			internal.APIResponse(c, err, nil)
+		}else{
+			internal.APIResponse(c, code.OK, nil)
+		}
+	}
+}
+
+// @Summary 验证邮箱是否存在
+// @Description 验证邮箱是否存在
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} internal.Response{data=string}
+// @Router /user/checkUserEmail [get]
+func CheckUserEmail(c *gin.Context) {
+	var service service.UserEmailService
+	if err := c.ShouldBind(&service); err == nil {
+		if err := service.CheckUserEmail(); err!= nil {
+			internal.APIResponse(c, err, nil)
+		}else{
+			internal.APIResponse(c, code.OK, nil)
+		}
+	}
+}
+
 func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	userGroup := router.Group("/user")
 	// --------------------无需认证-------------------------
-	userGroup.POST("/emailVerificationCode", GetEmailVerificationCode)
 	userGroup.POST("/login", Login)
 	userGroup.POST("/register", Register)	
+	userGroup.GET("/emailVerificationCode", GetEmailVerificationCode)
+	userGroup.POST("/verifyEmailVerificationCode", VerifyEmailVerificationCode)
+	userGroup.GET("/checkUserName", CheckUserName)
+	userGroup.GET("/checkUserEmail", CheckUserEmail)
 	// --------------------需要认证-------------------------
 	authGroup := userGroup.Group("")
 	authGroup.Use(middleware.JWTAuthMiddleware())
