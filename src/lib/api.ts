@@ -20,6 +20,7 @@ const api = {
     userEmailVerificationCode: `${baseUrl}/${apiHost}/${user}/emailVerificationCode`,
     userVerifyEmailVerificationCode: `${baseUrl}/${apiHost}/${user}/verifyEmailVerificationCode`,
     userCheckUserName: `${baseUrl}/${apiHost}/${user}/checkUserName`,
+    userCheckEmail: `${baseUrl}/${apiHost}/${user}/checkEmail`,
     // others   
 }
 

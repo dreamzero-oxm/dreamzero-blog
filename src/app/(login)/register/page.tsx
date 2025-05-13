@@ -1,7 +1,7 @@
 "use client"
 import Stepper, { Step } from '@/components/Stepper';
 import { Input } from "@/components/ui/input"
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import debounce from 'lodash/debounce';
 import {
     InputOTP,
@@ -23,6 +23,7 @@ import {
     useUserVerifyEmailVerificationCode,
     useUserCheckUserName,
     useUserRegister,
+    useUserCheckEmail,
 } from '@/hooks/user-hook'
 import { toast } from 'sonner';
 
@@ -36,6 +37,7 @@ export default function Page() {
     const [emailError, setEmailError] = useState<undefined | boolean>(undefined);
     const [password, setPassword] = useState('');
     // step 1 error
+    const {error: emailIsCreate, mutate: checkEmail} = useUserCheckEmail();
     const [lengthErr, setLengthErr] = useState<boolean>(false);
     const [spaceErr, setSpaceErr] = useState<boolean>(false);
     const [userNameErr, setUserNameErr] = useState<boolean>(false);
@@ -92,10 +94,14 @@ export default function Page() {
     };
 
     // 邮箱验证函数
-    const validateEmail = (email: string) => {
+    const validateEmail = useCallback((email: string) => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return emailRegex.test(email);
-    };
+        const result = emailRegex.test(email);
+        if (result) {
+            checkEmail(email);
+        }
+        return result;
+    }, [checkEmail]);
 
     // 密码验证函数
     const validatePassword = (password: string, email: string) => {
@@ -186,7 +192,7 @@ export default function Page() {
     const disabled = useMemo<boolean>(() => {
         switch (step) {
             case 1:
-                return emailError || passwordError || email === '' || password === '' || userNameInValiate != null || userName.length === 0;
+                return emailError || passwordError || email === '' || password === '' || userNameInValiate != null || userName.length === 0 || emailIsCreate !== null;
             case 2:
                 return verificationCode.length !== 6 || vericationCodeError != null;
             case 3 :
@@ -205,7 +211,7 @@ export default function Page() {
             default:
                 return false;
         }
-    },[step, emailError, passwordError, email, password, verificationCode, vericationCodeError, userNameInValiate, userName, isSendRegister, registerIsPending, validateUserName, verifyVerificationCode]);
+    },[step, emailError, emailIsCreate, passwordError, email, password, verificationCode, vericationCodeError, userNameInValiate, userName, isSendRegister, registerIsPending, validateUserName, verifyVerificationCode, validateEmail]);
 
 
     // effect
@@ -252,13 +258,14 @@ export default function Page() {
                                 value={email} 
                                 onChange={handleEmailChange}
                                 onFocus={() => {
-                                    if (email) {
+                                    if (email && (emailError === undefined || emailError === false) && emailIsCreate === null) {
                                         debouncedValidateEmail(email);
                                     }
                                 }}
-                                className={emailError ? 'border-red-600' : ''}
+                                className={emailError || emailIsCreate ? 'border-red-600' : ''}
                             />
                             {emailError && <p className="text-red-600 text-sm mt-1">请输入有效的邮箱地址</p>}
+                            {emailIsCreate && <p className="text-red-600 text-sm mt-1">该邮箱已被注册</p>}
                         </div>
                         <div className='flex flex-col gap-2'>
                             <h2 className='text-primary'>用户名</h2>
@@ -268,7 +275,7 @@ export default function Page() {
                                 value={userName} 
                                 onChange={handleUserNameChange}
                                 onFocus={() => {
-                                    if (userName) {
+                                    if (userName && userNameInValiate === null) {
                                         debouncedValidateUserName(userName);
                                     }
                                 }}
@@ -284,7 +291,7 @@ export default function Page() {
                                 value={password}
                                 onChange={handlePasswordChange}
                                 onFocus={() => {
-                                    if (password) {
+                                    if (password && passwordError === false) {
                                         debouncedValidatePassword(password, email);
                                     }
                                 }}

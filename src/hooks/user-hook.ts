@@ -15,6 +15,7 @@ const {
     userVerifyEmailVerificationCode,
     userCheckUserName,
     userRegister,
+    userCheckEmail,
 } = api;
 
 export function useUserLogin() {
@@ -49,6 +50,14 @@ export function useUserLogin() {
         data,
         error,
         mutate,
+    }
+}
+
+export function useUserLogout() {
+    const router = useRouter()
+    return () => {
+        localStorage.removeItem("token");
+        router.push('/login');
     }
 }
 
@@ -118,6 +127,30 @@ export function useUserCheckUserName() {
         mutate,
     }
 }
+
+export function useUserCheckEmail() {
+    const {isPending, data, error, mutate} = useMutation({
+        mutationFn: (email: string) => {
+            return get<BaseResponse>(userCheckEmail, {
+                params: {
+                    email: email,
+                }
+            })
+        },
+        onSuccess(data) {
+            if (data.code!== 0) {
+                throw new Error(data.msg);
+            }
+        }
+    })
+    return {
+        isPending,
+        data,
+        error,
+        mutate,
+    }
+}
+
 
 export function useUserRegister() {
     const router = useRouter()
