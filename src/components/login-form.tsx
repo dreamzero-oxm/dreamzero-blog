@@ -8,6 +8,7 @@ import { useUserLogin } from "@/hooks/user-hook"
 import { FormEvent, useEffect } from "react"
 import { toast } from "sonner"
 import { KeyRound } from "lucide-react"
+import Link from "next/link"
 
 export default function LoginForm({
   className,
@@ -96,9 +97,9 @@ export default function LoginForm({
       </div>
       <div className="text-center text-sm">
         没有账号?{" "}
-        <a href="#" className="underline underline-offset-4">
-          Sign up
-        </a>
+        <Link href="/register" className="underline underline-offset-4">
+          注册
+        </Link>
       </div>
     </form>
   )
