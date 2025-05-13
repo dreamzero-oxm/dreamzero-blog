@@ -88,7 +88,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <main>
             {children}
-            <Toaster expand={true}/>
+            <Toaster expand={true} position="bottom-right" richColors/>
           </main>
         </ReactQueryProvider>
       </body>

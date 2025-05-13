@@ -17,6 +17,9 @@ const api = {
     // user
     userLogin: `${baseUrl}/${apiHost}/${user}/login`,
     userRegister: `${baseUrl}/${apiHost}/${user}/register`,
+    userEmailVerificationCode: `${baseUrl}/${apiHost}/${user}/emailVerificationCode`,
+    userVerifyEmailVerificationCode: `${baseUrl}/${apiHost}/${user}/verifyEmailVerificationCode`,
+    userCheckUserName: `${baseUrl}/${apiHost}/${user}/checkUserName`,
     // others   
 }
 
