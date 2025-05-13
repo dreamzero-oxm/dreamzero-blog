@@ -249,6 +249,66 @@ paths:
       summary: 上传图片
       tags:
       - photo
+  /user/checkUserEmail:
+    get:
+      consumes:
+      - application/json
+      description: 验证邮箱是否存在
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 验证邮箱是否存在
+      tags:
+      - user
+  /user/checkUserName:
+    get:
+      consumes:
+      - application/json
+      description: 验证用户名是否存在
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 验证用户名是否存在
+      tags:
+      - user
+  /user/emailVerificationCode:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 获取邮箱验证码
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 获取邮箱验证码
+      tags:
+      - user
   /user/login:
     post:
       consumes:
@@ -359,6 +419,26 @@ paths:
                   type: string
               type: object
       summary: 用户注册
+      tags:
+      - user
+  /user/verifyEmailVerificationCode:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 验证邮箱验证码
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 验证邮箱验证码
       tags:
       - user
 swagger: "2.0"
