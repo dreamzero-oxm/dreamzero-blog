@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"blog-server/internal/config"
+	"blog-server/internal/email"
 	"blog-server/internal/logger"
 	"blog-server/internal/middleware"
 	"blog-server/internal/models"
@@ -15,7 +16,6 @@ import (
 	"blog-server/internal/server"
 	"blog-server/internal/version"
 	"blog-server/router"
-	"blog-server/internal/email"
 
 	"github.com/urfave/cli"
 )
@@ -68,14 +68,14 @@ func main() {
 		}
 
 		// init zap logger
-		if err := logger.InitLogger(config.Conf.App.LogOutputDir); err!= nil {
+		if err := logger.InitLogger(config.Conf.App.LogOutputDir); err != nil {
 			return err
 		}
 
 		// init RSA keys
 		if privateKey, publicKey, err := rsa.InitRSAKeys(config.Conf.App.RsaPrivateKeyPath, config.Conf.App.RsaPublicKeyPath); err != nil {
 			return err
-		}else {
+		} else {
 			// 将密钥保存到全局变量中
 			rsa.PrivateKey = privateKey
 			rsa.PublicKey = publicKey
@@ -93,18 +93,18 @@ func main() {
 		defer models.Close()
 
 		// init redis
-		if err := redis.Init(config.Conf.Redis); err!= nil {
+		if err := redis.Init(config.Conf.Redis); err != nil {
 			return err
 		}
 		defer redis.Close()
 
 		// init email
-		if err := email.InitEmail(); err!= nil {
+		if err := email.InitEmail(); err != nil {
 			return err
 		}
-		
+
 		// init email consumer
-		if err := email.InitEmailConsumer(); err!= nil {
+		if err := email.InitEmailConsumer(); err != nil {
 			return err
 		}
 

@@ -12,7 +12,7 @@ type User struct {
 	Password         string    `json:"-" gorm:"type:varchar(255);;not null"`                                                   // 密码，加密存储
 	Nickname         string    `json:"nickname" gorm:"type:varchar(50);not null"`                                              // 昵称，默认为用户名
 	Email            string    `json:"email" gorm:"type:varchar(100);not null"`                                                // 邮箱,
-	Phone            string    `json:"-" gorm:"type:varchar(20);not null"`                                              	   // 手机号,暂不使用
+	Phone            string    `json:"-" gorm:"type:varchar(20);not null"`                                                     // 手机号,暂不使用
 	Avatar           string    `json:"avatar" gorm:"type:varchar(255)"`                                                        // 头像，默认为空
 	Role             string    `json:"-" gorm:"type:varchar(10);not null;check:role IN ('admin', 'user', 'guest')"`            // 角色，例如：admin, user, guest
 	Status           string    `json:"-" gorm:"type:varchar(10);not null;check:status IN ('active', 'inactive', 'suspended')"` // 状态，例如：active, inactive, suspended

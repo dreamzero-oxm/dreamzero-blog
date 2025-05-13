@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"regexp"
-	"math/big"
-	"time"
 	"crypto/rand"
+	"math/big"
+	"regexp"
+	"time"
 )
 
 // ValidatePassword 验证密码强度
@@ -61,7 +61,7 @@ func GenerateVerificationCode() string {
 	// 生成6位随机数字验证码
 	const charset = "0123456789"
 	const codeLength = 6
-	
+
 	// 使用 crypto/rand 包来生成安全的随机数
 	code := make([]byte, codeLength)
 	for i := range code {
@@ -74,6 +74,6 @@ func GenerateVerificationCode() string {
 		// 从字符集中选择一个字符
 		code[i] = charset[randomIndex.Int64()]
 	}
-	
+
 	return string(code)
 }

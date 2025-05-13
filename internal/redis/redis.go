@@ -4,8 +4,8 @@ import (
 	"blog-server/internal/config"
 	"blog-server/internal/utils"
 	"context"
-	"sync"
 	"fmt"
+	"sync"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -13,7 +13,7 @@ import (
 var (
 	// RedisClient Redis客户端实例
 	redisClient *redis.Client
-	once sync.Once
+	once        sync.Once
 )
 
 const Nil = redis.Nil
@@ -35,7 +35,7 @@ func Init(conf config.RedisConfig) error {
 			WriteTimeout: conf.WriteTimeout,
 			PoolSize:     conf.PoolSize,
 		})
-	
+
 		// 通过 Ping 命令检查连接是否正常
 		ctx := context.Background()
 		if _, err := redisClient.Ping(ctx).Result(); err != nil {

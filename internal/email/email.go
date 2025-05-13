@@ -2,11 +2,11 @@ package email
 
 import (
 	"blog-server/internal/config"
+	"crypto/tls"
 	"fmt"
 	"net/smtp"
-	"crypto/tls"
-	"strings"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/jordan-wright/email"
@@ -14,10 +14,10 @@ import (
 
 var (
 	emailTemplate string
-	once sync.Once
+	once          sync.Once
 )
 
-func InitEmail() error  {
+func InitEmail() error {
 	var resultErr error
 	once.Do(func() {
 		// 读取模板
@@ -44,13 +44,13 @@ func SendEmail(to string, subject string, body string) error {
 	e.Subject = subject
 	e.HTML = []byte(body)
 	smtpAddr := fmt.Sprintf("%s:%d", config.Conf.Email.SmtpHost, config.Conf.Email.SmtpPort)
-	
+
 	// 根据端口选择发送方式
 	if config.Conf.Email.SmtpPort == 465 {
 		// SSL 方式
 		tlsConfig := &tls.Config{
 			ServerName:         config.Conf.Email.SmtpHost,
-			InsecureSkipVerify: true,  // 如果服务器证书有问题，可以临时设置为true
+			InsecureSkipVerify: true, // 如果服务器证书有问题，可以临时设置为true
 		}
 		if err := e.SendWithTLS(smtpAddr, getStmpAuth(), tlsConfig); err != nil && !strings.Contains(err.Error(), "short response") {
 			return fmt.Errorf("SSL发送失败: %v", err)
@@ -60,14 +60,14 @@ func SendEmail(to string, subject string, body string) error {
 		// TLS 方式
 		tlsConfig := &tls.Config{
 			ServerName:         config.Conf.Email.SmtpHost,
-			InsecureSkipVerify: true,  // 如果服务器证书有问题，可以临时设置为true
+			InsecureSkipVerify: true, // 如果服务器证书有问题，可以临时设置为true
 		}
 		if err := e.SendWithStartTLS(smtpAddr, getStmpAuth(), tlsConfig); err != nil && !strings.Contains(err.Error(), "short response") {
 			return fmt.Errorf("TLS发送失败: %v", err)
 		}
 		return nil
 	}
-	
+
 	// 不安全的方式（不推荐）
 	if err := e.Send(smtpAddr, getStmpAuth()); err != nil {
 		return fmt.Errorf("普通发送失败: %v", err)

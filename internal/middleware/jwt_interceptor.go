@@ -26,11 +26,10 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 2. 解析 Token
-		claims, err:= utils.ValidateJWT(authHeader, rsa.PublicKey)
-		
+		claims, err := utils.ValidateJWT(authHeader, rsa.PublicKey)
 
 		// 3. 验证 Token
-		if err!= nil {
+		if err != nil {
 			internal.APIResponse(c, code.ErrTokenInvalid, fmt.Sprintf("[%v] Token错误: %v", utils.GetFullCallerInfo(0), err))
 			return
 		}
@@ -67,11 +66,11 @@ func RateLimitMiddleware(limit int, duration time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取客户端IP
 		clientIP := c.ClientIP()
-		
+
 		// 使用Redis实现计数器
 		redisClient := redis.GetRedisClient()
 		key := config.Conf.Redis.KeyPrifex + ":rate_limit:" + clientIP
-		
+
 		// 获取当前计数
 		count, err := redisClient.Get(context.Background(), key).Int()
 		if err == nil && count >= limit {
@@ -82,16 +81,16 @@ func RateLimitMiddleware(limit int, duration time.Duration) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		
+
 		// 增加计数
 		if err := redisClient.Incr(context.Background(), key).Err(); err != nil {
 			c.Next()
 			return
 		}
-		
+
 		// 设置过期时间
 		redisClient.Expire(context.Background(), key, duration)
-		
+
 		c.Next()
 	}
 }

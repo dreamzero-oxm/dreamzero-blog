@@ -4,8 +4,8 @@ import (
 	"blog-server/internal"
 	IError "blog-server/internal/code"
 	logger "blog-server/internal/logger"
-	"blog-server/service"
 	"blog-server/internal/middleware"
+	"blog-server/service"
 
 	"github.com/gin-gonic/gin"
 )

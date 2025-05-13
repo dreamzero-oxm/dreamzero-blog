@@ -2,12 +2,12 @@ package router
 
 import (
 	"blog-server/controller"
+	_ "blog-server/docs"
 	"blog-server/internal/server"
 	"blog-server/router/api"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "blog-server/docs"
 )
 
 func InitRouter(server *server.Server) {
