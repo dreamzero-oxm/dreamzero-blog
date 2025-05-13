@@ -65,4 +65,4 @@ email:
   smtp_password: "pseukvusbbrubadf"
   sender_name: "MOITY"
   sender_email: "ouxiangming_moi@foxmail.com"
-  email_template: "public/email_template.html"
+  email_template: "/etc/moity-blog/public/email_template.html"
