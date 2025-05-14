@@ -1,6 +1,6 @@
+'use client'
 import { Header } from "@/components/header";
-import SplashCursor from "@/components/ui/SplashCursor";
-
+import Crosshair from '@/components/Crosshair';
 
 export default function RootLayout({
   children,
@@ -10,7 +10,10 @@ export default function RootLayout({
   return (
     <>
       <Header />
-      <div className="hidden md:block"><SplashCursor /></div>
+      <div className="hidden md:block">
+        {/* <SplashCursor /> */}
+        <Crosshair color='#000000'/>
+      </div>
       {children}
     </>
   );
