@@ -12,7 +12,12 @@ export default function RootLayout({
       <Header />
       <div className="hidden md:block">
         {/* <SplashCursor /> */}
-        <Crosshair color='#000000'/>
+        <div className="block dark:hidden">
+          <Crosshair color='#000000'/>
+        </div>
+        <div className="hidden dark:block">
+          <Crosshair color='#ffffff'/>
+        </div>
       </div>
       {children}
     </>
