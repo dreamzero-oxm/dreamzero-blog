@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Switch } from "@/components/ui/switch";
-import { Sun, Moon, Fingerprint } from "lucide-react";
+import { Sun, Moon, Fingerprint, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -17,12 +17,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-
-
+import { useUserLogout } from '@/hooks/user-hook'
 
 export function Header() {
   const pathname = usePathname();
   const isBlogPage = pathname.includes("/blog/");
+  const [isLogin, setIsLogin] = useState(false);
+  const logout = useUserLogout();
   
   // 使用函数来初始化状态，避免直接访问 localStorage
   const [dark, setDark] = useState(false);  // 初始值设为 false
@@ -39,6 +40,11 @@ export function Header() {
     } else {
       document.documentElement.classList.remove('dark')
     }
+
+    // 检测token
+    const token = localStorage.getItem("token");
+    console.log("token", !!token);
+    setIsLogin(!!token);
   }, []);
 
   const handleSwitchTheme = (isDark: boolean) => {
@@ -95,16 +101,30 @@ export function Header() {
                 <p>明亮切换</p>
               </TooltipContent>
             </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
+            {isLogin ? (
+              <Tooltip>
+                <TooltipTrigger>
+                  <LogOut className="cursor-pointer" onClick={()=>{
+                    logout();
+                    setIsLogin(false);
+                  }} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>登出</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger>
                 <Link href="/login" title="Login">
-                  <Fingerprint />
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>登录</p>
-              </TooltipContent>
-            </Tooltip>
+                      <Fingerprint />
+                    </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>登录</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
             <Tooltip>
               <TooltipTrigger>
                 <Link href="https://github.com/This-MOI" title="Github">
