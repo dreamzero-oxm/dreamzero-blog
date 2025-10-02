@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "my-blog",
+      "script": "pnpm",
+      "args": "start"
+    }
+  ]
+}
