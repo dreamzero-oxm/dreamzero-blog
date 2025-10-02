@@ -5,6 +5,8 @@ import ReactQueryProvider from "@/components/provider/react-query-provider";
 import localFont from 'next/font/local'
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner"
+import React from 'react';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 
 export const metadata: Metadata = {
   // 标题
@@ -86,10 +88,12 @@ export default function RootLayout({
       </head>
       <body className="min-w-md overflow-x-hidden">
         <ReactQueryProvider>
-          <main>
-            {children}
-            <Toaster expand={true} position="bottom-right" richColors/>
-          </main>
+          <AntdRegistry>
+            <main>
+              {children}
+              <Toaster expand={true} position="bottom-right" richColors/>
+            </main>
+          </AntdRegistry>
         </ReactQueryProvider>
       </body>
     </html>
