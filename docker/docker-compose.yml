@@ -1,17 +1,23 @@
 services:
-  blog-web:
+  blog-web-frontend:
     # depends_on:
     #   mysql:
     #     condition: service_healthy
-    image: my-blog:v1.0
+    image: my-blog:v1.1
     container_name: my-blog-web-frontend
     ports:
       - ${front_end_port}:9999
+    volumes:
+      - ./src/content/blog:/app/src/content/blog
     env_file: .env
     environment:
       - TZ=${TIMEZONE}
     networks:
       - blog
-    restart: on-failure
+    restart: always
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "myhost:host-gateway"
+
+networks:
+  blog:
+    driver: bridge

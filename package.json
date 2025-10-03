@@ -12,7 +12,7 @@
     "generate-rss": "node scripts/generate-rss.js"
   },
   "dependencies": {
-    "@ant-design/nextjs-registry": "^1.0.2",
+    "@ant-design/nextjs-registry": "^1.1.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@giscus/react": "^3.1.0",

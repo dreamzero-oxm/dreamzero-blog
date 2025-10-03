@@ -1,20 +1,57 @@
-# 指定node版本为21.7.1  | 注：node 中默认含 npm 等指令 | 注: 需要提前下载node 21.7.1 的镜像(docker pull node:12.7.1 / docker pull node:14 / ...)
-FROM node:22.20.0-alpine
+FROM ubuntu:22.04 AS base
+USER root
+SHELL ["/bin/bash", "-c"]
 
-# 项目在docker里面的工作目录，/app 只是随意指定的目录而已
-WORKDIR /app
+ARG NEED_MIRROR=0
 
-# 把当前目录(第1个.)下的所有文件添加到docker里面的 /app  目录
-COPY . .
+WORKDIR /blog
 
-# build docker 镜像时运行npm命令。这一步是在docker里面跑的命令
-# 根据 package.json 自动安装所需依赖
+RUN mkdir -p /blog/frontend
+
+# apt设置国内清华源
+RUN if [ "$NEED_MIRROR" == "1" ]; then \
+        sed -i 's|http://ports.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
+        sed -i 's|http://archive.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
+    fi; 
+
+RUN --mount=type=cache,id=blog,target=/var/cache/apt,sharing=locked \
+        apt-get update && \
+        apt-get install -y curl 
+
+# 安装npm
+RUN --mount=type=cache,id=blog,target=/var/cache/apt,sharing=locked \
+        curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+        apt purge -y nodejs npm && \
+        apt autoremove -y && \
+        apt-get update && \
+        apt-get install -y nodejs  
+
+# 设置npm国内淘宝镜像
+RUN if [ "$NEED_MIRROR" == "1" ]; then \
+        npm config set registry https://registry.npmmirror.com; \
+    fi;
+
+RUN npm install -g pnpm
+
+# 切换到/frontend目录
+WORKDIR /blog/frontend
+
+# 复制前端项目代码到/frontend目录
+COPY . /blog/frontend
+
+# 安装前端项目依赖
 RUN npm install
-RUN npm run build
-# RUN npm run start
 
+# 构建前端项目
+RUN pnpm build
+
+# 暴露端口
 EXPOSE 9999
+
+WORKDIR /blog
+COPY ./docker/entrypoint.sh /blog/entrypoint.sh
+RUN chmod +x /blog/entrypoint.sh
 
 # CMD [ "node", "app.js" ]
 # 或等效于：
-ENTRYPOINT [ "npm", "run", "start" ]
+ENTRYPOINT [ "./entrypoint.sh" ]
