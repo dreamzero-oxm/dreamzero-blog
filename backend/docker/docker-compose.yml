@@ -1,0 +1,22 @@
+services:
+  postgres_db: # 服务名称
+    image: postgres:latest # 指定镜像及其版本
+    container_name: blog-postgres # 指定容器的名称
+    environment:
+      POSTGRES_PASSWORD: dkdmfvowk@sd12mvc
+      #POSTGRES_DB: default
+    ports: # 端口映射
+      - "5432:5432"
+    volumes: # 数据持久化的配置
+      - /nas/db/postgres/data:/var/lib/postgresql/data
+      - /nas/db/postgres/log:/var/log/postgresql
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:  # 网络配置
+      - pub-network  # 加入到 pub-network 网络
+
+networks:  # 网络
+  pub-network:
+      external: true
