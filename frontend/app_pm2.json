@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "my-blog",
+      "name": "main-dreamzero-blog",
       "script": "pnpm",
       "args": "start"
     }
