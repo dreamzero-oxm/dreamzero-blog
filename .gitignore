@@ -85,3 +85,9 @@ build/
 logs/*
 test_files/
 **/logs/*
+
+# ------docker------
+/docker/kafka
+/docker/redis
+/docker/minio
+/docker/postgres
