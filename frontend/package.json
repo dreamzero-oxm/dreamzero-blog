@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack -p 9999",
+    "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start -p 9999",
+    "start": "next start",
     "lint": "next lint",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "generate-rss": "node scripts/generate-rss.js"

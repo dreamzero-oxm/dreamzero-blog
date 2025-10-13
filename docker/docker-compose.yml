@@ -4,11 +4,11 @@ services:
     #   mysql:
     #     condition: service_healthy
     image: my-blog:v1.1
-    container_name: my-blog-web-frontend
+    container_name: www-dreamzero-web-frontend
     ports:
-      - ${front_end_port}:9999
+      - ${front_end_port}:3000
     volumes:
-      - ./src/content/blog:/app/src/content/blog
+      - ./frontend/src/content/blog:/blog/frontend/src/content/blog
     env_file: .env
     environment:
       - TZ=${TIMEZONE}
