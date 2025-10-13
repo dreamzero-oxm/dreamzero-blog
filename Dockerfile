@@ -37,7 +37,7 @@ RUN npm install -g pnpm
 WORKDIR /blog/frontend
 
 # 复制前端项目代码到/frontend目录
-COPY . /blog/frontend
+COPY ./frontend/ /blog/frontend
 
 # 安装前端项目依赖
 RUN npm install
@@ -46,10 +46,10 @@ RUN npm install
 RUN pnpm build
 
 # 暴露端口
-EXPOSE 9999
+EXPOSE 3000
 
 WORKDIR /blog
-COPY ./docker/entrypoint.sh /blog/entrypoint.sh
+COPY ./frontend/docker/entrypoint.sh /blog/entrypoint.sh
 RUN chmod +x /blog/entrypoint.sh
 
 # CMD [ "node", "app.js" ]
