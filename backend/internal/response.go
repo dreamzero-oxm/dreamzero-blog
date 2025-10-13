@@ -1,0 +1,26 @@
+package internal
+
+import (
+	"net/http"
+
+	"blog-server/internal/code"
+
+	"github.com/gin-gonic/gin"
+)
+
+// Response ...
+type Response struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+
+// APIResponse ....
+func APIResponse(ctx *gin.Context, err error, data interface{}) {
+	code, message := code.DecodeErr(err)
+	ctx.JSON(http.StatusOK, Response{
+		Code: code,
+		Msg:  message,
+		Data: data,
+	})
+}

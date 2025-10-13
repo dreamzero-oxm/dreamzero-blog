@@ -1,0 +1,68 @@
+app:
+  name: "MOITY Blog Backend"
+  run_mode: "local"
+  addr: "0.0.0.0"
+  port: "9997"
+  jwt_expiration_time: 1  # 1 hour
+  rsa_private_key_path: "/etc/moity-blog/rsa_private_key.pem"
+  rsa_public_key_path: "/etc/moity-blog/rsa_public_key.pem"
+  log_output_dir: "/var/log/moity_blog_backend"
+minio:
+  endpoint: "10.21.23.14:10004"
+  access_key_id: "***REMOVED***"
+  secret_access_key: "***REMOVED***"
+  use_ssl: false
+  bucket_names:
+    - "moity-blog"
+  locaiton: "cn-east-1"
+database: 
+  postgres:
+    host: "10.21.23.14"
+    port: "5432"
+    username: "postgres"
+    password: "***REMOVED***"
+    db_name: "moity_blog"
+    sslmode: "disable"
+  gorm:
+    log_level: "ERROR"
+    log_output_dir: "/var/log/moity_blog_backend"
+kafka:
+  brokers:
+    - "10.21.23.14:9092"
+  version: "4.0.0"
+  client_id: "blog-server"
+  producer:
+    retry_max: 3
+    retry_backoff: 100
+    required_acks: "all"
+    timeout: 10s
+    compression: "snappy"
+  consumer:
+    group_id: "blog-server-group"
+    auto_offset_reset: "latest"
+    session_timeout: 30s
+    heartbeat_interval: 3s
+    rebalance_timeout: 60s
+  tls:
+    enable: false
+    ca_file: "/path/to/ca.pem"
+    cert_file: "/path/to/client-cert.pem"
+    key_file: "/path/to/client-key.pem"
+    skip_verify: false
+redis:
+  addr: "10.21.23.14:6379"
+  password: "moity***REMOVED***"
+  db: 0
+  dial_timeout: 10s
+  read_timeout: 10s
+  write_timeout: 10s
+  pool_size: 10
+  key_prefix: "moity_blog:"
+email:
+  smtp_host: "smtp.qq.com"
+  smtp_port: 465
+  smtp_username: "1322832250@qq.com"
+  smtp_password: "pseukvusbbrubadf"
+  sender_name: "MOITY"
+  sender_email: "ouxiangming_moi@foxmail.com"
+  email_template: "/etc/moity-blog/public/email_template.html"

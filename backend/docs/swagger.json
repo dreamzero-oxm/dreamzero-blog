@@ -1,0 +1,775 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample blog server.",
+        "title": "Blog-server",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "MOITY",
+            "url": "http://www.moity-soeoe.com",
+            "email": "ouxiangming_moi@foxmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "127.0.0.1:9997",
+    "basePath": "/api/v1",
+    "paths": {
+        "/artical_comment/add": {
+            "post": {
+                "description": "添加评论",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artical_comment"
+                ],
+                "summary": "添加评论",
+                "parameters": [
+                    {
+                        "description": "评论内容",
+                        "name": "comment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.AddCommentService"
+                        }
+                    },
+                    {
+                        "description": "文章标题列表",
+                        "name": "artical_title",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.AddCommentService"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20301": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/artical_comment/list": {
+            "get": {
+                "description": "获取评论列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "artical_comment"
+                ],
+                "summary": "获取评论列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "文章标题列表",
+                        "name": "artical_title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否通知",
+                        "name": "is_notify",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否已读",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "是否通过审核",
+                        "name": "is_pass",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "通知排序",
+                        "name": "notify_desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "已读排序",
+                        "name": "read_desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "通过审核排序",
+                        "name": "pass_desc",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.ArticleComment"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20302": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/photo/list": {
+            "get": {
+                "description": "获取图片列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "photo"
+                ],
+                "summary": "获取图片列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.DailyPhotograph"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20203": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/photo/test": {
+            "get": {
+                "description": "测试",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "photo"
+                ],
+                "summary": "测试",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/photo/upload": {
+            "post": {
+                "description": "上传图片",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "photo"
+                ],
+                "summary": "上传图片",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "图片",
+                        "name": "photos",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20201": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/checkUserEmail": {
+            "get": {
+                "description": "验证邮箱是否存在",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "验证邮箱是否存在",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/checkUserName": {
+            "get": {
+                "description": "验证用户名是否存在",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "验证用户名是否存在",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/emailVerificationCode": {
+            "post": {
+                "description": "获取邮箱验证码",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "获取邮箱验证码",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "description": "用户登录",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "用户登录",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20002": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20104": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20114": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20115": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20116": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/register": {
+            "post": {
+                "description": "用户注册",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "用户注册",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20002": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20105": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "20106": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/user/verifyEmailVerificationCode": {
+            "post": {
+                "description": "验证邮箱验证码",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "验证邮箱验证码",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "internal.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ArticleComment": {
+            "type": "object",
+            "properties": {
+                "article_title": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "is_notify": {
+                    "type": "boolean"
+                },
+                "is_pass": {
+                    "type": "boolean"
+                },
+                "is_read": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.DailyPhotograph": {
+            "description": "日常照片",
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.AddCommentService": {
+            "type": "object",
+            "required": [
+                "artical_title",
+                "comment"
+            ],
+            "properties": {
+                "artical_title": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "comment": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
