@@ -9,7 +9,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    image: my-blog:v1.1
+    image: main-dreamzero-blog:v1.0
     container_name: www-dreamzero-web-frontend
     ports:
       - ${front_end_port}:3000
