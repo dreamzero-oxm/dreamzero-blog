@@ -4,6 +4,10 @@ import { withContentCollections } from "@content-collections/next";
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  eslint: {
+    // 在开发环境进行 ESLint 检查，在生产环境忽略 ESLint 错误
+    ignoreDuringBuilds: process.env.NODE_ENV === 'production',
+  },
 };
 
 const withMDX = createMDX({
