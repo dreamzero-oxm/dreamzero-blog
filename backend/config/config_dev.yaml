@@ -8,19 +8,19 @@ app:
   rsa_public_key_path: "/etc/moity-blog/rsa_public_key.pem"
   log_output_dir: "/var/log/moity_blog_backend"
 minio:
-  endpoint: "dreamzero-minio:9100"
+  endpoint: "127.0.0.1:10004"
   access_key_id: "***REMOVED***"
   secret_access_key: "***REMOVED***"
   use_ssl: false
   bucket_names:
     - "moity-blog"
-  location: "cn-east-1"
+  locaiton: "cn-east-1"
 database: 
   postgres:
-    host: "dreamzero-postgres"
-    port: "15432"
-    username: "root"
-    password: "dreamzero_postgres_123"
+    host: "127.0.0.1"
+    port: "5432"
+    username: "postgres"
+    password: "***REMOVED***"
     db_name: "moity_blog"
     sslmode: "disable"
   gorm:
@@ -28,7 +28,7 @@ database:
     log_output_dir: "/var/log/moity_blog_backend"
 kafka:
   brokers:
-    - "dreamzero-kafka:19092"
+    - "127.0.0.1:9092"
   version: "4.0.0"
   client_id: "blog-server"
   producer:
@@ -50,8 +50,8 @@ kafka:
     key_file: "/path/to/client-key.pem"
     skip_verify: false
 redis:
-  addr: "dreamzero-redis:16379"
-  password: "dreamzero***REMOVED***"
+  addr: "127.0.0.1:6379"
+  password: "moity***REMOVED***"
   db: 0
   dial_timeout: 10s
   read_timeout: 10s
@@ -63,6 +63,6 @@ email:
   smtp_port: 465
   smtp_username: "1322832250@qq.com"
   smtp_password: "pseukvusbbrubadf"
-  sender_name: "DreamZero"
-  sender_email: "ouxiangming@dreamzero.cn"
+  sender_name: "MOITY"
+  sender_email: "ouxiangming_moi@foxmail.com"
   email_template: "/etc/moity-blog/public/email_template.html"
