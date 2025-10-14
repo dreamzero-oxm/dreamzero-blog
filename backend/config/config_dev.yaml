@@ -8,7 +8,7 @@ app:
   rsa_public_key_path: "/etc/moity-blog/rsa_public_key.pem"
   log_output_dir: "/var/log/moity_blog_backend"
 minio:
-  endpoint: "127.0.0.1:10004"
+  endpoint: "172.22.0.1:10004"
   access_key_id: "***REMOVED***"
   secret_access_key: "***REMOVED***"
   use_ssl: false
@@ -17,7 +17,7 @@ minio:
   locaiton: "cn-east-1"
 database: 
   postgres:
-    host: "127.0.0.1"
+    host: "172.22.0.1"
     port: "5432"
     username: "postgres"
     password: "***REMOVED***"
@@ -28,7 +28,7 @@ database:
     log_output_dir: "/var/log/moity_blog_backend"
 kafka:
   brokers:
-    - "127.0.0.1:9092"
+    - "172.22.0.1:9092"
   version: "4.0.0"
   client_id: "blog-server"
   producer:
@@ -50,7 +50,7 @@ kafka:
     key_file: "/path/to/client-key.pem"
     skip_verify: false
 redis:
-  addr: "127.0.0.1:6379"
+  addr: "172.22.0.1:6379"
   password: "moity***REMOVED***"
   db: 0
   dial_timeout: 10s
