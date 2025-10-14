@@ -57,11 +57,11 @@ RUN if [ "$NEED_MIRROR" == "1" ]; then \
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
+# 复制前端项目代码到/frontend目录
+COPY . /blog/
+
 # 切换到/frontend目录
 WORKDIR /blog/frontend
-
-# 复制前端项目代码到/frontend目录
-COPY ./frontend/ /blog/frontend
 
 # 安装前端项目依赖
 RUN npm install
@@ -73,7 +73,6 @@ RUN pnpm build
 EXPOSE 3000
 
 WORKDIR /blog/backend
-COPY ./backend/ /blog/backend
 
 # 安装后端项目依赖
 RUN go mod tidy
