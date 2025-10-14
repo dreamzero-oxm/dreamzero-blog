@@ -12,7 +12,7 @@ services:
     image: main-dreamzero-blog:v1.0
     container_name: www-dreamzero-web
     ports:
-      - ${front_end_port}:3000
+      - ${front_end_port}:9999
       - ${back_end_port}:9997
     volumes:
       - ./frontend/src/content/blog:/blog/frontend/src/content/blog

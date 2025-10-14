@@ -70,7 +70,7 @@ RUN npm install
 RUN pnpm build
 
 # 暴露端口
-EXPOSE 3000
+EXPOSE 9999
 
 WORKDIR /blog/backend
 
