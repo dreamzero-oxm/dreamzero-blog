@@ -1,18 +1,19 @@
 services:
   blog-web-frontend:
-    depends_on:
-      postgres:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+    #   minio:
+    #     condition: service_healthy
+    #   kafka:
+    #     condition: service_healthy
+    #   redis:
+    #     condition: service_healthy
     image: main-dreamzero-blog:v1.0
     container_name: www-dreamzero-web-frontend
     ports:
       - ${front_end_port}:3000
+      - ${back_end_port}:9997
     volumes:
       - ./frontend/src/content/blog:/blog/frontend/src/content/blog
     env_file: .env
@@ -23,46 +24,46 @@ services:
     restart: always
     extra_hosts:
       - "myhost:host-gateway"
-  minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z # 全功能版本
-    container_name: minio
-    restart: unless-stopped
-    ports:
-      - 19100:9100
-      - 19001:9001
-    environment:
-      MINIO_ROOT_USER: "admin"
-      MINIO_ROOT_PASSWORD: "dreamzero.admin.123"
-    # 指定端口、控制台端口、文件存放目录
-    command: server --address ":9100" --console-address ":9001" /cdata
-    volumes:
-      - ./minio/data:/cdata
-    networks:
-      - blog
-  redis:
-    image: redis:latest
-    container_name: redis
-    restart: always
-    ports:
-      - '16379:6379'
-    volumes:
-      - ./redis/data:/data
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-      - ./redis/logs:/logs
-    #配置文件启动
-    command: redis-server /usr/local/etc/redis/redis.conf
-  postgres:
-    image: postgres:latest                            # 使用 PostgreSQL 镜像
-    container_name: dreamzero-postgres                # 容器名称
-    environment:
-      POSTGRES_USER: root                             # 设置用户名为 'root'
-      POSTGRES_PASSWORD: dreamzero_postgres_123       # 设置密码为 'dreamzero_postgres_123'
-      POSTGRES_DB: moity_blog                         # 设置数据库名为 'moity_blog'
-    ports:
-      - "15432:5432"                   # 将容器的 5432 端口映射到主机的 15432 端口
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data  # 数据映射到主机指定路径
-  kafka:
+  # minio:
+  #   image: minio/minio:RELEASE.2025-04-22T22-12-26Z # 全功能版本
+  #   container_name: minio
+  #   restart: unless-stopped
+  #   ports:
+  #     - 19100:9100
+  #     - 19001:9001
+  #   environment:
+  #     MINIO_ROOT_USER: "admin"
+  #     MINIO_ROOT_PASSWORD: "dreamzero.admin.123"
+  #   # 指定端口、控制台端口、文件存放目录
+  #   command: server --address ":9100" --console-address ":9001" /cdata
+  #   volumes:
+  #     - ./minio/data:/cdata
+  #   networks:
+  #     - blog
+  # redis:
+  #   image: redis:latest
+  #   container_name: redis
+  #   restart: always
+  #   ports:
+  #     - '16379:6379'
+  #   volumes:
+  #     - ./redis/data:/data
+  #     - ./redis.conf:/usr/local/etc/redis/redis.conf
+  #     - ./redis/logs:/logs
+  #   #配置文件启动
+  #   command: redis-server /usr/local/etc/redis/redis.conf
+  # postgres:
+  #   image: postgres:latest                            # 使用 PostgreSQL 镜像
+  #   container_name: dreamzero-postgres                # 容器名称
+  #   environment:
+  #     POSTGRES_USER: root                             # 设置用户名为 'root'
+  #     POSTGRES_PASSWORD: dreamzero_postgres_123       # 设置密码为 'dreamzero_postgres_123'
+  #     POSTGRES_DB: moity_blog                         # 设置数据库名为 'moity_blog'
+  #   ports:
+  #     - "15432:5432"                   # 将容器的 5432 端口映射到主机的 15432 端口
+  #   volumes:
+  #     - ./postgres/data:/var/lib/postgresql/data  # 数据映射到主机指定路径
+  # kafka:
     image: 'bitnami/kafka:3.6.2'
     container_name: kafka
     restart: always
