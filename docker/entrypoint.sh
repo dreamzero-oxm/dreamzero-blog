@@ -7,7 +7,7 @@ cd /blog/frontend && pnpm start &
 echo "前端项目启动中..."
 
 echo "开始启动后端项目"
-cd /blog/backend/build && ./blog-server &
+cd /blog/backend/build && ./blog-server -c /blog/backend/config/config_dev.yaml &
 echo "后端项目启动中..."
 
 # 等待所有后台进程完成
