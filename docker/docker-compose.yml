@@ -10,7 +10,7 @@ services:
     #   redis:
     #     condition: service_healthy
     image: main-dreamzero-blog:v1.0
-    container_name: www-dreamzero-web-frontend
+    container_name: www-dreamzero-web
     ports:
       - ${front_end_port}:3000
       - ${back_end_port}:9997
@@ -66,30 +66,30 @@ services:
   #   volumes:
   #     - ./postgres/data:/var/lib/postgresql/data  # 数据映射到主机指定路径
   # kafka:
-    image: 'bitnami/kafka:3.6.2'
-    container_name: kafka
-    restart: always
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
-    environment:
-      - TZ=Asia/Shanghai
-      - KAFKA_CFG_NODE_ID=0
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://192.168.9.81:9094
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-    networks:
-      - blog
-    ports:
-      - '19092:9092'
-      - '19094:9094'
-    volumes:
-      - ./kafka/data:/bitnami/kafka
-      - ./kafka/logs:/bitnami/kafka/logs
+  #  image: 'bitnami/kafka:3.6.2'
+  #  container_name: kafka
+  #  restart: always
+  #  ulimits:
+  #    nofile:
+  #      soft: 65536
+  #      hard: 65536
+  #  environment:
+  #    - TZ=Asia/Shanghai
+  #    - KAFKA_CFG_NODE_ID=0
+  #    - KAFKA_CFG_PROCESS_ROLES=controller,broker
+  #    - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+  #    - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+  #    - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://192.168.9.81:9094
+  #    - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+  #    - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+  #  networks:
+  #    - blog
+  #  ports:
+  #    - '19092:9092'
+  #    - '19094:9094'
+  #  volumes:
+  #    - ./kafka/data:/bitnami/kafka
+  #    - ./kafka/logs:/bitnami/kafka/logs
 networks:
   blog:
     driver: bridge

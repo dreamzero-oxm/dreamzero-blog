@@ -17,7 +17,12 @@ RUN if [ "$NEED_MIRROR" == "1" ]; then \
 
 RUN --mount=type=cache,id=blog,target=/var/cache/apt,sharing=locked \
         apt-get update && \
-        apt-get install -y curl ca-certificates git 
+        apt-get install -y --no-install-recommends curl \
+	ca-certificates \
+	git \
+	make \
+	gcc \
+	build-essential  
 
 # 安装npm
 RUN --mount=type=cache,id=blog,target=/var/cache/apt,sharing=locked \
@@ -49,6 +54,8 @@ ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 RUN if [ "$NEED_MIRROR" == "1" ]; then \
         export GOPROXY=https://goproxy.cn,direct; \
     fi;
+
+RUN go install github.com/swaggo/swag/cmd/swag@latest
 
 # 切换到/frontend目录
 WORKDIR /blog/frontend
