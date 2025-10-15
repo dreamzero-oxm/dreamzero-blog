@@ -67,7 +67,7 @@ export default function InformalPhotographs() {
           {list.map((item) => (
             <ImageListItem key={item.ID} className='rounded-lg overflow-hidden'>
               <Image
-                src={item.image_url}
+                src={item.image_url.replace('http://10.21.23.14:10004', '')}
                 width={248}
                 className='object-cover w-[248px] aspect-auto'
                 alt={item.title}
