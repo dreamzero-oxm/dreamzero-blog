@@ -59,10 +59,10 @@ redis:
   pool_size: 10
   key_prefix: "moity_blog:"
 email:
-  smtp_host: "smtp.qq.com"
+  smtp_host: "smtp.exmail.qq.com"
   smtp_port: 465
-  smtp_username: "1322832250@qq.com"
-  smtp_password: "pseukvusbbrubadf"
-  sender_name: "MOITY"
-  sender_email: "ouxiangming_moi@foxmail.com"
+  smtp_username: "ouxiangming@dreamzero.cn"
+  smtp_password: "***REMOVED***"
+  sender_name: "DreamZero"
+  sender_email: "ouxiangming@dreamzero.cn"
   email_template: "/etc/dreamzero/public/email_template.html"
