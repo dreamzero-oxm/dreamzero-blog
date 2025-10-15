@@ -15,9 +15,10 @@ services:
       - ${front_end_port}:9999
       - ${back_end_port}:9997
     volumes:
-      - ./frontend/src/content/blog:/blog/frontend/src/content/blog
-      - ./backend/config:/blog/backend/config
+      - ../frontend/src/content/blog:/blog/frontend/src/content/blog
+      - ../backend/config:/blog/backend/config
       - ./backend/runtime_logs:/var/log/moity_blog_backend
+      - ../backend/public:/etc/dreamzero/public
     env_file: .env
     environment:
       - TZ=${TIMEZONE}
