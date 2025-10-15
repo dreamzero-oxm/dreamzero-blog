@@ -91,3 +91,4 @@ test_files/
 /docker/redis
 /docker/minio
 /docker/postgres
+/docker/backend
