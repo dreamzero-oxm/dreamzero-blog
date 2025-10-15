@@ -1,12 +1,12 @@
 export const config = {
   site: {
-    title: "Moity Soeoe",
-    name: "Moity Soeoe的博客",
-    description: "Moity Soeoe的博客",
-    keywords: ["Moity Soeoe", "AI", "Full Stack Developer"],
-    url: "https://moity-soeoe.com",
-    baseUrl: "https://moity-soeoe.com",
-    image: "https://moity-soeoe.com/og-image.png",
+    title: "归零重启(DreamZero)",
+    name: "DreamZero的博客",
+    description: "DreamZero的博客",
+    keywords: ["DreamZero", "AI", "Full Stack Developer"],
+    url: "https://dreamzero.cn",
+    baseUrl: "https://dreamzero.cn",
+    image: "https://dreamzero.cn/og-image.png",
     favicon: {
       ico: "/favicon.ico",
       png: "/favicon.png",
@@ -15,7 +15,7 @@ export const config = {
     },
     manifest: "/site.webmanifest",
     rss: {
-      title: "Moity Soeoe的博客",
+      title: "DreamZero的博客",
       description: "Practice of Full Stack Engineer",
       feedLinks: {
         rss2: "/rss.xml",
@@ -25,9 +25,9 @@ export const config = {
     },
   },
   author: {
-    name: "Moity Soeoe",
-    email: "ouxiangming_moi@foxmail.com",
-    bio: "Moity Soeoe(XiangMing Ou)",
+    name: "DreamZero",
+    email: "ouxiangming@dreamzero.cn",
+    bio: "XiangMing Ou(DreamZero)",
   },
   social: {
     github: "https://github.com/This-MOI",
@@ -57,15 +57,7 @@ export const config = {
             title: "Aimerick",
             href: "https://www.aimerick.cc/",
           },
-          {
-            title: "LLH",
-            href: "http://mydream.aimerick.cc:8080/"
-          },
         ]
-      },
-      { 
-        title: "TV", 
-        href: "http://10.21.23.14:8096/",
       },
       {
         title: "日常",
@@ -76,7 +68,7 @@ export const config = {
   // 配置 SEO 相关的配置
   // 搜索引擎优化
   seo: {
-    metadataBase: new URL("https://moity-soeoe.com"),
+    metadataBase: new URL("https://dreamzero.cn"),
     alternates: {
       canonical: './',
     },
@@ -86,7 +78,7 @@ export const config = {
     },
     twitter: {
       card: "summary_large_image" as const,
-      creator: "@moity",
+      creator: "@dreamzero",
     },
   },
 };
