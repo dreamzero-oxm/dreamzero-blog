@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner"
 import React from 'react';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   // 标题
@@ -86,13 +87,20 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <script defer src="http://10.21.23.14:10000/script.js" data-website-id="f04cae10-5687-49b1-8299-7971ccf122cd"></script>
       </head>
-      <body className="min-w-md overflow-x-hidden">
+      <body>
         <ReactQueryProvider>
           <AntdRegistry>
-            <main>
-              {children}
-              <Toaster expand={true} position="bottom-right" richColors/>
-            </main>
+            <div className="min-w-screen min-h-screen overflow-x-hidden flex flex-col">
+              <main className="flex-1">
+                {children}
+                <Toaster expand={true} position="bottom-right" richColors/>
+              </main>
+              <footer className="w-full flex justify-center items-center p-4 mt-auto">
+                <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4">
+                  粤ICP备2025480966号-1
+                </Link>
+              </footer>
+            </div>
           </AntdRegistry>
         </ReactQueryProvider>
       </body>
