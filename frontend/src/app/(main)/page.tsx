@@ -10,7 +10,7 @@ export default function Home() {
     .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col min-h-screen">
+    <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col min-h-full">
       {/* 个人介绍部分 */}
       <div className="mb-16 space-y-4">
         <h1 className="text-4xl font-bold">{config.site.title}</h1>
@@ -78,11 +78,6 @@ export default function Home() {
             </article>
           ))}
         </div>
-      </div>
-      <div className="w-full flex justify-center items-center">
-        <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4">
-          粤ICP备2025480966号-1
-        </Link>
       </div>
     </div>
   );
