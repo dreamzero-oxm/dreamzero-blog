@@ -1,3 +1,4 @@
+// 首先删除Next.js Image组件的导入
 "use client"
 
 import ImageList from '@mui/material/ImageList';
@@ -8,7 +9,6 @@ import { PhotoListItem } from '@/interface/photo';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import DecryptedText from '@/components/decrypted-text';
-import Image from 'next/image'
 
 export default function InformalPhotographs() {
   const [list, setList] = useState<PhotoListItem[]>([])
@@ -66,9 +66,8 @@ export default function InformalPhotographs() {
           <ImageList variant='masonry' cols={3} gap={8}>
           {list.map((item) => (
             <ImageListItem key={item.ID} className='rounded-lg overflow-hidden'>
-              <Image
+              <img
                 src={item.image_url.replace('http://10.21.23.14:10004', '')}
-                width={248}
                 className='object-cover w-[248px] aspect-auto'
                 alt={item.title}
                 loading="lazy"
