@@ -88,7 +88,7 @@ export default function CommentBox({title}: CommentProps) {
                     </div>
                     <DrawerClose id="drawer-close-button">
                         <div className="w-full h-auto py-1 rounded-xl border-2">
-                            123
+                            退出评论
                         </div>
                     </DrawerClose>
                 </DrawerFooter>
