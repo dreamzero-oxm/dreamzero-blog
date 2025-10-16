@@ -1,6 +1,6 @@
 import * as React from "react"
-import Image from "next/image"
 import Link from "next/link"
+import Mermaid from "@/components/Mermaid"
 
 import { cn } from "@/lib/utils"
 
@@ -154,23 +154,54 @@ const components = {
       {...props}
     />
   ),
-  code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-    <code
-      className={cn(
-        "w-max-2xl rounded-[0.6rem] bg-[#ededeb] px-[0.3rem] py-[0.2rem]",
-        "font-mono text-[1.0rem] font-normal text-[#ed4759]",
-        className
-      )}
-      {...props}
-    />
-  ),
+  code: ({
+    className,
+    children,
+    ...props
+  }: React.HTMLAttributes<HTMLElement>) => {
+    // 支持三种识别方式：
+    // 1) ```mermaid 围栏会带上 className 包含 "language-mermaid"
+    // 2) rehype/remark 可能把语言放在 data-language 属性
+    // 3) 也兼容用户手动写 <code class="mermaid"> 的情况
+    const lang =
+      (className ?? "")
+        .split(/\s+/)
+        .find(s => s.startsWith("language-"))
+        ?.replace("language-", "") ||
+      (props as any)["data-language"] ||
+      ((className ?? "").includes("mermaid") ? "mermaid" : "")
+
+    // children 可能是数组/ReactNode，这里尽量拿到纯文本
+    const text =
+      typeof children === "string"
+        ? children
+        : Array.isArray(children)
+          ? children.join("")
+          : ""
+
+    if (lang === "mermaid" && typeof text === "string" && text.trim()) {
+      return <Mermaid chart={text} className={cn("my-6")} />
+    }
+
+    return (
+      <code
+        className={cn(
+          "w-max-2xl rounded-[0.6rem] bg-[#ededeb] px-[0.3rem] py-[0.2rem]",
+          "font-mono text-[1.0rem] font-normal text-[#ed4759]",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </code>
+    )
+  },
   small: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <small
       className={cn("text-[70%]", className)}
       {...props}
     />
   ),
-  Image,
   Link: ({ className, ...props }: React.ComponentProps<typeof Link>) => (
     <Link
       className={cn(
@@ -189,6 +220,7 @@ const components = {
       {...props}
     />
   ),
+  
 }
 
 export { components }

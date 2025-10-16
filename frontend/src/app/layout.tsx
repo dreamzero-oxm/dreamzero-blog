@@ -85,7 +85,6 @@ export default function RootLayout({
         <link rel="alternate" type="application/atom+xml" title="Atom" href="/atom.xml" />
         <link rel="alternate" type="application/json" title="JSON" href="/feed.json" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <script defer src="http://10.21.23.14:10000/script.js" data-website-id="f04cae10-5687-49b1-8299-7971ccf122cd"></script>
       </head>
       <body>
         <ReactQueryProvider>
