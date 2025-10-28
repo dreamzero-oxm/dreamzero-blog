@@ -26,6 +26,8 @@ var (
 	ErrTokenExpired          = &Errno{Code: 20104, Message: "Token已过期"}
 	ErrTokenIssError         = &Errno{Code: 20105, Message: "Token签发错误"}
 	ErrTokenNbfError         = &Errno{Code: 20106, Message: "Token生效时间错误"}
+	ErrRefreshTokenInvalid   = &Errno{Code: 20107, Message: "Refresh token无效"}
+	ErrRefreshTokenExpired   = &Errno{Code: 20108, Message: "Refresh token已过期"}
 
 	// user errors
 	ErrEncrypt                   = &Errno{Code: 20201, Message: "密码加密错误"}

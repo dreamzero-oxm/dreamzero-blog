@@ -3,10 +3,11 @@ app:
   run_mode: "local"
   addr: "0.0.0.0"
   port: "9997"
-  jwt_expiration_time: 1  # 1 hour
-  rsa_private_key_path: "/etc/moity-blog/rsa_private_key.pem"
-  rsa_public_key_path: "/etc/moity-blog/rsa_public_key.pem"
-  log_output_dir: "/var/log/moity_blog_backend"
+  jwt_expiration_time: 5  # 5 minutes
+  refresh_token_expiration: 1440  # 1 day
+  rsa_private_key_path: "temp/rsa_private_key.pem"
+  rsa_public_key_path: "temp/rsa_public_key.pem"
+  log_output_dir: "temp/logs"
 minio:
   endpoint: "10.21.23.14:10004"
   access_key_id: "cxb944fJZaWvdZrnhB3V"
@@ -14,7 +15,7 @@ minio:
   use_ssl: false
   bucket_names:
     - "moity-blog"
-  locaiton: "cn-east-1"
+  location: "cn-east-1"
 database: 
   postgres:
     host: "10.21.23.14"
@@ -25,7 +26,7 @@ database:
     sslmode: "disable"
   gorm:
     log_level: "ERROR"
-    log_output_dir: "/var/log/moity_blog_backend"
+    log_output_dir: "temp/logs"
 kafka:
   brokers:
     - "10.21.23.14:9092"
@@ -45,9 +46,9 @@ kafka:
     rebalance_timeout: 60s
   tls:
     enable: false
-    ca_file: "/path/to/ca.pem"
-    cert_file: "/path/to/client-cert.pem"
-    key_file: "/path/to/client-key.pem"
+    ca_file: "temp/ca.pem"
+    cert_file: "temp/client-cert.pem"
+    key_file: "temp/client-key.pem"
     skip_verify: false
 redis:
   addr: "10.21.23.14:6379"
@@ -65,4 +66,4 @@ email:
   smtp_password: "zVFHAmzHPitXuSsu"
   sender_name: "DreamZero"
   sender_email: "ouxiangming@dreamzero.cn"
-  email_template: "/etc/dreamzero/public/email_template.html"
+  email_template: "public/email_template.html"

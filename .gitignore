@@ -85,6 +85,7 @@ build/
 logs/*
 test_files/
 **/logs/*
+temp/
 
 # ------docker------
 /docker/kafka

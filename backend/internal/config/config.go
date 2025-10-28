@@ -61,14 +61,15 @@ func watchConfig() {
 
 // AppConfig ...
 type AppConfig struct {
-	Name              string `json:"name" yaml:"name" mapstructure:"name"`
-	RunMode           string `json:"run_mode" yaml:"run_mode" mapstructure:"run_mode"`
-	Addr              string `json:"addr" yaml:"addr" mapstructure:"addr"`
-	Port              string `json:"port" yaml:"port" mapstructure:"port"`
-	JwtExpirationTime int    `json:"jwt_expiration_time" yaml:"jwt_expiration_time" mapstructure:"jwt_expiration_time"`
-	RsaPrivateKeyPath string `json:"rsa_private_key_path" yaml:"rsa_private_key_path" mapstructure:"rsa_private_key_path"`
-	RsaPublicKeyPath  string `json:"rsa_public_key_path" yaml:"rsa_public_key_path" mapstructure:"rsa_public_key_path"`
-	LogOutputDir      string `json:"log_output_dir" yaml:"log_output_dir" mapstructure:"log_output_dir"`
+	Name                   string `json:"name" yaml:"name" mapstructure:"name"`
+	RunMode                string `json:"run_mode" yaml:"run_mode" mapstructure:"run_mode"`
+	Addr                   string `json:"addr" yaml:"addr" mapstructure:"addr"`
+	Port                   string `json:"port" yaml:"port" mapstructure:"port"`
+	JwtExpirationTime      int    `json:"jwt_expiration_time" yaml:"jwt_expiration_time" mapstructure:"jwt_expiration_time"`           // JWT过期时间（小时）- 用于access token
+	RefreshTokenExpiration int    `json:"refresh_token_expiration" yaml:"refresh_token_expiration" mapstructure:"refresh_token_expiration"` // Refresh token过期时间（天）
+	RsaPrivateKeyPath      string `json:"rsa_private_key_path" yaml:"rsa_private_key_path" mapstructure:"rsa_private_key_path"`
+	RsaPublicKeyPath       string `json:"rsa_public_key_path" yaml:"rsa_public_key_path" mapstructure:"rsa_public_key_path"`
+	LogOutputDir           string `json:"log_output_dir" yaml:"log_output_dir" mapstructure:"log_output_dir"`
 }
 
 type MinioConfig struct {

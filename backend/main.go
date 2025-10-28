@@ -44,7 +44,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "conf, c",
-			Value: "config/config_original.yaml",
+			Value: "config/config_dev.yaml",
 			Usage: "config/config_{original|local|dev|test|pre|prod}.yaml",
 		},
 		cli.BoolFlag{

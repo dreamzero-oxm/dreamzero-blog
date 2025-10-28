@@ -13,17 +13,6 @@ import (
 type PhotoController struct {
 }
 
-// @Summary 测试
-// @Description 测试
-// @Tags photo
-// @Accept json
-// @Produce json
-// @Success 200 {object} internal.Response{data=string}
-// @Router /photo/test [get]
-func PhotoTestApi(c *gin.Context) {
-	internal.APIResponse(c, IError.OK, "hello photo")
-}
-
 // @Summary 上传图片
 // @Description 上传图片
 // @Tags photo
@@ -84,7 +73,6 @@ func (controller *PhotoController) InitRouter(engine *gin.RouterGroup) error {
 
 	photoGroup := engine.Group("/photo")
 	// --------------------无需认证-------------------------
-	photoGroup.GET("/test", PhotoTestApi)
 	photoGroup.GET("/list", ListPhoto)
 	// --------------------需要认证-------------------------
 	authPhotoGroup := photoGroup.Group("")

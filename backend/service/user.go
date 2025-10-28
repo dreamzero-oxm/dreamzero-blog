@@ -85,20 +85,20 @@ type LoginUserService struct {
 	Password string `json:"password" form:"password" binding:"required"`
 }
 
-func (service *LoginUserService) Login() (*models.User, string, error) {
+func (service *LoginUserService) Login() (*models.User, string, string, error) {
 	postgreDB := models.DB
 	var user models.User
 	if postgreDB.Where("user_name = ? OR email = ? OR phone = ?", service.Account, service.Account, service.Account).First(&user).Error != nil {
-		return nil, "", code.ErrUserNotFound
+		return nil, "", "", code.ErrUserNotFound
 	}
 	// TODO: 可以用Redis存储Lock信息，防止用户频繁登录
 	if user.IsLocked && user.LockUntil.After(time.Now()) {
 		user.LastFailedLogin = time.Now()
 		user.LastFailedReason = "user locked"
 		if postgreDB.Save(&user).Error != nil {
-			return nil, "", code.ErrDatabase
+			return nil, "", "", code.ErrDatabase
 		}
-		return nil, "", code.ErrUserLocked
+		return nil, "", "", code.ErrUserLocked
 	} else if user.IsLocked && user.LockUntil.Before(time.Now()) {
 		user.IsLocked = false
 		user.LockUntil = time.Now()
@@ -114,20 +114,20 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 			user.LockUntil = time.Now().Add((time.Duration(user.FailedLoginCount - 5)) * time.Minute)
 		}
 		if postgreDB.Save(&user).Error != nil {
-			return nil, "", code.ErrDatabase
+			return nil, "", "", code.ErrDatabase
 		}
-		return nil, "", code.ErrPasswordIncorrect
+		return nil, "", "", code.ErrPasswordIncorrect
 	}
 	// 验证用户是否被封号
 	switch user.Status {
 	case "suspended":
-		return nil, "", code.ErrUserSuspended
+		return nil, "", "", code.ErrUserSuspended
 	case "inactive":
 		user.Status = "active"
 	}
 	// 验证用户是否激活
 	if !user.IsActive {
-		return nil, "", code.ErrUserInactive
+		return nil, "", "", code.ErrUserInactive
 	}
 	// 处理用户的失败登录记录
 	if user.FailedLoginCount > 0 {
@@ -135,36 +135,63 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 		user.LastFailedLogin = time.Now()
 	}
 
-	var token string
+	var accessToken, refreshToken string
 	redisClient := redis.GetRedisClient()
-	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrifex+":user_token:"+user.Email).Result(); err == nil {
-		token = v
-	} else {
-		// TODO:生成JWT
-		// 生成JWT
-		claims := jwt.MapClaims{
-			// 发行者
-			"iss": "moity",
-			// 用户ID
-			"sub": user.ID,
-			// 过期时间
-			"exp": time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Hour).Unix(),
-			// 生效时间
-			"nbf": time.Now().Unix(),
-			// 签发时间
-			"iat": time.Now().Unix(),
-		}
-		jwtToken, err := utils.GenerateJWT(claims, rsa.PrivateKey)
-		if err != nil {
-			return nil, "jwt", code.ErrGenerateJWT
-		}
-		token = jwtToken
-		// 将JWT存入Redis
-		if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex+":user_token:"+user.Email, jwtToken, time.Duration(config.Conf.App.JwtExpirationTime)*time.Hour).Err(); err != nil {
-			logger.Logger.Errorf("redis set user token failed: %v", err)
-			return nil, "", err
-		}
+	
+	// 生成Access Token
+	accessClaims := jwt.MapClaims{
+		// 发行者
+		"iss": "moity",
+		// 用户ID
+		"sub": user.ID,
+		// Token类型
+		"type": "access",
+		// 过期时间
+		"exp": time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Minute).Unix(),
+		// 生效时间
+		"nbf": time.Now().Unix(),
+		// 签发时间
+		"iat": time.Now().Unix(),
 	}
+	accessJwtToken, err := utils.GenerateJWT(accessClaims, rsa.PrivateKey)
+	if err != nil {
+		return nil, "", "", code.ErrGenerateJWT
+	}
+	accessToken = accessJwtToken
+	
+	// 生成Refresh Token
+	refreshClaims := jwt.MapClaims{
+		// 发行者
+		"iss": "moity",
+		// 用户ID
+		"sub": user.ID,
+		// Token类型
+		"type": "refresh",
+		// 过期时间 (天)
+		"exp": time.Now().Add(time.Duration(config.Conf.App.RefreshTokenExpiration) * time.Minute).Unix(),
+		// 生效时间
+		"nbf": time.Now().Unix(),
+		// 签发时间
+		"iat": time.Now().Unix(),
+	}
+	refreshJwtToken, err := utils.GenerateJWT(refreshClaims, rsa.PrivateKey)
+	if err != nil {
+		return nil, "", "", code.ErrGenerateJWT
+	}
+	refreshToken = refreshJwtToken
+	
+	// 将Access Token存入Redis
+	if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex+":access_token:"+user.Email, accessToken, time.Duration(config.Conf.App.JwtExpirationTime)*time.Minute).Err(); err != nil {
+		logger.Logger.Errorf("redis set access token failed: %v", err)
+		return nil, "", "", err
+	}
+	
+	// 将Refresh Token存入Redis
+	if err := redisClient.Set(context.Background(), config.Conf.Redis.KeyPrifex+":refresh_token:"+user.Email, refreshToken, time.Duration(config.Conf.App.RefreshTokenExpiration)*time.Minute).Err(); err != nil {
+		logger.Logger.Errorf("redis set refresh token failed: %v", err)
+		return nil, "", "", err
+	}
+
 
 	// 更新用户的登录记录
 	user.LastLogin = time.Now()
@@ -172,9 +199,9 @@ func (service *LoginUserService) Login() (*models.User, string, error) {
 	// 更新用户的信息
 	if err := postgreDB.Save(&user).Error; err != nil {
 		logger.Logger.Errorf("update user failed: %v", err)
-		return nil, "", code.ErrDatabase
+		return nil, "", "", code.ErrDatabase
 	}
-	return &user, token, nil
+	return &user, accessToken, refreshToken, nil
 }
 
 func generateDefualtUser() *models.User {

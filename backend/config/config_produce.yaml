@@ -14,7 +14,7 @@ minio:
   use_ssl: false
   bucket_names:
     - "moity-blog"
-  locaiton: "cn-east-1"
+  location: "cn-east-1"
 database: 
   postgres:
     host: "172.18.0.1"
