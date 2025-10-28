@@ -3,13 +3,9 @@ package middleware
 import (
 	"blog-server/internal"
 	"blog-server/internal/code"
-	"blog-server/internal/config"
-	"blog-server/internal/redis"
 	"blog-server/internal/rsa"
 	"blog-server/internal/utils"
-	"context"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -52,62 +48,18 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// 7. 将用户信息保存到上下文
+		// 7. 验证token类型是否为access
+		tokenType, ok := claims["type"].(string)
+		if !ok || tokenType != "access" {
+			internal.APIResponse(c, code.ErrTokenInvalid, "Token类型错误")
+			return
+		}
+
+		// 8. 将用户信息保存到上下文
 		c.Set("userID", claims["sub"].(string))
 		c.Set("claims", claims)
 
-		// 7. 继续处理请求
-		c.Next()
-	}
-}
-
-// RateLimitMiddleware 限流中间件
-func RateLimitMiddleware(limit int, duration time.Duration) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// 获取客户端IP
-		clientIP := c.ClientIP()
-
-		// 使用Redis实现计数器
-		redisClient := redis.GetRedisClient()
-		key := config.Conf.Redis.KeyPrifex + ":rate_limit:" + clientIP
-
-		// 获取当前计数
-		count, err := redisClient.Get(context.Background(), key).Int()
-		if err == nil && count >= limit {
-			c.JSON(http.StatusTooManyRequests, gin.H{
-				"code": 429,
-				"msg":  "请求过于频繁，请稍后再试",
-			})
-			c.Abort()
-			return
-		}
-
-		// 增加计数
-		if err := redisClient.Incr(context.Background(), key).Err(); err != nil {
-			c.Next()
-			return
-		}
-
-		// 设置过期时间
-		redisClient.Expire(context.Background(), key, duration)
-
-		c.Next()
-	}
-}
-
-// CORSMiddleware 跨域中间件
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
+		// 9. 继续处理请求
 		c.Next()
 	}
 }

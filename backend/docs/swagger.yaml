@@ -374,6 +374,60 @@ paths:
       summary: 用户登录
       tags:
       - user
+  /user/refreshToken:
+    post:
+      consumes:
+      - application/json
+      description: 使用refresh token获取新的access token和refresh token
+      parameters:
+      - description: Refresh Token
+        in: body
+        name: refresh_token
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20120":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20121":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 刷新Token
+      tags:
+      - user
   /user/register:
     post:
       consumes:

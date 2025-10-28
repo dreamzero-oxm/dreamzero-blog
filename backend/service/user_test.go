@@ -83,11 +83,12 @@ func TestLogin(t *testing.T) {
 	}
 	for _, tt := range test {
 		t.Run(tt.name, func(t *testing.T) {
-			_, jwt, err := tt.service.Login()
+			_, accessToken, refreshToken, err := tt.service.Login()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Login() error = %v, wantErr %v", err, tt.wantErr)
 			} else {
-				t.Logf("Login JWT: %v", jwt)
+				t.Logf("Login AccessToken: %v", accessToken)
+				t.Logf("Login RefreshToken: %v", refreshToken)
 			}
 		})
 	}

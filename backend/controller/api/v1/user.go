@@ -27,7 +27,7 @@ type UserController struct {
 func Login(c *gin.Context) {
 	var service service.LoginUserService
 	if err := c.ShouldBind(&service); err == nil {
-		user, jwt, err := service.Login()
+		user, accessToken, refreshToken, err := service.Login()
 		if err != nil {
 			internal.APIResponse(c, err, gin.H{
 				"success": false,
@@ -36,7 +36,8 @@ func Login(c *gin.Context) {
 			internal.APIResponse(c, nil, gin.H{
 				"success": true,
 				"user":    user,
-				"token":   jwt,
+				"access_token":  accessToken,
+				"refresh_token": refreshToken,
 			})
 		}
 	} else {
@@ -143,6 +144,38 @@ func CheckUserEmail(c *gin.Context) {
 	}
 }
 
+// @Summary 刷新Token
+// @Description 使用refresh token获取新的access token和refresh token
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param refresh_token body string true "Refresh Token"
+// @Success 200 {object} internal.Response{data=object}
+// @Failure 20002 {object} internal.Response{data=string}
+// @Failure 20120 {object} internal.Response{data=string}
+// @Failure 20121 {object} internal.Response{data=string}
+// @Router /user/refreshToken [post]
+func RefreshToken(c *gin.Context) {
+	// 传入Refresh_Token
+	var service service.RefreshTokenService
+	if err := c.ShouldBind(&service); err == nil {
+		user, accessToken, err := service.RefreshToken()
+		if err != nil {
+			internal.APIResponse(c, err, gin.H{
+				"success": false,
+			})
+		} else {
+			internal.APIResponse(c, nil, gin.H{
+				"success": true,
+				"user":    user,
+				"access_token":  accessToken,
+			})
+		}
+	} else {
+		internal.APIResponse(c, code.ErrBind, nil)
+	}
+}
+
 func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	userGroup := router.Group("/user")
 	// --------------------无需认证-------------------------
@@ -152,6 +185,7 @@ func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	userGroup.POST("/verifyEmailVerificationCode", VerifyEmailVerificationCode)
 	userGroup.GET("/checkUserName", CheckUserName)
 	userGroup.GET("/checkUserEmail", CheckUserEmail)
+	userGroup.POST("/refreshToken", RefreshToken)
 	// --------------------需要认证-------------------------
 	authGroup := userGroup.Group("")
 	authGroup.Use(middleware.JWTAuthMiddleware())
