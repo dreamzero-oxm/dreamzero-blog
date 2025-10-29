@@ -176,6 +176,25 @@ func RefreshToken(c *gin.Context) {
 	}
 }
 
+// @Summary 验证Access Token
+// @Description 验证access token是否有效
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} internal.Response{data=object}
+// @Failure 20002 {object} internal.Response{data=string}
+// @Failure 20117 {object} internal.Response{data=string}
+// @Failure 20118 {object} internal.Response{data=string}
+// @Failure 20119 {object} internal.Response{data=string}
+// @Security ApiKeyAuth
+// @Router /user/validateAccessToken [get]
+func ValidateAccessToken(c *gin.Context) {
+	// 返回验证成功信息
+	internal.APIResponse(c, nil, gin.H{
+		"valid": true,
+	})
+}
+
 func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	userGroup := router.Group("/user")
 	// --------------------无需认证-------------------------
@@ -189,5 +208,6 @@ func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	// --------------------需要认证-------------------------
 	authGroup := userGroup.Group("")
 	authGroup.Use(middleware.JWTAuthMiddleware())
+	authGroup.GET("/validateAccessToken", ValidateAccessToken)
 	return nil
 }
