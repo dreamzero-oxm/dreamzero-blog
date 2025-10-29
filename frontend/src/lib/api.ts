@@ -1,20 +1,18 @@
-import {useSSL, apiAddress, apiPort} from '@/lib/config'
+// import {useSSL, apiAddress, apiPort} from '@/lib/config'
 
 // export const baseUrl = `${useSSL ? 'https' : 'http'}://${apiAddress}:${apiPort}`
 export const baseUrl = ``
 export const apiHost = 'api/v1'
 
-export const photoHost = `photo`
-export const articalComment = `artical_comment`
 export const user = `user`
 
 const api = {
     // photo
-    updatePhotos: `${baseUrl}/${apiHost}/${photoHost}/upload`,
-    listPhotos: `${baseUrl}/${apiHost}/${photoHost}/list`, 
+    updatePhotos: `${baseUrl}/${apiHost}/photo/upload`,
+    listPhotos: `${baseUrl}/${apiHost}/photo/list`, 
     // article comment
-    submitArticleComment: `${baseUrl}/${apiHost}/${articalComment}/add`,
-    listAriticleComment: `${baseUrl}/${apiHost}/${articalComment}/list`,
+    submitArticleComment: `${baseUrl}/${apiHost}/artical_comment/add`,
+    listAriticleComment: `${baseUrl}/${apiHost}/artical_comment/list`,
     // user
     userLogin: `${baseUrl}/${apiHost}/${user}/login`,
     userRegister: `${baseUrl}/${apiHost}/${user}/register`,
@@ -22,6 +20,8 @@ const api = {
     userVerifyEmailVerificationCode: `${baseUrl}/${apiHost}/${user}/verifyEmailVerificationCode`,
     userCheckUserName: `${baseUrl}/${apiHost}/${user}/checkUserName`,
     userCheckEmail: `${baseUrl}/${apiHost}/${user}/checkUserEmail`,
+    validateAccessToken: `${baseUrl}/${apiHost}/${user}/validateAccessToken`,
+    refreshToken: `${baseUrl}/${apiHost}/${user}/refreshToken`,
     // others   
 }
 
