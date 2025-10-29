@@ -9,11 +9,11 @@ import (
 
 type AddCommentService struct {
 	Comment      string   `json:"comment" form:"comment" binding:"required"`
-	ArticalTitle []string `json:"artical_title" form:"artical_title" binding:"required"`
+	ArticleTitle []string `json:"article_title" form:"article_title" binding:"required"`
 }
 
 func (ac *AddCommentService) AddComment() error {
-	jsonTitle, err := json.Marshal(ac.ArticalTitle)
+	jsonTitle, err := json.Marshal(ac.ArticleTitle)
 	if err != nil {
 		return err
 	}
@@ -21,7 +21,7 @@ func (ac *AddCommentService) AddComment() error {
 		Content:      ac.Comment,
 		ArticleTitle: string(jsonTitle),
 	}
-	// logger.Logger.Infof("comment: %v, title: %v, comment: %v", ac.Comment, ac.ArticalTitle, comment)
+	// logger.Logger.Infof("comment: %v, title: %v, comment: %v", ac.Comment, ac.ArticleTitle, comment)
 	// return nil
 	if err := models.DB.Create(&comment).Error; err != nil {
 		return err
@@ -33,7 +33,7 @@ type ListCommentService struct {
 	// 评论ID
 	CommentID int `json:"comment_id" form:"comment_id"`
 	// 文章标题数组
-	ArticalTitle []string `json:"artical_title" form:"artical_title"`
+	ArticleTitle []string `json:"article_title" form:"article_title"`
 	// 相关内容
 	Content string `json:"content" form:"content"`
 	// 是否通知
@@ -54,12 +54,12 @@ func (lc *ListCommentService) ListComment() ([]models.ArticleComment, error) {
 
 	fmt.Println(lc)
 	// 如果提供了文章标题，添加标题过滤条件
-	if len(lc.ArticalTitle) > 0 {
-		jsonTitle, err := json.Marshal(lc.ArticalTitle)
-		if err != nil {
-			return nil, err
+	if len(lc.ArticleTitle) > 0 {
+		// 对于数组类型的文章标题，我们需要使用JSON查询
+		// 这里我们构建一个OR条件，匹配数组中的任何一个标题
+		for _, title := range lc.ArticleTitle {
+			db = db.Or("article_title LIKE ?", "%"+title+"%")
 		}
-		db = db.Where("article_title = ?", string(jsonTitle))
 	}
 
 	if lc.CommentID > 0 {

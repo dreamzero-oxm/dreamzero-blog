@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 import type { CreateArticleComment } from "@/interface/article-comment"
-import { useSubmitComment } from "@/hooks/artical-comment-hook"
+import { useSubmitComment } from "@/hooks/article-comment-hook"
 
 interface CommentProps {
     // 文章title
