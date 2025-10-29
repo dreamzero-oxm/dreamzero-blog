@@ -146,6 +146,8 @@ func (service *LoginUserService) Login() (*models.User, string, string, error) {
 		"sub": user.ID,
 		// Token类型
 		"type": "access",
+		// 用户角色
+		"role": user.Role,
 		// 过期时间
 		"exp": time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Minute).Unix(),
 		// 生效时间
@@ -167,6 +169,8 @@ func (service *LoginUserService) Login() (*models.User, string, string, error) {
 		"sub": user.ID,
 		// Token类型
 		"type": "refresh",
+		// 用户角色
+		"role": user.Role,
 		// 过期时间 (天)
 		"exp": time.Now().Add(time.Duration(config.Conf.App.RefreshTokenExpiration) * time.Minute).Unix(),
 		// 生效时间

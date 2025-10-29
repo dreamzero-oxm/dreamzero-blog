@@ -72,6 +72,7 @@ func (service *RefreshTokenService) RefreshToken() (*models.User, string, error)
 		"iss":  "moity",
 		"sub":  user.ID,
 		"type": "access",
+		"role": user.Role,
 		"exp":  time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Minute).Unix(),
 		"nbf":  time.Now().Unix(),
 		"iat":  time.Now().Unix(),
