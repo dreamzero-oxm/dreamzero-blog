@@ -5,7 +5,6 @@ import (
 	"blog-server/internal/code"
 	"blog-server/internal/middleware"
 	"blog-server/service"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +23,7 @@ type ArticleController struct{}
 // @Router /articles [post]
 func (a *ArticleController) CreateArticle(c *gin.Context) {
 	var createService service.CreateArticleService
+	// 绑定JSON请求体中的字段
 	if err := c.ShouldBindJSON(&createService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
@@ -58,14 +58,13 @@ func (a *ArticleController) CreateArticle(c *gin.Context) {
 // @Success 200 {object} internal.Response{data=models.Article}
 // @Router /articles/{id} [put]
 func (a *ArticleController) UpdateArticle(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.ParseUint(idStr, 10, 32)
-	if err != nil {
+	var updateService service.UpdateArticleService
+	// 先绑定URI参数中的ID
+	if err := c.ShouldBindUri(&updateService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
 	}
-
-	var updateService service.UpdateArticleService
+	// 再绑定JSON请求体中的其他字段
 	if err := c.ShouldBindJSON(&updateService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
@@ -78,7 +77,6 @@ func (a *ArticleController) UpdateArticle(c *gin.Context) {
 		return
 	}
 	updateService.UserID = userID.(uint)
-	updateService.ID = uint(id)
 
 	article, err := updateService.Update()
 	if err != nil {
@@ -100,9 +98,9 @@ func (a *ArticleController) UpdateArticle(c *gin.Context) {
 // @Success 200 {object} internal.Response
 // @Router /articles/{id} [delete]
 func (a *ArticleController) DeleteArticle(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.ParseUint(idStr, 10, 32)
-	if err != nil {
+	var deleteService service.DeleteArticleService
+	// 绑定URI参数中的ID
+	if err := c.ShouldBindUri(&deleteService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
 	}
@@ -113,11 +111,7 @@ func (a *ArticleController) DeleteArticle(c *gin.Context) {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
 	}
-
-	deleteService := service.DeleteArticleService{
-		ID:     uint(id),
-		UserID: userID.(uint),
-	}
+	deleteService.UserID = userID.(uint)
 
 	if err := deleteService.Delete(); err != nil {
 		internal.APIResponse(c, err, nil)
@@ -137,15 +131,20 @@ func (a *ArticleController) DeleteArticle(c *gin.Context) {
 // @Success 200 {object} internal.Response{data=models.Article}
 // @Router /articles/{id} [get]
 func (a *ArticleController) GetArticle(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.ParseUint(idStr, 10, 32)
-	if err != nil {
+	var getService service.GetArticleService
+	// 绑定URI参数中的ID
+	if err := c.ShouldBindUri(&getService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
 	}
 
-	getService := service.GetArticleService{
-		ID: uint(id),
+	// 从JWT中获取用户ID
+	userID, exists := c.Get("user_id")
+	if !exists {
+		// 如果用户未登录，设置UserID为0
+		getService.UserID = 0
+	} else {
+		getService.UserID = userID.(uint)
 	}
 
 	article, err := getService.Get()
@@ -159,10 +158,11 @@ func (a *ArticleController) GetArticle(c *gin.Context) {
 
 // ListArticles 获取文章列表
 // @Summary 获取文章列表
-// @Description 获取文章列表，支持分页和筛选
+// @Description 获取文章列表，支持分页和筛选。管理员可以查看所有状态、用户或标签的文章，非管理员只能查看公开文章。
 // @Tags article
 // @Accept json
 // @Produce json
+// @Param Authorization header string false "Bearer token"
 // @Param page query int false "页码" default(1)
 // @Param page_size query int false "每页数量" default(10)
 // @Param status query string false "文章状态" Enums(draft,published,private)
@@ -177,6 +177,9 @@ func (a *ArticleController) ListArticles(c *gin.Context) {
 		return
 	}
 
+	// 设置上下文并处理JWT信息
+	listService.SetContext(c)
+
 	articles, total, err := listService.List()
 	if err != nil {
 		internal.APIResponse(c, err, nil)
@@ -184,8 +187,10 @@ func (a *ArticleController) ListArticles(c *gin.Context) {
 	}
 
 	internal.APIResponse(c, nil, gin.H{
-		"list":  articles,
-		"total": total,
+		"articles": articles,
+		"total":    total,
+		"page":     listService.Page,
+		"page_size": listService.PageSize,
 	})
 }
 
@@ -199,15 +204,11 @@ func (a *ArticleController) ListArticles(c *gin.Context) {
 // @Success 200 {object} internal.Response
 // @Router /articles/{id}/like [post]
 func (a *ArticleController) LikeArticle(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.ParseUint(idStr, 10, 32)
-	if err != nil {
+	var likeService service.LikeArticleService
+	// 绑定URI参数中的ID
+	if err := c.ShouldBindUri(&likeService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
-	}
-
-	likeService := service.LikeArticleService{
-		ID: uint(id),
 	}
 
 	if err := likeService.Like(); err != nil {
@@ -230,14 +231,13 @@ func (a *ArticleController) LikeArticle(c *gin.Context) {
 // @Success 200 {object} internal.Response
 // @Router /articles/{id}/status [put]
 func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
-	idStr := c.Param("id")
-	id, err := strconv.ParseUint(idStr, 10, 32)
-	if err != nil {
+	var updateStatusService service.UpdateArticleStatusService
+	// 先绑定URI参数中的ID
+	if err := c.ShouldBindUri(&updateStatusService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
 	}
-
-	var updateStatusService service.UpdateArticleStatusService
+	// 再绑定JSON请求体中的其他字段
 	if err := c.ShouldBindJSON(&updateStatusService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
@@ -250,7 +250,6 @@ func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
 		return
 	}
 	updateStatusService.UserID = userID.(uint)
-	updateStatusService.ID = uint(id)
 
 	if err := updateStatusService.UpdateStatus(); err != nil {
 		internal.APIResponse(c, err, nil)
