@@ -42,9 +42,37 @@ export function Header() {
     }
 
     // 检测token
-    const token = localStorage.getItem("token");
-    console.log("token", !!token);
-    setIsLogin(!!token);
+    const accessToken = localStorage.getItem("access_token");
+    console.log("access_token", !!accessToken);
+    setIsLogin(!!accessToken);
+  }, []);
+
+  // 监听storage事件，以便在其他标签页中清除token时更新登录状态
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'access_token') {
+        const accessToken = localStorage.getItem("access_token");
+        setIsLogin(!!accessToken);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // 监听自定义事件，以便在同一标签页中清除token时更新登录状态
+  useEffect(() => {
+    const handleTokenChange = () => {
+      const accessToken = localStorage.getItem("access_token");
+      setIsLogin(!!accessToken);
+    };
+
+    window.addEventListener('tokenChange', handleTokenChange);
+    return () => {
+      window.removeEventListener('tokenChange', handleTokenChange);
+    };
   }, []);
 
   const handleSwitchTheme = (isDark: boolean) => {
@@ -104,9 +132,11 @@ export function Header() {
             {isLogin ? (
               <Tooltip>
                 <TooltipTrigger>
-                  <LogOut className="cursor-pointer" onClick={()=>{
-                    logout();
+                  <LogOut className="cursor-pointer" onClick={async ()=>{
+                    await logout();
                     setIsLogin(false);
+                    // 强制刷新页面，确保所有状态都被重置
+                    window.location.reload();
                   }} />
                 </TooltipTrigger>
                 <TooltipContent>

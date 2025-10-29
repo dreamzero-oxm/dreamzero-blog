@@ -12,7 +12,7 @@ export default function Page() {
                         <div className="flex h-6 w-6 items-center justify-center rounded-md ">
                             <Shell className="size-6" />
                         </div>
-                        Moity Soeoe Blog.
+                        DreamZero Blog.
                     </Link>
                 </div>
                 <div className="flex flex-1 items-center justify-center">

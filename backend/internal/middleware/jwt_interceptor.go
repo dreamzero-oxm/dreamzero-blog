@@ -17,7 +17,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		// 1. 获取 Authorization Header
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
-			internal.APIResponse(c, code.ErrAuthorizationNotExist, nil)
+			internal.APIResponseUnauthorized(c, code.ErrAuthorizationNotExist, nil)
 			return
 		}
 
@@ -26,32 +26,32 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 
 		// 3. 验证 Token
 		if err != nil {
-			internal.APIResponse(c, code.ErrTokenInvalid, fmt.Sprintf("[%v] Token错误: %v", utils.GetFullCallerInfo(0), err))
+			internal.APIResponseUnauthorized(c, code.ErrTokenInvalid, fmt.Sprintf("[%v] Token错误: %v", utils.GetFullCallerInfo(0), err))
 			return
 		}
 
 		// 4. 验证发行者
 		if claims["iss"].(string) != "moity" {
-			internal.APIResponse(c, code.ErrTokenIssError, nil)
+			internal.APIResponseUnauthorized(c, code.ErrTokenIssError, nil)
 			return
 		}
 
 		// 5. 验证是否到时间可用
 		if claims["nbf"].(int64) > time.Now().Unix() {
-			internal.APIResponse(c, code.ErrTokenNbfError, nil)
+			internal.APIResponseUnauthorized(c, code.ErrTokenNbfError, nil)
 			return
 		}
 
 		// 6. 验证是否过期
 		if claims["exp"].(int64) < time.Now().Unix() {
-			internal.APIResponse(c, code.ErrTokenExpired, nil)
+			internal.APIResponseUnauthorized(c, code.ErrTokenExpired, nil)
 			return
 		}
 
 		// 7. 验证token类型是否为access
 		tokenType, ok := claims["type"].(string)
 		if !ok || tokenType != "access" {
-			internal.APIResponse(c, code.ErrTokenInvalid, "Token类型错误")
+			internal.APIResponseUnauthorized(c, code.ErrTokenInvalid, "Token类型错误")
 			return
 		}
 
