@@ -11,8 +11,8 @@ const api = {
     updatePhotos: `${baseUrl}/${apiHost}/photo/upload`,
     listPhotos: `${baseUrl}/${apiHost}/photo/list`, 
     // article comment
-    submitArticleComment: `${baseUrl}/${apiHost}/artical_comment/add`,
-    listAriticleComment: `${baseUrl}/${apiHost}/artical_comment/list`,
+    submitArticleComment: `${baseUrl}/${apiHost}/article_comment/add`,
+    listArticleComment: `${baseUrl}/${apiHost}/article_comment/list`,
     // user
     userLogin: `${baseUrl}/${apiHost}/${user}/login`,
     userRegister: `${baseUrl}/${apiHost}/${user}/register`,
