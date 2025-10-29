@@ -96,8 +96,8 @@ export default function RootLayout({
                   {children}
                   <Toaster expand={true} position="bottom-right" richColors/>
                 </main>
-                <footer className="w-full flex justify-center items-center p-4 mt-auto">
-                  <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4">
+                <footer className="w-full flex justify-center items-center p-4 bg-background border-t flex-shrink-0">
+                  <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4 text-sm whitespace-nowrap">
                     粤ICP备2025480966号-1
                   </Link>
                 </footer>
