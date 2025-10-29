@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner"
 import React from 'react';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import Link from 'next/link';
+
 import AuthProvider from "@/components/provider/auth-provider";
 
 export const metadata: Metadata = {
@@ -91,16 +91,11 @@ export default function RootLayout({
         <ReactQueryProvider>
           <AntdRegistry>
             <AuthProvider>
-              <div className="min-w-screen min-h-screen overflow-x-hidden flex flex-col">
-                <main className="flex-1">
+              <div className="w-full min-h-screen  overflow-x-hidden flex flex-col">
+                <main className="flex-1 flex">
                   {children}
                   <Toaster expand={true} position="bottom-right" richColors/>
                 </main>
-                <footer className="w-full flex justify-center items-center p-4 bg-background border-t flex-shrink-0">
-                  <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4 text-sm whitespace-nowrap">
-                    粤ICP备2025480966号-1
-                  </Link>
-                </footer>
               </div>
             </AuthProvider>
           </AntdRegistry>
