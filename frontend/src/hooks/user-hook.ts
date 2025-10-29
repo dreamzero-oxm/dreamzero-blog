@@ -36,7 +36,11 @@ export function useUserLogin() {
             }else {
                 const response: UserLoginResponse = data.data;
                 if (response.success) {
-                    localStorage.setItem("token", response?.token ?? "");
+                    // 存储access_token和refresh_token到localStorage
+                    localStorage.setItem("access_token", response?.access_token ?? "");
+                    localStorage.setItem("refresh_token", response?.refresh_token ?? "");
+                    // 触发自定义事件，通知其他组件token已更新
+                    window.dispatchEvent(new Event('tokenChange'));
                     router.push('/');
                 }else{
                     throw new Error(data.msg);
@@ -55,7 +59,11 @@ export function useUserLogin() {
 export function useUserLogout() {
     const router = useRouter()
     return () => {
-        localStorage.removeItem("token");
+        // 清除access_token和refresh_token
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        // 触发自定义事件，通知其他组件token已清除
+        window.dispatchEvent(new Event('tokenChange'));
         router.refresh();
     }
 }

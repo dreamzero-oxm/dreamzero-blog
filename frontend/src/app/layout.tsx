@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner"
 import React from 'react';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import Link from 'next/link';
+import AuthProvider from "@/components/provider/auth-provider";
 
 export const metadata: Metadata = {
   // 标题
@@ -89,17 +90,19 @@ export default function RootLayout({
       <body>
         <ReactQueryProvider>
           <AntdRegistry>
-            <div className="min-w-screen min-h-screen overflow-x-hidden flex flex-col">
-              <main className="flex-1">
-                {children}
-                <Toaster expand={true} position="bottom-right" richColors/>
-              </main>
-              <footer className="w-full flex justify-center items-center p-4 mt-auto">
-                <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4">
-                  粤ICP备2025480966号-1
-                </Link>
-              </footer>
-            </div>
+            <AuthProvider>
+              <div className="min-w-screen min-h-screen overflow-x-hidden flex flex-col">
+                <main className="flex-1">
+                  {children}
+                  <Toaster expand={true} position="bottom-right" richColors/>
+                </main>
+                <footer className="w-full flex justify-center items-center p-4 mt-auto">
+                  <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4">
+                    粤ICP备2025480966号-1
+                  </Link>
+                </footer>
+              </div>
+            </AuthProvider>
           </AntdRegistry>
         </ReactQueryProvider>
       </body>
