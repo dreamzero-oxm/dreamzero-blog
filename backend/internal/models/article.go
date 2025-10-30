@@ -25,7 +25,7 @@ type Article struct {
 	LikeCount   uint          `json:"like_count" gorm:"type:int;default:0;comment:点赞次数"`
 	UserID      uint          `json:"user_id" gorm:"type:int;not null;comment:用户ID"`
 	User        User          `json:"user" gorm:"foreignKey:UserID"`
-	Tags        string        `json:"tags" gorm:"type:varchar(255);comment:文章标签，逗号分隔"`
+	TagsArray   []string      `json:"tags" gorm:"type:text;serializer:json"`
 	CoverImage  string        `json:"cover_image" gorm:"type:varchar(255);comment:封面图片URL"`
 	PublishedAt *time.Time    `json:"published_at" gorm:"comment:发布时间"`
 }
@@ -71,5 +71,6 @@ func (a *Article) BeforeSave(tx *gorm.DB) error {
 		now := time.Now()
 		a.PublishedAt = &now
 	}
+	
 	return nil
 }

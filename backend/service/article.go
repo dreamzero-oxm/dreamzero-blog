@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"strings"
 	"blog-server/internal/models"
 	"blog-server/internal/code"
 	"gorm.io/gorm"
@@ -14,7 +15,7 @@ type CreateArticleService struct {
 	Content   string `json:"content" binding:"required"`
 	Summary   string `json:"summary"`
 	Status    models.ArticleStatus `json:"status" binding:"required"`
-	Tags      string `json:"tags"`
+	Tags      []string `json:"tags"`
 	CoverImage string `json:"cover_image"`
 	UserID    uint   `json:"user_id"`
 }
@@ -25,7 +26,7 @@ func (s *CreateArticleService) Create() (*models.Article, error) {
 		Content:   s.Content,
 		Summary:   s.Summary,
 		Status:    s.Status,
-		Tags:      s.Tags,
+		TagsArray: s.Tags,
 		CoverImage: s.CoverImage,
 		UserID:    s.UserID,
 	}
@@ -47,7 +48,7 @@ type UpdateArticleService struct {
 	Content   string `json:"content" binding:"required"`
 	Summary   string `json:"summary"`
 	Status    models.ArticleStatus `json:"status" binding:"required"`
-	Tags      string `json:"tags"`
+	Tags      []string `json:"tags"`
 	CoverImage string `json:"cover_image"`
 	UserID    uint   `json:"user_id"`
 }
@@ -70,7 +71,7 @@ func (s *UpdateArticleService) Update() (*models.Article, error) {
 	article.Content = s.Content
 	article.Summary = s.Summary
 	article.Status = s.Status
-	article.Tags = s.Tags
+	article.TagsArray = s.Tags
 	article.CoverImage = s.CoverImage
 
 	// 验证更新后的文章数据
@@ -142,7 +143,8 @@ type ListArticleService struct {
 	PageSize int    `form:"page_size" binding:"min=1,max=100"`
 	Status   *models.ArticleStatus   `form:"status"` // 可选，用于筛选状态
 	UserID   *uint  `form:"user_id"` // 可选，用于筛选用户
-	Tag      string `form:"tag"`     // 可选，用于筛选标签
+	Tag      string `form:"tag"`     // 可选，用于筛选标签（单个标签）
+	Tags     []string `form:"tags"`  // 可选，用于筛选多个标签
 	IsAdmin  bool   // 是否为管理员，用于权限控制
 	c        *gin.Context // Gin上下文，用于获取JWT信息
 }
@@ -231,7 +233,19 @@ func (s *ListArticleService) List() ([]models.Article, int64, error) {
 	
 	// 标签筛选对所有用户都适用
 	if s.Tag != "" {
-		query = query.Where("tags LIKE ?", "%"+s.Tag+"%")
+		// 单个标签查询，使用数组包含操作符
+		query = query.Where("tags_array @> ?", "[\""+s.Tag+"\"]")
+	}
+	
+	// 多个标签查询，使用OR条件
+	if len(s.Tags) > 0 {
+		tagConditions := make([]string, len(s.Tags))
+		tagValues := make([]interface{}, len(s.Tags))
+		for i, tag := range s.Tags {
+			tagConditions[i] = "tags_array @> ?"
+			tagValues[i] = "[\"" + tag + "\"]"
+		}
+		query = query.Where("(" + strings.Join(tagConditions, " OR ") + ")", tagValues...)
 	}
 
 	// 获取总数

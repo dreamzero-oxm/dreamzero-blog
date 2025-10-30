@@ -5,6 +5,7 @@ export interface Article {
   title: string;
   content: string;
   excerpt: string;
+  summary?: string;
   status: 'draft' | 'published' | 'private';
   user_id: number;
   view_count: number;
@@ -12,6 +13,7 @@ export interface Article {
   comment_count: number;
   tags: string[];
   cover_image?: string;
+  is_liked?: boolean;
 }
 
 export interface CreateArticleRequest {
@@ -46,6 +48,8 @@ export interface ListArticlesRequest {
   page_size?: number;
   status?: 'draft' | 'published' | 'private';
   keyword?: string;
+  tag?: string;  // 单个标签查询
+  tags?: string[];  // 多个标签查询
 }
 
 export interface ListArticlesResponse {

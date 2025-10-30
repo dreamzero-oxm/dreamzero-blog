@@ -167,7 +167,8 @@ func (a *ArticleController) GetArticle(c *gin.Context) {
 // @Param page_size query int false "每页数量" default(10)
 // @Param status query string false "文章状态" Enums(draft,published,private)
 // @Param user_id query int false "用户ID"
-// @Param tag query string false "标签"
+// @Param tag query string false "单个标签"
+// @Param tags query []string false "多个标签"
 // @Success 200 {object} internal.Response{data=object{list=[]models.Article,total=int64}}
 // @Router /articles [get]
 func (a *ArticleController) ListArticles(c *gin.Context) {
