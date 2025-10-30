@@ -37,15 +37,22 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
     page: 1,
     page_size: 10,
     status: undefined,
-    keyword: '',
+    keyword: undefined,
     tag: undefined,
-    tags: [],
+    tags: undefined,
   });
   
   const [tagInput, setTagInput] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const { data, isLoading, error, refetch } = useGetArticles(searchParams);
+  const { data, isLoading, error, refetch } = useGetArticles({
+    page: searchParams.page,
+    page_size: searchParams.page_size,
+    status: searchParams.status,
+    keyword: searchParams.keyword,
+    tag: searchParams.tag,
+    tags: searchParams.tags,
+  });
   const deleteArticleMutation = useDeleteArticle();
   const updateStatusMutation = useUpdateArticleStatus();
 
