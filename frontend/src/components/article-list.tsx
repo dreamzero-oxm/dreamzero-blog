@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import {
@@ -15,7 +15,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { Search, Plus, Edit, Trash2, Eye, EyeOff, FileText } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Search, Plus, Edit, Trash2, Eye, EyeOff, FileText, X, Heart, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGetArticles, useDeleteArticle, useUpdateArticleStatus } from '@/hooks/article-hook';
 import type { Article, ListArticlesRequest } from '@/interface/article';
 import { toast } from 'sonner';
@@ -32,7 +38,12 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
     page_size: 10,
     status: undefined,
     keyword: '',
+    tag: undefined,
+    tags: [],
   });
+  
+  const [tagInput, setTagInput] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const { data, isLoading, error, refetch } = useGetArticles(searchParams);
   const deleteArticleMutation = useDeleteArticle();
@@ -61,12 +72,117 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
   };
 
   const handleSearch = () => {
-    setSearchParams(prev => ({ ...prev, page: 1 }));
+    setSearchParams(prev => ({ 
+      ...prev, 
+      page: 1,
+      tags: selectedTags.length > 0 ? selectedTags : undefined
+    }));
     refetch();
   };
 
   const handlePageChange = (page: number) => {
     setSearchParams(prev => ({ ...prev, page }));
+  };
+  
+  const handleAddTag = () => {
+    if (tagInput.trim() && !selectedTags.includes(tagInput.trim())) {
+      const newTags = [...selectedTags, tagInput.trim()];
+      setSelectedTags(newTags);
+      setSearchParams(prev => ({ 
+        ...prev, 
+        page: 1,
+        tags: newTags.length > 0 ? newTags : undefined
+      }));
+      setTagInput('');
+      refetch();
+    }
+  };
+  
+  const handleRemoveTag = (tagToRemove: string) => {
+    const newTags = selectedTags.filter(tag => tag !== tagToRemove);
+    setSelectedTags(newTags);
+    setSearchParams(prev => ({ 
+      ...prev, 
+      page: 1,
+      tags: newTags.length > 0 ? newTags : undefined
+    }));
+    refetch();
+  };
+  
+  const handleTagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
+  
+  // 处理搜索输入防抖
+  const [searchDebounce, setSearchDebounce] = useState('');
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchParams(prev => ({ ...prev, keyword: searchDebounce }));
+      setSearchParams(prev => ({ ...prev, page: 1 }));
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [searchDebounce]);
+  
+  // 处理状态筛选
+  const handleStatusFilter = (status: string) => {
+    if (status === 'all') {
+      setSearchParams(prev => ({ ...prev, status: undefined }));
+    } else {
+      setSearchParams(prev => ({ ...prev, status: status as 'draft' | 'published' | 'private' }));
+    }
+    setSearchParams(prev => ({ ...prev, page: 1 }));
+  };
+  
+  // 处理标签筛选
+  const handleTagFilter = (tag: string) => {
+    if (tag === 'all') {
+      setSearchParams(prev => ({ ...prev, tag: undefined }));
+    } else {
+      setSearchParams(prev => ({ ...prev, tag }));
+    }
+    setSearchParams(prev => ({ ...prev, page: 1 }));
+  };
+  
+  // 获取所有标签
+  const getAllTags = (articlesList: Article[]) => {
+    const tags = new Set<string>();
+    articlesList?.forEach(article => {
+      article.tags?.forEach(tag => tags.add(tag));
+    });
+    return Array.from(tags);
+  };
+  
+  // 生成分页数字
+  const getPaginationNumbers = () => {
+    const delta = 2; // 当前页前后显示的页数
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
   };
 
   const getStatusBadge = (status: string) => {
@@ -87,43 +203,42 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
   const currentPage = searchParams.page || 1;
   const pageSize = searchParams.page_size || 10;
   const totalPages = Math.ceil(total / pageSize);
+  const allTags = getAllTags(articles);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold">文章管理</h2>
+          <p className="text-muted-foreground">管理您的所有文章</p>
+        </div>
+        <Button onClick={onCreate} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          新建文章
+        </Button>
+      </div>
+      
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>文章管理</CardTitle>
-              <CardDescription>管理您的所有文章</CardDescription>
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="搜索文章标题"
+                  value={searchDebounce}
+                  onChange={(e) => setSearchDebounce(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
             </div>
-            <Button onClick={onCreate} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              新建文章
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="搜索文章标题..."
-                className="pl-8"
-                value={searchParams.keyword}
-                onChange={(e) => setSearchParams(prev => ({ ...prev, keyword: e.target.value }))}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              />
-            </div>
+            
             <Select
               value={searchParams.status || 'all'}
-              onValueChange={(value) => setSearchParams(prev => ({ 
-                ...prev, 
-                status: value === 'all' ? undefined : value as 'draft' | 'published' | 'private'
-              }))}
+              onValueChange={handleStatusFilter}
             >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="选择状态" />
+              <SelectTrigger>
+                <SelectValue placeholder="状态" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">全部状态</SelectItem>
@@ -132,8 +247,70 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                 <SelectItem value="private">私密</SelectItem>
               </SelectContent>
             </Select>
-            <Button onClick={handleSearch}>搜索</Button>
+            
+            <Select
+              value={searchParams.tag || 'all'}
+              onValueChange={handleTagFilter}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="标签" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部标签</SelectItem>
+                {allTags.map((tag: string) => (
+                  <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+          
+          {(searchParams.keyword || searchParams.status || searchParams.tag) && (
+            <div className="mt-4 flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">当前筛选:</span>
+              {searchParams.keyword && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  关键词: {searchParams.keyword}
+                  <X
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => {
+                      setSearchDebounce('');
+                      setSearchParams(prev => ({ ...prev, keyword: undefined }));
+                    }}
+                  />
+                </Badge>
+              )}
+              {searchParams.status && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  状态: {searchParams.status === 'draft' ? '草稿' : searchParams.status === 'published' ? '已发布' : '私密'}
+                  <X
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => handleStatusFilter('all')}
+                  />
+                </Badge>
+              )}
+              {searchParams.tag && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  标签: {searchParams.tag}
+                  <X
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => handleTagFilter('all')}
+                  />
+                </Badge>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSearchDebounce('');
+                  setSearchParams({ page: 1 });
+                }}
+              >
+                清除所有筛选
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
           {isLoading ? (
             <div className="flex justify-center py-8">加载中...</div>
@@ -146,42 +323,89 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>标题</TableHead>
-                    <TableHead>状态</TableHead>
-                    <TableHead>浏览量</TableHead>
-                    <TableHead>点赞数</TableHead>
-                    <TableHead>评论数</TableHead>
-                    <TableHead>创建时间</TableHead>
-                    <TableHead>操作</TableHead>
+                    <TableHead className="w-[300px]">标题</TableHead>
+                    <TableHead className="w-[100px]">状态</TableHead>
+                    <TableHead className="w-[150px]">标签</TableHead>
+                    <TableHead className="w-[80px] text-center">浏览量</TableHead>
+                    <TableHead className="w-[80px] text-center">点赞数</TableHead>
+                    <TableHead className="w-[80px] text-center">评论数</TableHead>
+                    <TableHead className="w-[120px]">创建时间</TableHead>
+                    <TableHead className="w-[150px] text-right">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {articles.map((article) => (
-                    <TableRow key={article.id}>
+                    <TableRow key={article.id} className="hover:bg-muted/50">
                       <TableCell className="font-medium">
-                        <div className="max-w-[200px] truncate" title={article.title}>
-                          {article.title}
+                        <div className="flex flex-col space-y-1">
+                          <div className="font-semibold truncate" title={article.title}>
+                            {article.title}
+                          </div>
+                          {article.summary && (
+                            <div className="text-sm text-muted-foreground truncate" title={article.summary}>
+                              {article.summary}
+                            </div>
+                          )}
                         </div>
                       </TableCell>
-                      <TableCell>{getStatusBadge(article.status)}</TableCell>
-                      <TableCell>{article.view_count}</TableCell>
-                      <TableCell>{article.like_count}</TableCell>
-                      <TableCell>{article.comment_count}</TableCell>
                       <TableCell>
-                        {format(new Date(article.created_at), 'yyyy-MM-dd HH:mm', { locale: zhCN })}
+                        {getStatusBadge(article.status)}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap gap-1">
+                          {article.tags && article.tags.length > 0 ? (
+                            article.tags.slice(0, 2).map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground text-xs">无标签</span>
+                          )}
+                          {article.tags && article.tags.length > 2 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{article.tags.length - 2}
+                            </Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center">
+                          <Eye className="h-4 w-4 mr-1 text-muted-foreground" />
+                          {article.view_count}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center">
+                          <Heart className="h-4 w-4 mr-1 text-muted-foreground" />
+                          {article.like_count}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center">
+                          <MessageSquare className="h-4 w-4 mr-1 text-muted-foreground" />
+                          {article.comment_count}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {format(new Date(article.created_at), 'yyyy-MM-dd HH:mm', { locale: zhCN })}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-1">
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            className="h-8 w-8"
                             onClick={() => onView?.(article)}
                           >
                             <FileText className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            className="h-8 w-8"
                             onClick={() => onEdit?.(article)}
                           >
                             <Edit className="h-4 w-4" />
@@ -189,7 +413,8 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                           {article.status === 'published' ? (
                             <Button
                               variant="ghost"
-                              size="sm"
+                              size="icon"
+                              className="h-8 w-8"
                               onClick={() => handleStatusChange(article.id, 'draft')}
                             >
                               <EyeOff className="h-4 w-4" />
@@ -197,7 +422,8 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                           ) : (
                             <Button
                               variant="ghost"
-                              size="sm"
+                              size="icon"
+                              className="h-8 w-8"
                               onClick={() => handleStatusChange(article.id, 'published')}
                             >
                               <Eye className="h-4 w-4" />
@@ -205,7 +431,8 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                           )}
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
                             onClick={() => handleDelete(article.id)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -220,38 +447,63 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
           )}
 
           {totalPages > 1 && (
-            <div className="flex justify-center mt-4">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-                      className={currentPage <= 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                    />
-                  </PaginationItem>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => handlePageChange(page)}
-                        isActive={currentPage === page}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-                      className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    共 {total} 篇文章，第 {currentPage} 页，共 {totalPages} 页
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage <= 1}
+                      className="flex items-center gap-1"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      上一页
+                    </Button>
+                    
+                    <div className="flex items-center space-x-1">
+                      {getPaginationNumbers().map((pageNum, index) => {
+                        if (pageNum === '...') {
+                          return (
+                            <div key={`ellipsis-${index}`} className="px-3 py-1 text-sm text-muted-foreground">
+                              ...
+                            </div>
+                          );
+                        }
+                        
+                        return (
+                          <Button
+                            key={pageNum}
+                            variant={currentPage === pageNum ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(pageNum as number)}
+                            className="w-8 h-8 p-0"
+                          >
+                            {pageNum}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage >= totalPages}
+                      className="flex items-center gap-1"
+                    >
+                      下一页
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
     </div>
   );
 }

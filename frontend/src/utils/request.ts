@@ -51,7 +51,17 @@ const makeRequest = async <T = BaseResponse>(
 ): Promise<T> => {
   // 处理查询参数
   const queryParams = options.params 
-    ? `?${new URLSearchParams(options.params).toString()}` 
+    ? `?${new URLSearchParams(
+        Object.entries(options.params).reduce((acc, [key, value]) => {
+          if (Array.isArray(value)) {
+            // 对于数组参数，为每个元素添加相同的键
+            value.forEach(item => acc.append(key, item));
+          } else {
+            acc.append(key, value);
+          }
+          return acc;
+        }, new URLSearchParams())
+      ).toString()}` 
     : '';
   
   // 获取token

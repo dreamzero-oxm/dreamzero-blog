@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { get, post, put, del } from '@/utils/request';
+import { get, post, put, del } from '@/utils/enhanced-request';
 import api from '@/lib/api';
 import type { 
   CreateArticleRequest, 
@@ -12,14 +12,29 @@ import type {
   ArticleResponse,
   BaseArticleResponse
 } from '@/interface/article';
+import { handleError, ErrorType } from '@/utils/error-handler';
 
 // 获取文章列表
 export function useGetArticles(params?: ListArticlesRequest) {
   return useQuery({
     queryKey: ['articles', params],
     queryFn: async (): Promise<ArticleListResponse> => {
-      return get<ArticleListResponse>(api.articles, { params });
+      return get<ArticleListResponse>(api.articles, { 
+        params,
+        retries: 2,
+        retryDelay: 1000,
+        timeout: 15000
+      });
     },
+    retry: (failureCount, error) => {
+      // 如果是认证错误，不重试
+      if (error instanceof Error && error.message.includes('401')) {
+        return false;
+      }
+      // 其他错误最多重试2次
+      return failureCount < 2;
+    },
+    staleTime: 5 * 60 * 1000, // 5分钟
   });
 }
 
@@ -28,9 +43,22 @@ export function useGetArticle(id: number) {
   return useQuery({
     queryKey: ['article', id],
     queryFn: async (): Promise<ArticleResponse> => {
-      return get<ArticleResponse>(`${api.articles}/${id}`);
+      return get<ArticleResponse>(`${api.articles}/${id}`, {
+        retries: 2,
+        retryDelay: 1000,
+        timeout: 15000
+      });
     },
     enabled: !!id,
+    retry: (failureCount, error) => {
+      // 如果是认证错误，不重试
+      if (error instanceof Error && error.message.includes('401')) {
+        return false;
+      }
+      // 其他错误最多重试2次
+      return failureCount < 2;
+    },
+    staleTime: 5 * 60 * 1000, // 5分钟
   });
 }
 
@@ -40,10 +68,26 @@ export function useCreateArticle() {
   
   return useMutation({
     mutationFn: async (data: CreateArticleRequest): Promise<BaseArticleResponse> => {
-      return post<BaseArticleResponse>(api.articles, { body: data });
+      return post<BaseArticleResponse>(api.articles, { 
+        body: data,
+        retries: 1,
+        retryDelay: 1000,
+        timeout: 30000
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
+    },
+    onError: (error) => {
+      const apiError = handleError(error);
+      console.error('创建文章失败:', apiError.message);
+      
+      // 根据错误类型进行特定处理
+      if (apiError.type === ErrorType.VALIDATION_ERROR) {
+        // 可以在这里添加表单验证错误的处理
+      } else if (apiError.type === ErrorType.AUTHENTICATION_ERROR) {
+        // 可以在这里添加认证错误的处理，如跳转到登录页
+      }
     },
   });
 }
@@ -54,11 +98,27 @@ export function useUpdateArticle() {
   
   return useMutation({
     mutationFn: async (data: UpdateArticleRequest): Promise<BaseArticleResponse> => {
-      return put<BaseArticleResponse>(`${api.articles}/${data.id}`, { body: data });
+      return put<BaseArticleResponse>(`${api.articles}/${data.id}`, { 
+        body: data,
+        retries: 1,
+        retryDelay: 1000,
+        timeout: 30000
+      });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       queryClient.invalidateQueries({ queryKey: ['article', variables.id] });
+    },
+    onError: (error) => {
+      const apiError = handleError(error);
+      console.error('更新文章失败:', apiError.message);
+      
+      // 根据错误类型进行特定处理
+      if (apiError.type === ErrorType.VALIDATION_ERROR) {
+        // 可以在这里添加表单验证错误的处理
+      } else if (apiError.type === ErrorType.AUTHENTICATION_ERROR) {
+        // 可以在这里添加认证错误的处理，如跳转到登录页
+      }
     },
   });
 }
@@ -69,10 +129,25 @@ export function useDeleteArticle() {
   
   return useMutation({
     mutationFn: async (data: DeleteArticleRequest): Promise<BaseArticleResponse> => {
-      return del<BaseArticleResponse>(`${api.articles}/${data.id}`);
+      return del<BaseArticleResponse>(`${api.articles}/${data.id}`, {
+        retries: 1,
+        retryDelay: 1000,
+        timeout: 15000
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
+    },
+    onError: (error) => {
+      const apiError = handleError(error);
+      console.error('删除文章失败:', apiError.message);
+      
+      // 根据错误类型进行特定处理
+      if (apiError.type === ErrorType.AUTHENTICATION_ERROR) {
+        // 可以在这里添加认证错误的处理，如跳转到登录页
+      } else if (apiError.type === ErrorType.AUTHORIZATION_ERROR) {
+        // 可以在这里添加权限错误的处理
+      }
     },
   });
 }
@@ -83,11 +158,27 @@ export function useUpdateArticleStatus() {
   
   return useMutation({
     mutationFn: async (data: UpdateArticleStatusRequest): Promise<BaseArticleResponse> => {
-      return put<BaseArticleResponse>(`${api.articles}/${data.id}/status`, { body: data });
+      return put<BaseArticleResponse>(`${api.articles}/${data.id}/status`, { 
+        body: data,
+        retries: 1,
+        retryDelay: 1000,
+        timeout: 15000
+      });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       queryClient.invalidateQueries({ queryKey: ['article', variables.id] });
+    },
+    onError: (error) => {
+      const apiError = handleError(error);
+      console.error('更新文章状态失败:', apiError.message);
+      
+      // 根据错误类型进行特定处理
+      if (apiError.type === ErrorType.AUTHENTICATION_ERROR) {
+        // 可以在这里添加认证错误的处理，如跳转到登录页
+      } else if (apiError.type === ErrorType.AUTHORIZATION_ERROR) {
+        // 可以在这里添加权限错误的处理
+      }
     },
   });
 }
@@ -98,11 +189,26 @@ export function useLikeArticle() {
   
   return useMutation({
     mutationFn: async (data: LikeArticleRequest): Promise<BaseArticleResponse> => {
-      return post<BaseArticleResponse>(`${api.articles}/${data.id}/like`);
+      return post<BaseArticleResponse>(`${api.articles}/${data.id}/like`, {
+        retries: 1,
+        retryDelay: 1000,
+        timeout: 10000
+      });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       queryClient.invalidateQueries({ queryKey: ['article', variables.id] });
+    },
+    onError: (error) => {
+      const apiError = handleError(error);
+      console.error('点赞文章失败:', apiError.message);
+      
+      // 根据错误类型进行特定处理
+      if (apiError.type === ErrorType.AUTHENTICATION_ERROR) {
+        // 可以在这里添加认证错误的处理，如跳转到登录页
+      } else if (apiError.type === ErrorType.NETWORK_ERROR) {
+        // 可以在这里添加网络错误的处理，如显示重试按钮
+      }
     },
   });
 }
