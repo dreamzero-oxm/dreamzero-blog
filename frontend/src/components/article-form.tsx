@@ -40,6 +40,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   const [coverImagePreview, setCoverImagePreview] = useState<string>('');
+  const [activeTab, setActiveTab] = useState('edit');
   
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const formChangedRef = useRef(false);
@@ -249,7 +250,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
         </CardHeader>
       </Card>
       
-      <Tabs defaultValue="edit" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="edit">编辑</TabsTrigger>
           <TabsTrigger value="preview">预览</TabsTrigger>
@@ -420,6 +421,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                     <Button
                       type="button"
                       variant="outline"
+                      onClick={() => setActiveTab('preview')}
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       预览
