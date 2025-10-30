@@ -56,8 +56,21 @@ var (
 	ErrPhotoList   = &Errno{Code: 20303, Message: "图片列表获取失败"}
 
 	// article comment errors
-	ErrArticalCommentCreateFailed = &Errno{Code: 20401, Message: "评论创建失败"}
-	ErrArticalCommentListFailed   = &Errno{Code: 20402, Message: "评论列表获取失败"}
+	ErrArticleCommentCreateFailed = &Errno{Code: 20401, Message: "评论创建失败"}
+	ErrArticleCommentListFailed   = &Errno{Code: 20402, Message: "评论列表获取失败"}
+
+	// article errors
+	ErrArticleTitleEmpty        = &Errno{Code: 20501, Message: "文章标题不能为空"}
+	ErrArticleContentEmpty      = &Errno{Code: 20502, Message: "文章内容不能为空"}
+	ErrArticleUserIDEmpty       = &Errno{Code: 20503, Message: "文章用户ID不能为空"}
+	ErrArticleStatusInvalid     = &Errno{Code: 20504, Message: "文章状态无效"}
+	ErrArticleNotFound          = &Errno{Code: 20505, Message: "文章不存在"}
+	ErrArticleCreateFailed      = &Errno{Code: 20506, Message: "文章创建失败"}
+	ErrArticleUpdateFailed      = &Errno{Code: 20507, Message: "文章更新失败"}
+	ErrArticleDeleteFailed      = &Errno{Code: 20508, Message: "文章删除失败"}
+	ErrArticleListFailed        = &Errno{Code: 20509, Message: "文章列表获取失败"}
+	ErrArticleGetFailed         = &Errno{Code: 20510, Message: "文章获取失败"}
+	ErrArticlePermissionDenied  = &Errno{Code: 20511, Message: "没有权限操作此文章"}
 )
 
 // Errno ...

@@ -9,7 +9,11 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            retry: 1 // 设置重试次数为1次
+        },
+        mutations: {
+            retry: 1 // 设置mutation的重试次数为1次
         }
     }
 })

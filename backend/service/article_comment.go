@@ -2,26 +2,21 @@ package service
 
 import (
 	"blog-server/internal/models"
-	"encoding/json"
 	"fmt"
 	// "blog-server/internal/logger"
 )
 
 type AddCommentService struct {
-	Comment      string   `json:"comment" form:"comment" binding:"required"`
-	ArticalTitle []string `json:"artical_title" form:"artical_title" binding:"required"`
+	Comment      string `json:"comment" form:"comment" binding:"required"`
+	ArticleTitle string `json:"article_title" form:"article_title" binding:"required"`
 }
 
 func (ac *AddCommentService) AddComment() error {
-	jsonTitle, err := json.Marshal(ac.ArticalTitle)
-	if err != nil {
-		return err
-	}
 	comment := models.ArticleComment{
 		Content:      ac.Comment,
-		ArticleTitle: string(jsonTitle),
+		ArticleTitle: ac.ArticleTitle,
 	}
-	// logger.Logger.Infof("comment: %v, title: %v, comment: %v", ac.Comment, ac.ArticalTitle, comment)
+	// logger.Logger.Infof("comment: %v, title: %v, comment: %v", ac.Comment, ac.ArticleTitle, comment)
 	// return nil
 	if err := models.DB.Create(&comment).Error; err != nil {
 		return err
@@ -32,8 +27,8 @@ func (ac *AddCommentService) AddComment() error {
 type ListCommentService struct {
 	// 评论ID
 	CommentID int `json:"comment_id" form:"comment_id"`
-	// 文章标题数组
-	ArticalTitle []string `json:"artical_title" form:"artical_title"`
+	// 文章标题
+	ArticleTitle string `json:"article_title" form:"article_title"`
 	// 相关内容
 	Content string `json:"content" form:"content"`
 	// 是否通知
@@ -54,12 +49,8 @@ func (lc *ListCommentService) ListComment() ([]models.ArticleComment, error) {
 
 	fmt.Println(lc)
 	// 如果提供了文章标题，添加标题过滤条件
-	if len(lc.ArticalTitle) > 0 {
-		jsonTitle, err := json.Marshal(lc.ArticalTitle)
-		if err != nil {
-			return nil, err
-		}
-		db = db.Where("article_title = ?", string(jsonTitle))
+	if lc.ArticleTitle != "" {
+		db = db.Where("article_title LIKE ?", "%"+lc.ArticleTitle+"%")
 	}
 
 	if lc.CommentID > 0 {

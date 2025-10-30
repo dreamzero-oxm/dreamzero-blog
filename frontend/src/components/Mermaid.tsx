@@ -31,7 +31,7 @@ export default function Mermaid({ chart, className, theme }: Props) {
       try {
         const { svg } = await mermaid.render(idRef.current, chart)
         if (mounted) setHtml(svg)
-      } catch (err) {
+      } catch {
         // 渲染失败时回退为代码块
         if (mounted) setHtml(`<pre><code>${escapeHtml(chart)}</code></pre>`)
       }

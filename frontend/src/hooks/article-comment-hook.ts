@@ -14,9 +14,7 @@ export function useSubmitComment() {
             // 创建 FormData 对象
             const formData = new FormData();
             formData.append('comment', postData.comment);
-            postData.articleTitle.forEach(title => {
-                formData.append('artical_title', title);
-            });
+            formData.append('article_title', postData.articleTitle);
             // fetch 会自动设置正确的 Content-Type 和边界
             return post<BaseResponse>(submitArticleComment, {
                 body: formData,

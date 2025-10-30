@@ -10,16 +10,20 @@ import (
 func RegisterAPIV1(apiGroup *gin.RouterGroup) {
 	var (
 		photoController          *v1.PhotoController
-		articalCommentController *v1.ArticalCommentController
+		articleCommentController *v1.ArticleCommentController
 		userController           *v1.UserController
+		articleController        *v1.ArticleController
 	)
 	if err := photoController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
-	if err := articalCommentController.InitRouter(apiGroup); err != nil {
+	if err := articleCommentController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
 	if err := userController.InitRouter(apiGroup); err != nil {
+		panic(err)
+	}
+	if err := articleController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
 }

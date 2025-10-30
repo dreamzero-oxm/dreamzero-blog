@@ -1,4 +1,4 @@
 export interface CreateArticleComment {
-    articleTitle: string[];
+    articleTitle: string;
     comment: string;
 }
