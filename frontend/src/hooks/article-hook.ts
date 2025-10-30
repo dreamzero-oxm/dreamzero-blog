@@ -12,14 +12,15 @@ import type {
   ArticleResponse,
   BaseArticleResponse
 } from '@/interface/article';
+import type { BaseResponse } from '@/interface/base';
 import { handleError, ErrorType } from '@/utils/error-handler';
 
 // 获取文章列表
 export function useGetArticles(params?: ListArticlesRequest) {
   return useQuery({
     queryKey: ['articles', params],
-    queryFn: async (): Promise<ArticleListResponse> => {
-      return get<ArticleListResponse>(api.articles, { 
+    queryFn: async (): Promise<BaseResponse<ArticleListResponse>> => {
+      return get<BaseResponse<ArticleListResponse>>(api.articles, { 
         params,
         retries: 2,
         retryDelay: 1000,
@@ -42,8 +43,8 @@ export function useGetArticles(params?: ListArticlesRequest) {
 export function useGetArticle(id: number) {
   return useQuery({
     queryKey: ['article', id],
-    queryFn: async (): Promise<ArticleResponse> => {
-      return get<ArticleResponse>(`${api.articles}/${id}`, {
+    queryFn: async (): Promise<BaseResponse<ArticleResponse>> => {
+      return get<BaseResponse<ArticleResponse>>(`${api.articles}/${id}`, {
         retries: 2,
         retryDelay: 1000,
         timeout: 15000

@@ -1,13 +1,14 @@
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Edit, Eye, EyeOff, Trash2, Heart, MessageCircle, Eye as ViewIcon, Share2, Clock, BarChart3, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Edit, Eye, EyeOff, Trash2, Heart, MessageCircle, Eye as ViewIcon, Share2, Clock, BarChart3, Check } from 'lucide-react';
 import { useGetArticle, useUpdateArticleStatus, useDeleteArticle, useLikeArticle } from '@/hooks/article-hook';
 import type { Article } from '@/interface/article';
 import { toast } from 'sonner';
@@ -313,9 +314,11 @@ export default function ArticleView({ articleId, onBack, onEdit }: ArticleViewPr
             <div>
               <h3 className="text-lg font-medium mb-2">封面图片</h3>
               <div className="relative overflow-hidden rounded-md">
-                <img
+                <Image
                   src={article.cover_image}
                   alt={article.title}
+                  width={800}
+                  height={400}
                   className="w-full max-h-96 object-cover transition-transform hover:scale-105 duration-300"
                 />
               </div>
@@ -335,7 +338,7 @@ export default function ArticleView({ articleId, onBack, onEdit }: ArticleViewPr
             <div>
               <h3 className="text-lg font-medium mb-2">标签</h3>
               <div className="flex flex-wrap gap-2">
-                {article.tags.map((tag) => (
+                {article.tags.map((tag: string) => (
                   <Badge key={tag} variant="secondary" className="hover:bg-secondary/80 transition-colors">
                     {tag}
                   </Badge>

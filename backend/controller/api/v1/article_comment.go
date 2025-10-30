@@ -38,7 +38,7 @@ func AddComment(c *gin.Context) {
 // @Tags article_comment
 // @Accept json
 // @Produce json
-// @Param article_title query []string false "文章标题列表"
+// @Param article_title query string false "文章标题"
 // @Param is_notify query bool false "是否通知"
 // @Param is_read query bool false "是否已读"
 // @Param is_pass query bool false "是否通过审核"

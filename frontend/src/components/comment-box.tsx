@@ -18,7 +18,7 @@ import { useSubmitComment } from "@/hooks/article-comment-hook"
 
 interface CommentProps {
     // 文章title
-    title: string[]
+    title: string
 }
 
 export default function CommentBox({title}: CommentProps) {
