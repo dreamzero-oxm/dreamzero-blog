@@ -65,6 +65,12 @@ export const useCheckAndRefreshToken = () => {
   const router = useRouter();
   
   const checkAndRefresh = async () => {
+    // // 开发模式下跳过登录验证
+    if (process.env.NODE_ENV === 'development') {
+      console.log('开发模式：跳过登录验证');
+      return true;
+    }
+    
     try {
       // 首先验证access token是否有效
       const result = await validateToken.mutateAsync();
@@ -102,7 +108,13 @@ export const useUserLogout = () => {
     queryClient.clear();
     // 触发自定义事件，通知其他组件token已清除
     window.dispatchEvent(new Event('tokenChange'));
-    router.push('/login');
+    
+    // 开发模式下不跳转到登录页
+    if (process.env.NODE_ENV !== 'development') {
+      router.push('/login');
+    } else {
+      console.log('开发模式：已登出，但不跳转到登录页');
+    }
   };
   return logout;
 };

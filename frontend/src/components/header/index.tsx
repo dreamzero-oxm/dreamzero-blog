@@ -88,7 +88,7 @@ export function Header() {
 
 
   return (
-    <header className="pt-4">
+    <header className="">
       <motion.div
         initial={{ maxWidth: "48rem" }}
         animate={{ maxWidth: isBlogPage ? "72rem" : "48rem" }}
@@ -115,7 +115,7 @@ export function Header() {
         <div className="flex items-center space-x-2 md:space-x-8 mr-4">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <div className="flex items-center gap-2">
                   {dark ? <Moon /> : <Sun />}
                   <Switch
@@ -131,13 +131,15 @@ export function Header() {
             </Tooltip>
             {isLogin ? (
               <Tooltip>
-                <TooltipTrigger>
-                  <LogOut className="cursor-pointer" onClick={async ()=>{
+                <TooltipTrigger asChild>
+                  <button className="cursor-pointer" onClick={async ()=>{
                     await logout();
                     setIsLogin(false);
                     // 强制刷新页面，确保所有状态都被重置
                     window.location.reload();
-                  }} />
+                  }}>
+                    <LogOut />
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>登出</p>
@@ -145,7 +147,7 @@ export function Header() {
               </Tooltip>
             ) : (
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                 <Link href="/login" title="Login">
                       <Fingerprint />
                     </Link>
@@ -156,7 +158,7 @@ export function Header() {
               </Tooltip>
             )}
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Link href="https://github.com/This-MOI" title="Github">
                   <GithubIcon />
                 </Link>

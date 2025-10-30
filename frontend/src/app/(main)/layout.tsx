@@ -2,6 +2,7 @@
 import { Header } from "@/components/header";
 import { useCheckAndRefreshToken } from "@/hooks/auth-hook";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function RootLayout({
@@ -41,36 +42,16 @@ export default function RootLayout({
   }
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="flex-1 min-h-full w-full flex flex-col">
       <Header />
-      <div className="hidden md:block">
-        {/* <SplashCursor /> */}
-        {/* <div className="block dark:hidden z-0">
-          <LiquidEther
-            colors={[ '#5227FF', '#FF9FFC', '#B19EEF' ]}
-            mouseForce={20}
-            cursorSize={100}
-            isViscous={false}
-            viscous={30}
-            iterationsViscous={32}
-            iterationsPoisson={32}
-            resolution={0.5}
-            isBounce={false}
-            autoDemo={true}
-            autoSpeed={0.5}
-            autoIntensity={2.2}
-            takeoverDuration={0.25}
-            autoResumeDelay={3000}
-            autoRampDuration={0.6}
-          />
-        </div> */}
-        {/* <div className="hidden dark:block">
-          <LiquidEther color='#ffffff'/>
-        </div> */}
-      </div>
-      <div className="bg-background">
+      <div className="bg-background flex-1">
         {children}
       </div>
+      <footer className="w-full flex justify-center items-center p-4 bg-background border-t flex-shrink-0">
+        <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4 text-sm whitespace-nowrap">
+          粤ICP备2025480966号-1
+        </Link>
+      </footer>
     </div>
   );
 }

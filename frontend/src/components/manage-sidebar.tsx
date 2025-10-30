@@ -1,4 +1,6 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { FileText, Home, User, Settings, LogOut } from "lucide-react"
+import Link from "next/link"
+import { useUserLogout } from "@/hooks/user-hook"
 
 import {
   Sidebar,
@@ -10,47 +12,45 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  // SidebarMenuAction,
-  // SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-// Menu items.
 const items = [
   {
-    title: "Home",
-    url: "#",
+    title: "文章管理",
+    url: "/manage",
+    icon: FileText,
+  },
+  {
+    title: "首页",
+    url: "/",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "个人信息",
+    url: "/manage/profile",
+    icon: User,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
+    title: "设置",
+    url: "/manage/settings",
     icon: Settings,
   },
 ]
 
 export default function ManageSidebar() {
+  const logout = useUserLogout()
+  
+  const handleLogout = () => {
+    logout()
+  }
+  
   return (
     <Sidebar variant="floating" collapsible="icon">
       <SidebarContent>
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton >
+              <SidebarMenuButton>
                 <div className="flex flex-1 items-center justify-between">
                   <span>管理</span>
                 </div>
@@ -59,19 +59,26 @@ export default function ManageSidebar() {
           </SidebarMenu>
         </SidebarHeader>
         <SidebarGroup>
-          <SidebarGroupLabel>文章</SidebarGroupLabel>
+          <SidebarGroupLabel>管理</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout} className="text-red-500">
+                  <LogOut />
+                  <span>退出登录</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

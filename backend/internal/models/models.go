@@ -120,6 +120,9 @@ func migrate() error {
 	if err := DB.AutoMigrate(&User{}); err != nil {
 		return err
 	}
+	if err := DB.AutoMigrate(&Article{}); err != nil {
+		return err
+	}
 	return nil
 }
 
