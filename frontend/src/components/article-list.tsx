@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import {
@@ -11,17 +11,11 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Search, Plus, Edit, Trash2, Eye, EyeOff, FileText, X, Heart, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
+// 移除未使用的Pagination和Tooltip相关导入
+import { Plus, Edit, Trash2, Eye, EyeOff, FileText, X, Heart, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useGetArticles, useDeleteArticle, useUpdateArticleStatus } from '@/hooks/article-hook';
 import type { Article, ListArticlesRequest } from '@/interface/article';
 import { toast } from 'sonner';
@@ -37,9 +31,9 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
     page: 1,
     page_size: 10,
     status: undefined,
-    keyword: undefined,
     tag: undefined,
     tags: undefined,
+    keyword: undefined,
   });
   
   const [tagInput, setTagInput] = useState('');
@@ -49,9 +43,9 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
     page: searchParams.page,
     page_size: searchParams.page_size,
     status: searchParams.status,
-    keyword: searchParams.keyword,
     tag: searchParams.tag,
     tags: searchParams.tags,
+    keyword: searchParams.keyword,
   });
   const deleteArticleMutation = useDeleteArticle();
   const updateStatusMutation = useUpdateArticleStatus();
@@ -123,17 +117,7 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
     }
   };
   
-  // 处理搜索输入防抖
-  const [searchDebounce, setSearchDebounce] = useState('');
-  
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearchParams(prev => ({ ...prev, keyword: searchDebounce }));
-      setSearchParams(prev => ({ ...prev, page: 1 }));
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, [searchDebounce]);
+
   
   // 处理状态筛选
   const handleStatusFilter = (status: string) => {
@@ -227,19 +211,51 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
       
       <Card>
         <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="搜索文章标题"
-                  value={searchDebounce}
-                  onChange={(e) => setSearchDebounce(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                placeholder="搜索文章标题"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={searchParams.keyword || ''}
+                onChange={(e) => setSearchParams(prev => ({ ...prev, keyword: e.target.value }))}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
+              />
+              <Button onClick={handleSearch}>搜索</Button>
             </div>
             
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                placeholder="添加标签"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagInputKeyDown}
+              />
+              <Button onClick={handleAddTag}>添加</Button>
+            </div>
+          </div>
+          
+          {selectedTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedTags.map((tag) => (
+                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                  {tag}
+                  <X
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => handleRemoveTag(tag)}
+                  />
+                </Badge>
+              ))}
+            </div>
+          )}
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Select
               value={searchParams.status || 'all'}
               onValueChange={handleStatusFilter}
@@ -271,21 +287,9 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
             </Select>
           </div>
           
-          {(searchParams.keyword || searchParams.status || searchParams.tag) && (
+          {(searchParams.status || searchParams.tag) && (
             <div className="mt-4 flex items-center gap-2">
               <span className="text-sm text-muted-foreground">当前筛选:</span>
-              {searchParams.keyword && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  关键词: {searchParams.keyword}
-                  <X
-                    className="h-3 w-3 cursor-pointer"
-                    onClick={() => {
-                      setSearchDebounce('');
-                      setSearchParams(prev => ({ ...prev, keyword: undefined }));
-                    }}
-                  />
-                </Badge>
-              )}
               {searchParams.status && (
                 <Badge variant="secondary" className="flex items-center gap-1">
                   状态: {searchParams.status === 'draft' ? '草稿' : searchParams.status === 'published' ? '已发布' : '私密'}
@@ -308,8 +312,12 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setSearchDebounce('');
-                  setSearchParams({ page: 1 });
+                  setSearchParams(prev => ({ 
+                    ...prev, 
+                    status: undefined, 
+                    tag: undefined,
+                    page: 1 
+                  }));
                 }}
               >
                 清除所有筛选
@@ -341,7 +349,7 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {articles.map((article) => (
+                  {articles.map((article: Article) => (
                     <TableRow key={article.id} className="hover:bg-muted/50">
                       <TableCell className="font-medium">
                         <div className="flex flex-col space-y-1">
@@ -361,7 +369,7 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {article.tags && article.tags.length > 0 ? (
-                            article.tags.slice(0, 2).map((tag, index) => (
+                            article.tags.slice(0, 2).map((tag: string, index: number) => (
                               <Badge key={index} variant="secondary" className="text-xs">
                                 {tag}
                               </Badge>
@@ -473,7 +481,7 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                     </Button>
                     
                     <div className="flex items-center space-x-1">
-                      {getPaginationNumbers().map((pageNum, index) => {
+                      {getPaginationNumbers().map((pageNum: number | string, index: number) => {
                         if (pageNum === '...') {
                           return (
                             <div key={`ellipsis-${index}`} className="px-3 py-1 text-sm text-muted-foreground">

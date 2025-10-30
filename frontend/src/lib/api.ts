@@ -10,7 +10,7 @@ const api = {
     submitArticleComment: `/${apiHost}/article_comment/add`,
     listArticleComment: `/${apiHost}/article_comment/list`,
     // article
-    articles: `/${apiHost}/article`,
+    articles: `/${apiHost}/articles`,
     // user
     userLogin: `/${apiHost}/${user}/login`,
     userRegister: `/${apiHost}/${user}/register`,

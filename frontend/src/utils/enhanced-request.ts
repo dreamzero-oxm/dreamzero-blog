@@ -185,7 +185,7 @@ const makeRequest = async <T = BaseResponse>(
   };
   
   try {
-    let token = getToken();
+    const token = getToken();
     return await sendRequest(token);
   } catch (error) {
     console.error(`[${method}]Request failed:`, error);

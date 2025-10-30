@@ -1,6 +1,6 @@
-// 首先删除Next.js Image组件的导入
 "use client"
 
+import Image from 'next/image';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { useListPhoto } from '@/hooks/photo-hook'
@@ -66,8 +66,10 @@ export default function InformalPhotographs() {
           <ImageList variant='masonry' cols={3} gap={8}>
           {list.map((item) => (
             <ImageListItem key={item.ID} className='rounded-lg overflow-hidden'>
-              <img
+              <Image
                 src={item.image_url.replace('http://10.21.23.14:10004', '')}
+                width={248}
+                height={200}
                 className='object-cover w-[248px] aspect-auto'
                 alt={item.title}
                 loading="lazy"

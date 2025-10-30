@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+'use client'
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { format } from 'date-fns';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,12 +11,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { X, Save, Eye, Upload, Image as ImageIcon } from 'lucide-react';
+import { X, Save, Eye, Upload } from 'lucide-react';
 import { useCreateArticle, useUpdateArticle } from '@/hooks/article-hook';
 import type { Article, CreateArticleRequest, UpdateArticleRequest } from '@/interface/article';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+
 import { components } from '@/components/mdx-components';
 
 interface ArticleFormProps {
@@ -36,7 +38,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
   const [tagInput, setTagInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
+
   const [coverImagePreview, setCoverImagePreview] = useState<string>('');
   
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -47,6 +49,35 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
   
   const isEditing = !!article;
   const isLoading = createArticleMutation.isPending || updateArticleMutation.isPending;
+  
+  const handleAutoSave = useCallback(async () => {
+    if (!formData.title?.trim() || !formData.content?.trim()) {
+      return; // 标题或内容为空时不自动保存
+    }
+    
+    try {
+      if (isEditing) {
+        await updateArticleMutation.mutateAsync({
+          ...formData as UpdateArticleRequest,
+          status: 'draft' // 自动保存时总是保存为草稿
+        });
+      } else {
+        // 如果是新文章，创建一个草稿
+        const result = await createArticleMutation.mutateAsync({
+          ...formData as CreateArticleRequest,
+          status: 'draft'
+        });
+        // 更新表单数据，添加新创建的文章ID
+        if (result?.data?.id) {
+          setFormData(prev => ({ ...prev, id: result.data.id }));
+        }
+      }
+      setLastSaved(new Date());
+      formChangedRef.current = false;
+    } catch (error) {
+      console.error('自动保存失败:', error);
+    }
+  }, [formData, isEditing, updateArticleMutation, createArticleMutation]);
   
   useEffect(() => {
     if (article) {
@@ -80,36 +111,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [formData]);
-  
-  const handleAutoSave = async () => {
-    if (!formData.title?.trim() || !formData.content?.trim()) {
-      return; // 标题或内容为空时不自动保存
-    }
-    
-    try {
-      if (isEditing) {
-        await updateArticleMutation.mutateAsync({
-          ...formData as UpdateArticleRequest,
-          status: 'draft' // 自动保存时总是保存为草稿
-        });
-      } else {
-        // 如果是新文章，创建一个草稿
-        const result = await createArticleMutation.mutateAsync({
-          ...formData as CreateArticleRequest,
-          status: 'draft'
-        });
-        // 更新表单数据，添加新创建的文章ID
-        if (result?.data?.id) {
-          setFormData(prev => ({ ...prev, id: result.data.id }));
-        }
-      }
-      setLastSaved(new Date());
-      formChangedRef.current = false;
-    } catch (error) {
-      console.error('自动保存失败:', error);
-    }
-  };
+  }, [formData, handleAutoSave]);
   
   // 表单验证
   const validateForm = (): boolean => {
@@ -336,9 +338,11 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                       <div className="mt-3">
                         <p className="text-sm font-medium mb-2">封面预览</p>
                         <div className="relative w-full h-48 rounded-md overflow-hidden border">
-                          <img
+                          <Image
                             src={coverImagePreview}
                             alt="封面预览"
+                            width={400}
+                            height={200}
                             className="w-full h-full object-cover"
                             onError={() => {
                               toast.error('图片加载失败，请检查URL是否正确');
@@ -416,7 +420,6 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => setShowPreview(true)}
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       预览
@@ -452,9 +455,11 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                   <div>
                     <h3 className="text-lg font-medium mb-2">封面图片</h3>
                     <div className="relative overflow-hidden rounded-md">
-                      <img
+                      <Image
                         src={coverImagePreview}
                         alt="封面图片"
+                        width={800}
+                        height={400}
                         className="w-full max-h-96 object-cover transition-transform hover:scale-105 duration-300"
                       />
                     </div>
