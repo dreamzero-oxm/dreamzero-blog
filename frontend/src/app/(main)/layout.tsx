@@ -3,27 +3,42 @@ import { Header } from "@/components/header";
 import { useCheckAndRefreshToken } from "@/hooks/auth-hook";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { checkAndRefresh, isLoading } = useCheckAndRefreshToken();
+  const { checkAndRefresh, isLoading } = useCheckAndRefreshToken('main');
   const router = useRouter();
+  const isAuthenticated = useRef(false);
 
   useEffect(() => {
+    // 如果已经验证过身份，则不再重复验证
+    if (isAuthenticated.current) {
+      return;
+    }
+    
     const authenticate = async () => {
       const accessToken = localStorage.getItem('access_token');
       
       if (!accessToken) {
         // 没有access token，不进行任何操作
+        isAuthenticated.current = true;
         return;
       }
       
-      // 验证并刷新token
-      await checkAndRefresh();
+      try {
+        // 验证并刷新token
+        const success = await checkAndRefresh();
+        if (success) {
+          isAuthenticated.current = true;
+        }
+      } catch (error) {
+        console.error('身份验证失败:', error);
+        isAuthenticated.current = true;
+      }
     };
     
     authenticate();

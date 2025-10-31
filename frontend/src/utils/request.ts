@@ -37,7 +37,7 @@ const refreshToken = async (): Promise<boolean> => {
     }
     
     const data = await response.json();
-    if (data.success) {
+    if (data.code === 200) {
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
       // 触发自定义事件，通知其他组件token已更新
@@ -47,6 +47,10 @@ const refreshToken = async (): Promise<boolean> => {
     return false;
   } catch (error) {
     console.error('Token refresh failed:', error);
+    // 刷新失败时清除令牌
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    window.dispatchEvent(new Event('tokenChange'));
     return false;
   }
 };
@@ -55,7 +59,9 @@ const refreshToken = async (): Promise<boolean> => {
 const makeRequest = async <T = BaseResponse>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
-  options: RequestParams = {}
+  options: RequestParams = {},
+  retryCount: number = 0,
+  maxRetries: number = 3
 ): Promise<T> => {
   // 处理查询参数
   const queryParams = options.params 
@@ -91,11 +97,20 @@ const makeRequest = async <T = BaseResponse>(
     // 构建完整的URL，如果url已经是完整URL则直接使用，否则添加基础URL
     const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
     
-    return fetch(`${fullUrl}${queryParams}`, {
-      method,
-      headers,
-      body: options.body instanceof FormData ? options.body : options.body? JSON.stringify(options.body) : undefined,
-    });
+    // 设置请求超时
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+    
+    try {
+      return await fetch(`${fullUrl}${queryParams}`, {
+        method,
+        headers,
+        body: options.body instanceof FormData ? options.body : options.body? JSON.stringify(options.body) : undefined,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
   };
   
   try {
@@ -119,12 +134,34 @@ const makeRequest = async <T = BaseResponse>(
     }
     
     if (!response.ok) {
+      // 如果是服务器错误(5xx)或网络错误，且未达到最大重试次数，则进行重试
+      if ((response.status >= 500 || !response.status) && retryCount < maxRetries) {
+        // 指数退避策略：等待时间 = 2^重试次数 * 1000ms
+        const delay = Math.pow(2, retryCount) * 1000;
+        console.warn(`[${method}]Request failed with status ${response.status}, retrying in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`);
+        
+        // 等待指定时间后重试
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return makeRequest<T>(method, url, options, retryCount + 1, maxRetries);
+      }
+      
       throw new Error(`[${method}]HTTP error! status: ${response.status}`);
     }
     
     return await response.json();
   } catch (error) {
-    console.error(`[${method}]Request failed:`, error);
+    // 如果是网络错误或超时，且未达到最大重试次数，则进行重试
+    if ((error instanceof Error && (error.name === 'AbortError' || error.message.includes('fetch'))) && retryCount < maxRetries) {
+      // 指数退避策略：等待时间 = 2^重试次数 * 1000ms
+      const delay = Math.pow(2, retryCount) * 1000;
+      console.warn(`[${method}]Request failed with error: ${error.message}, retrying in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`);
+      
+      // 等待指定时间后重试
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return makeRequest<T>(method, url, options, retryCount + 1, maxRetries);
+    }
+    
+    console.error(`[${method}]Request failed after ${retryCount} retries:`, error);
     throw error;
   }
 };

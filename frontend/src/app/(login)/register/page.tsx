@@ -241,6 +241,7 @@ export default function Page() {
                 }}
                 backButtonText="上一步"
                 nextButtonText="下一步"
+                completeButtonText="完成注册"
                 stepCircleContainerClassName="border-primary-500"
                 nextButtonProps={{
                     disabled: disabled,
@@ -284,7 +285,7 @@ export default function Page() {
                             {userName.length > 0 && userNameInValiate && <p className="text-red-600 text-sm mt-1">该用户名已被占用</p>}
                         </div>
                         <div className='flex flex-col gap-2'>
-                            <h2 className='text-primary'>Password</h2>
+                            <h2 className='text-primary'>密码</h2>
                             <Input 
                                 type='password' 
                                 placeholder='Password' 

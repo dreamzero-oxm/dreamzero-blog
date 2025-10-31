@@ -8,7 +8,7 @@ import { useCheckAndRefreshToken } from "@/hooks/auth-hook";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { checkAndRefresh, isLoading } = useCheckAndRefreshToken();
+  const { checkAndRefresh, isLoading } = useCheckAndRefreshToken('manage');
   
   const checkAuth = useCallback(async () => {
     try {
