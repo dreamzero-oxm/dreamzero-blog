@@ -7,35 +7,34 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { useGetUserProfile, useUpdateUserProfile, useUploadAvatar, useChangePassword, useGetOperationLogs } from '@/hooks/user-hook';
-import { UserProfile, OperationLog } from '@/interface/user';
+import { useGetUserProfile, useUpdateUserProfile, useChangePassword, useGetOperationLogs } from '@/hooks/user-hook';
+import { UserProfile } from '@/interface/user';
 import { Loader2, Edit, Camera, Lock, History } from 'lucide-react';
-import { toast } from 'sonner';
+
 import ProfileEditForm from '@/components/profile/profile-edit-form';
 import PasswordChangeForm from '@/components/profile/password-change-form';
 import OperationLogsTable from '@/components/profile/operation-logs-table';
-import AvatarUpload from '@/components/profile/avatar-upload';
+import { AvatarUpload } from '@/components/profile/avatar-upload';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [isEditing, setIsEditing] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   const [currentAvatar, setCurrentAvatar] = useState<string>('');
+  
+  const { data: profileData, isPending: profileLoading, refetch: refetchProfile } = useGetUserProfile();
+  const { mutate: updateProfile, isPending: updatePending } = useUpdateUserProfile();
+
+  const { mutate: changePassword, isPending: changePasswordPending } = useChangePassword();
+  const { data: logsData, isPending: logsLoading } = useGetOperationLogs();
+  
+  const profile = profileData?.data;
+  const logs = logsData?.data?.logs || [];
   
   useEffect(() => {
     if (profile?.avatar) {
       setCurrentAvatar(profile.avatar);
     }
   }, [profile]);
-  
-  const { data: profileData, isPending: profileLoading, refetch: refetchProfile } = useGetUserProfile();
-  const { mutate: updateProfile, isPending: updatePending } = useUpdateUserProfile();
-  const { mutate: uploadAvatar, isPending: uploadPending } = useUploadAvatar();
-  const { mutate: changePassword, isPending: changePasswordPending } = useChangePassword();
-  const { data: logsData, isPending: logsLoading } = useGetOperationLogs();
-  
-  const profile = profileData?.data;
-  const logs = logsData?.data?.logs || [];
   
   const handleAvatarChange = (avatarUrl: string) => {
     setCurrentAvatar(avatarUrl);
@@ -45,7 +44,6 @@ export default function ProfilePage() {
   const handleProfileUpdate = (updatedProfile: Partial<UserProfile>) => {
     updateProfile(updatedProfile, {
       onSuccess: () => {
-        setIsEditing(false);
         refetchProfile();
       }
     });
@@ -132,22 +130,18 @@ export default function ProfilePage() {
                     <p className="text-sm font-medium text-muted-foreground">邮箱</p>
                     <p className="text-base">{profile?.email || '-'}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">手机号</p>
-                    <p className="text-base">{profile?.phone || '-'}</p>
-                  </div>
-                  <div>
+                  {/* <div>
                     <p className="text-sm font-medium text-muted-foreground">角色</p>
                     <Badge variant={profile?.role === 'admin' ? 'default' : 'secondary'}>
                       {profile?.role === 'admin' ? '管理员' : '普通用户'}
                     </Badge>
-                  </div>
-                  <div>
+                  </div> */}
+                  {/* <div>
                     <p className="text-sm font-medium text-muted-foreground">状态</p>
                     <Badge variant={profile?.status === 'active' ? 'default' : 'destructive'}>
                       {profile?.status === 'active' ? '正常' : '已锁定'}
                     </Badge>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               

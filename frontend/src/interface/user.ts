@@ -19,6 +19,7 @@ export interface User extends BaseModel {
     lock_until: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UserProfile extends User {
     // 所有字段已在User接口中定义
 }

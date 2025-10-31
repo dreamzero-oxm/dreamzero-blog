@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { OperationLog } from '@/interface/user';
@@ -27,11 +25,11 @@ export default function OperationLogsTable({ logs, isLoading = false }: Operatio
   const filteredLogs = logs.filter(log => {
     // 搜索过滤
     const matchesSearch = searchTerm === '' || 
-      log.operation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.description.toLowerCase().includes(searchTerm.toLowerCase());
+      log.operation_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.operation_desc.toLowerCase().includes(searchTerm.toLowerCase());
     
     // 类型过滤
-    const matchesType = filterType === 'all' || log.type === filterType;
+    const matchesType = filterType === 'all' || log.operation_type === filterType;
     
     // 日期过滤
     let matchesDate = true;
@@ -79,7 +77,7 @@ export default function OperationLogsTable({ logs, isLoading = false }: Operatio
   const formatDate = (dateString: string) => {
     try {
       return format(new Date(dateString), 'yyyy-MM-dd HH:mm:ss', { locale: zhCN });
-    } catch (error) {
+    } catch {
       return dateString;
     }
   };
@@ -158,7 +156,7 @@ export default function OperationLogsTable({ logs, isLoading = false }: Operatio
               </TableHeader>
               <TableBody>
                 {filteredLogs.map((log) => {
-                  const typeDisplay = getOperationTypeDisplay(log.type);
+                  const typeDisplay = getOperationTypeDisplay(log.operation_type);
                   return (
                     <TableRow key={log.id}>
                       <TableCell className="font-medium">
@@ -169,11 +167,11 @@ export default function OperationLogsTable({ logs, isLoading = false }: Operatio
                           {typeDisplay.text}
                         </Badge>
                       </TableCell>
-                      <TableCell>{log.operation}</TableCell>
+                      <TableCell>{log.operation_type}</TableCell>
                       <TableCell className="max-w-xs truncate">
-                        {log.description}
+                        {log.operation_desc}
                       </TableCell>
-                      <TableCell>{log.ip_address || '-'}</TableCell>
+                      <TableCell>{log.request_ip || '-'}</TableCell>
                     </TableRow>
                   );
                 })}

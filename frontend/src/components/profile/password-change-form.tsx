@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Lock } from 'lucide-react';
+import { Eye, EyeOff, Lock, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { createValidator } from '@/lib/validation';
 import { Alert, AlertDescription } from '@/components/ui/alert';

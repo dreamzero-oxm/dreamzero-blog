@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef, ChangeEvent } from 'react';
+import Image from 'next/image';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Upload, Crop, Loader2 } from 'lucide-react';
+import { Upload as UploadIcon, Crop as CropIcon, Loader2 } from 'lucide-react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { validateImageFile } from '@/lib/validation';
@@ -45,8 +46,9 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
       const validation = validateImageFile(file, 5 * 1024 * 1024);
       
       if (!validation.isValid) {
-        setFileError(validation.error || '\u6587\u4ef6\u9a8c\u8bc1\u5931\u8d25');
-        toast.error(validation.error || '\u6587\u4ef6\u9a8c\u8bc1\u5931\u8d25');
+        const errorMessage = validation.errors.length > 0 ? validation.errors[0] : '\u6587\u4ef6\u9a8c\u8bc1\u5931\u8d25';
+        setFileError(errorMessage);
+        toast.error(errorMessage);
         return;
       }
       
@@ -189,7 +191,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5" />
+          <UploadIcon className="h-5 w-5" />
           \u5934\u50cf\u4e0a\u4f20
         </CardTitle>
         <CardDescription>
@@ -239,11 +241,14 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
                 circularCrop
                 keepSelection
               >
-                <img
+                <Image
                   ref={imgRef}
                   src={previewUrl}
                   alt="Preview"
+                  width={256}
+                  height={256}
                   className="max-h-64 object-contain"
+                  style={{ width: 'auto', height: 'auto' }}
                 />
               </ReactCrop>
             </div>
@@ -261,7 +266,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
                   </>
                 ) : (
                   <>
-                    <Crop className="mr-2 h-4 w-4" />
+                    <CropIcon className="mr-2 h-4 w-4" />
                     \u88c1\u526a\u5e76\u4e0a\u4f20
                   </>
                 )}
