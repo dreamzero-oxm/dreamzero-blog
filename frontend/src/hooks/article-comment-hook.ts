@@ -13,8 +13,8 @@ export function useSubmitComment() {
         mutationFn: (postData: CreateArticleComment) => {
             // 创建 FormData 对象
             const formData = new FormData();
-            formData.append('comment', postData.comment);
-            formData.append('article_title', postData.articleTitle);
+            formData.append('comment', postData.content);
+            formData.append('article_title', postData.article_title);
             // fetch 会自动设置正确的 Content-Type 和边界
             return post<BaseResponse>(submitArticleComment, {
                 body: formData,
