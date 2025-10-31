@@ -46,6 +46,19 @@ func createDB(databaseConfig config.DataBaseConfig) error {
 		return err
 	}
 	DB = db
+	
+	// 初始化UUID扩展，确保PostgreSQL支持UUID类型
+	sqlDB, err := DB.DB()
+	if err != nil {
+		logger.Logger.Errorf("Failed to get underlying sql.DB! [Error]: %v", err)
+		return err
+	}
+	_, err = sqlDB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
+	if err != nil {
+		logger.Logger.Errorf("Failed to create UUID extension! [Error]: %v", err)
+		return err
+	}
+	
 	logger.Logger.Info("Connected to Postgres!")
 	return nil
 }
@@ -121,6 +134,9 @@ func migrate() error {
 		return err
 	}
 	if err := DB.AutoMigrate(&Article{}); err != nil {
+		return err
+	}
+	if err := DB.AutoMigrate(&OperationLog{}); err != nil {
 		return err
 	}
 	return nil

@@ -14,6 +14,11 @@ type User struct {
 	Email            string    `json:"email" gorm:"type:varchar(100);not null"`                                                // 邮箱,
 	Phone            string    `json:"-" gorm:"type:varchar(20);not null"`                                                     // 手机号,暂不使用
 	Avatar           string    `json:"avatar" gorm:"type:varchar(255)"`                                                        // 头像，默认为空
+	Bio              string    `json:"bio" gorm:"type:varchar(255)"`                                                          // 个人简介
+	Website          string    `json:"website" gorm:"type:varchar(255)"`                                                      // 个人网站
+	Location         string    `json:"location" gorm:"type:varchar(100)"`                                                     // 所在地
+	Birthday         string    `json:"birthday" gorm:"type:varchar(20)"`                                                      // 生日
+	Gender           string    `json:"gender" gorm:"type:varchar(10)"`                                                         // 性别
 	Role             string    `json:"-" gorm:"type:varchar(10);not null;check:role IN ('admin', 'user', 'guest')"`            // 角色，例如：admin, user, guest
 	Status           string    `json:"-" gorm:"type:varchar(10);not null;check:status IN ('active', 'inactive', 'suspended')"` // 状态，例如：active, inactive, suspended
 	LastLogin        time.Time `json:"-" gorm:"type:timestamp;not null"`                                                       // 上次登录时间

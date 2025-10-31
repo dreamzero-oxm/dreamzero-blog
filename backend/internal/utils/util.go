@@ -4,7 +4,9 @@ import (
 	"crypto/rand"
 	"math/big"
 	"regexp"
+	"strconv"
 	"time"
+	"github.com/google/uuid"
 )
 
 // ValidatePassword 验证密码强度
@@ -76,4 +78,20 @@ func GenerateVerificationCode() string {
 	}
 
 	return string(code)
+}
+
+// StringToUint 将字符串转换为uint类型
+func StringToUint(s string) (uint, error) {
+	// 使用strconv.ParseUint将字符串转换为uint64
+	val, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	// 将uint64转换为uint
+	return uint(val), nil
+}
+
+// StringToUUID 将字符串转换为UUID类型
+func StringToUUID(s string) (uuid.UUID, error) {
+	return uuid.Parse(s)
 }

@@ -134,16 +134,16 @@ type KafkaConfig struct {
 }
 
 // RedisConfig ...
-type RedisConfig struct {
-	Addr         string        `json:"addr" yaml:"addr" mapstructure:"addr"`
-	Password     string        `json:"password" yaml:"password" mapstructure:"password"`
-	DB           int           `json:"db" yaml:"db" mapstructure:"db"`
-	DialTimeout  time.Duration `json:"dial_timeout" yaml:"dial_timeout" mapstructure:"dial_timeout"`
-	ReadTimeout  time.Duration `json:"read_timeout" yaml:"read_timeout" mapstructure:"read_timeout"`
-	WriteTimeout time.Duration `json:"write_timeout" yaml:"write_timeout" mapstructure:"write_timeout"`
-	PoolSize     int           `json:"pool_size" yaml:"pool_size" mapstructure:"pool_size"`
-	KeyPrifex    string        `json:"key_prefix" yaml:"key_prefix" mapstructure:"key_prefix"`
-}
+	type RedisConfig struct {
+		Addr         string        `json:"addr" yaml:"addr" mapstructure:"addr"`
+		Password     string        `json:"password" yaml:"password" mapstructure:"password"`
+		DB           int           `json:"db" yaml:"db" mapstructure:"db"`
+		DialTimeout  time.Duration `json:"dial_timeout" yaml:"dial_timeout" mapstructure:"dial_timeout"`
+		ReadTimeout  time.Duration `json:"read_timeout" yaml:"read_timeout" mapstructure:"read_timeout"`
+		WriteTimeout time.Duration `json:"write_timeout" yaml:"write_timeout" mapstructure:"write_timeout"`
+		PoolSize     int           `json:"pool_size" yaml:"pool_size" mapstructure:"pool_size"`
+		KeyPrefix    string        `json:"key_prefix" yaml:"key_prefix" mapstructure:"key_prefix"`
+	}
 
 type EmailConfig struct {
 	SmtpUsername  string `json:"smtp_username" yaml:"smtp_username" mapstructure:"smtp_username"`

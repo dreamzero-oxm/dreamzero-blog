@@ -1,0 +1,57 @@
+app:
+  name: "blog-server-test"
+  run_mode: "test"
+  addr: "localhost"
+  port: 8080
+  jwt_expiration_time: 7200
+  rsa_private_key_path: "./config/rsa_private_key.pem"
+  rsa_public_key_path: "./config/rsa_public_key.pem"
+  log_output_dir: "../logs"
+minio:
+  endpoint: "localhost:9000"
+  access_key_id: "minioadmin"
+  secret_access_key: "minioadmin"
+  use_ssl: false
+  bucket_names:
+    - "moity-blog"
+  location: "cn-east-1"
+database: 
+  postgres:
+    host: "localhost"
+    port: "5432"
+    username: "postgres"
+    password: "postgres"
+    db_name: "blog_test"
+    sslmode: "disable"
+  gorm:
+    log_level: "ERROR"
+    log_output_dir: "../logs"
+kafka:
+  brokers:
+    - "localhost:9092"
+  version: "4.0.0"
+  client_id: "blog-server-test"
+  producer:
+    retry_max: 3
+    retry_backoff: 100
+    required_acks: "all"
+    timeout: 3000
+    compression: "snappy"
+  consumer:
+    group_id: "blog-server-test-group"
+    auto_offset_reset: "latest"
+    session_timeout: 30000
+    heartbeat_interval: 3000
+    rebalance_timeout: 60000
+  tls:
+    enable: false
+    ca_file: "temp/ca.pem"
+    cert_file: "temp/client-cert.pem"
+    key_file: "temp/client-key.pem"
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+  pool_size: 10
+  min_idle_conns: 5

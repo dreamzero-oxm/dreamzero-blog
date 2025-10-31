@@ -7,6 +7,7 @@ import (
 	"blog-server/service"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type ArticleController struct{}
@@ -30,12 +31,13 @@ func (a *ArticleController) CreateArticle(c *gin.Context) {
 	}
 
 	// 从JWT中获取用户ID
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userID")
 	if !exists {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
 	}
-	createService.UserID = userID.(uint)
+	// 将uuid.UUID转换为字符串
+	createService.UserID = userID.(uuid.UUID).String()
 
 	article, err := createService.Create()
 	if err != nil {
@@ -71,12 +73,13 @@ func (a *ArticleController) UpdateArticle(c *gin.Context) {
 	}
 
 	// 从JWT中获取用户ID
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userID")
 	if !exists {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
 	}
-	updateService.UserID = userID.(uint)
+	// 将uuid.UUID转换为字符串
+	updateService.UserID = userID.(uuid.UUID).String()
 
 	article, err := updateService.Update()
 	if err != nil {
@@ -106,12 +109,13 @@ func (a *ArticleController) DeleteArticle(c *gin.Context) {
 	}
 
 	// 从JWT中获取用户ID
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userID")
 	if !exists {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
 	}
-	deleteService.UserID = userID.(uint)
+	// 将uuid.UUID转换为字符串
+	deleteService.UserID = userID.(uuid.UUID).String()
 
 	if err := deleteService.Delete(); err != nil {
 		internal.APIResponse(c, err, nil)
@@ -139,12 +143,13 @@ func (a *ArticleController) GetArticle(c *gin.Context) {
 	}
 
 	// 从JWT中获取用户ID
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userID")
 	if !exists {
-		// 如果用户未登录，设置UserID为0
-		getService.UserID = 0
+		// 如果用户未登录，设置UserID为空字符串
+		getService.UserID = ""
 	} else {
-		getService.UserID = userID.(uint)
+		// 将uuid.UUID转换为字符串
+		getService.UserID = userID.(uuid.UUID).String()
 	}
 
 	article, err := getService.Get()
@@ -245,12 +250,13 @@ func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
 	}
 
 	// 从JWT中获取用户ID
-	userID, exists := c.Get("user_id")
+	userID, exists := c.Get("userID")
 	if !exists {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
 	}
-	updateStatusService.UserID = userID.(uint)
+	// 将uuid.UUID转换为字符串
+	updateStatusService.UserID = userID.(uuid.UUID).String()
 
 	if err := updateStatusService.UpdateStatus(); err != nil {
 		internal.APIResponse(c, err, nil)

@@ -3,16 +3,54 @@ export interface UserLoginRequest {
     password: string;
 }
 
-export interface User {
-    id: number;
-    created_at: string;
-    updated_at: string;
+import { BaseModel } from './base';
+
+export interface User extends BaseModel {
     user_name: string;
     nickname: string;
     email: string;
     avatar: string;
+    bio: string;
+    website: string;
+    location: string;
+    birthday: string;
+    gender: string;
     is_locked: boolean;
     lock_until: string;
+}
+
+export interface UserProfile extends User {
+    // 所有字段已在User接口中定义
+}
+
+export interface UpdateUserProfileRequest {
+    nickname?: string;
+    email?: string;
+    avatar?: string;
+    bio?: string;
+    website?: string;
+    location?: string;
+    birthday?: string;
+    gender?: string;
+}
+
+export interface ChangePasswordRequest {
+    old_password: string;
+    new_password: string;
+}
+
+export interface OperationLog extends BaseModel {
+    user_id: string;
+    user_name: string;
+    operation_type: string;
+    operation_desc: string;
+    request_ip: string;
+    user_agent: string;
+    request_data: string;
+    response_data: string;
+    status: string;
+    error_message: string;
+    operation_time: string;
 }
 
 export interface UserLoginResponse {

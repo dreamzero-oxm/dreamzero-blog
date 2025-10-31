@@ -2,9 +2,9 @@
 
 import api from "@/lib/api";
 import { post, get } from "@/utils/request";
-import type { UserLoginRequest, UserLoginResponse } from "@/interface/user";
+import type { UserLoginRequest, UserLoginResponse, UserProfile, UpdateUserProfileRequest, ChangePasswordRequest, OperationLog } from "@/interface/user";
 import type { BaseResponse } from "@/interface/base";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
 
@@ -15,6 +15,11 @@ const {
     userCheckUserName,
     userRegister,
     userCheckEmail,
+    getUserProfile,
+    updateUserProfile,
+    uploadAvatar,
+    changePassword,
+    getOperationLogs,
 } = api;
 
 export function useUserLogin() {
@@ -196,5 +201,139 @@ export function useUserRegister() {
         data,
         error,
         mutate,
+    }
+}
+
+// 获取用户个人信息
+export function useGetUserProfile() {
+    const {isPending, data, error, refetch} = useQuery({
+        queryKey: ['userProfile'],
+        queryFn: () => get<BaseResponse<UserProfile>>(getUserProfile),
+        staleTime: 5 * 60 * 1000, // 5分钟
+    })
+    
+    return {
+        isPending,
+        data,
+        error,
+        refetch,
+    }
+}
+
+// 更新用户个人信息
+export function useUpdateUserProfile() {
+    const {isPending, data, error, mutate} = useMutation({
+        mutationFn: (postData: UpdateUserProfileRequest) => {
+            return post<BaseResponse<UserProfile>>(updateUserProfile, {
+                body: postData
+            })
+        },
+        onSuccess(data) {
+            if (data.code !== 0) {
+                throw new Error(data.msg);
+            } else {
+                toast.success("个人信息更新成功");
+            }
+        },
+        onError(error) {
+            toast.error("更新失败", {
+                description: error.message,
+            });
+        }
+    })
+    
+    return {
+        isPending,
+        data,
+        error,
+        mutate,
+    }
+}
+
+// 上传头像
+export function useUploadAvatar() {
+    const {isPending, data, error, mutate} = useMutation({
+        mutationFn: (fileOrBlob: File | Blob) => {
+            const formData = new FormData();
+            formData.append('avatar', fileOrBlob);
+            return post<BaseResponse<{avatar_url: string}>>(uploadAvatar, {
+                body: formData
+            })
+        },
+        onSuccess(data) {
+            if (data.code !== 0) {
+                throw new Error(data.msg);
+            } else {
+                toast.success("头像上传成功");
+            }
+        },
+        onError(error) {
+            toast.error("头像上传失败", {
+                description: error.message,
+            });
+        }
+    })
+    
+    return {
+        isPending,
+        data,
+        error,
+        mutate,
+    }
+}
+
+// 修改密码
+export function useChangePassword() {
+    const {isPending, data, error, mutate} = useMutation({
+        mutationFn: (postData: ChangePasswordRequest) => {
+            return post<BaseResponse>(changePassword, {
+                body: postData
+            })
+        },
+        onSuccess(data) {
+            if (data.code !== 0) {
+                throw new Error(data.msg);
+            } else {
+                toast.success("密码修改成功，请重新登录");
+                // 清除token，强制重新登录
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("refresh_token");
+                window.dispatchEvent(new Event('tokenChange'));
+                window.location.href = '/login';
+            }
+        },
+        onError(error) {
+            toast.error("密码修改失败", {
+                description: error.message,
+            });
+        }
+    })
+    
+    return {
+        isPending,
+        data,
+        error,
+        mutate,
+    }
+}
+
+// 获取操作日志
+export function useGetOperationLogs(page: number = 1, pageSize: number = 10) {
+    const {isPending, data, error, refetch} = useQuery({
+        queryKey: ['operationLogs', page, pageSize],
+        queryFn: () => get<BaseResponse<{logs: OperationLog[], total: number}>>(getOperationLogs, {
+            params: {
+                page,
+                page_size: pageSize
+            }
+        }),
+        staleTime: 5 * 60 * 1000, // 5分钟
+    })
+    
+    return {
+        isPending,
+        data,
+        error,
+        refetch,
     }
 }

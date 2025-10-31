@@ -3,6 +3,7 @@ package models
 import (
 	"blog-server/internal/code"
 	"errors"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"time"
 )
@@ -23,7 +24,7 @@ type Article struct {
 	Status      ArticleStatus `json:"status" gorm:"type:varchar(20);not null;default:'draft';comment:文章状态(draft/published/private)"`
 	ViewCount   uint          `json:"view_count" gorm:"type:int;default:0;comment:浏览次数"`
 	LikeCount   uint          `json:"like_count" gorm:"type:int;default:0;comment:点赞次数"`
-	UserID      uint          `json:"user_id" gorm:"type:int;not null;comment:用户ID"`
+	UserID      uuid.UUID     `json:"user_id" gorm:"type:uuid;not null;comment:用户ID"`
 	User        User          `json:"user" gorm:"foreignKey:UserID"`
 	TagsArray   []string      `json:"tags" gorm:"type:text;serializer:json"`
 	CoverImage  string        `json:"cover_image" gorm:"type:varchar(255);comment:封面图片URL"`
@@ -38,7 +39,7 @@ func (a *Article) Validate() error {
 	if a.Content == "" {
 		return errors.New(code.ErrArticleContentEmpty.Error())
 	}
-	if a.UserID == 0 {
+	if a.UserID == uuid.Nil {
 		return errors.New(code.ErrArticleUserIDEmpty.Error())
 	}
 	// 验证状态是否有效
