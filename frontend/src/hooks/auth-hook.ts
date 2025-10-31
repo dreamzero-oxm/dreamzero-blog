@@ -65,7 +65,7 @@ export const useCheckAndRefreshToken = () => {
   const router = useRouter();
   
   const checkAndRefresh = async () => {
-    // // 开发模式下跳过登录验证
+    // 开发模式下跳过登录验证
     if (process.env.NODE_ENV === 'development') {
       console.log('开发模式：跳过登录验证');
       return true;

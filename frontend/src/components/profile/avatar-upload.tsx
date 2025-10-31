@@ -1,19 +1,25 @@
 "use client";
 
+// 第三方库导入
 import { useState, useRef, ChangeEvent } from 'react';
 import Image from 'next/image';
+import { toast } from 'sonner';
+import { Upload as UploadIcon, Crop as CropIcon, Loader2, AlertCircle } from 'lucide-react';
+import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+
+// 项目内部组件导入
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Upload as UploadIcon, Crop as CropIcon, Loader2 } from 'lucide-react';
-import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
-import { validateImageFile } from '@/lib/validation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+
+// 工具函数/常量导入
+import { validateImageFile } from '@/lib/validation';
+import api from '@/lib/api';
+import { post } from '@/utils/request';
 
 interface AvatarUploadProps {
   currentAvatar?: string;
@@ -46,7 +52,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
       const validation = validateImageFile(file, 5 * 1024 * 1024);
       
       if (!validation.isValid) {
-        const errorMessage = validation.errors.length > 0 ? validation.errors[0] : '\u6587\u4ef6\u9a8c\u8bc1\u5931\u8d25';
+        const errorMessage = validation.errors.length > 0 ? validation.errors[0] : '文件验证失败';
         setFileError(errorMessage);
         toast.error(errorMessage);
         return;
@@ -118,7 +124,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      toast.error('\u8bf7\u5148\u9009\u62e9\u56fe\u7247');
+      toast.error('请先选择图片');
       return;
     }
 
@@ -127,7 +133,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
     try {
       let fileToUpload: Blob = selectedFile;
       
-      // \u5982\u679c\u7528\u6237\u8fdb\u884c\u4e86\u88c1\u526a\uff0c\u4f7f\u7528\u88c1\u526a\u540e\u7684\u56fe\u7247
+      // 如果用户进行了裁剪，使用裁剪后的图片
       if (showCropper && completedCrop) {
         fileToUpload = await getCroppedImg();
       }
@@ -135,36 +141,31 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
       const formData = new FormData();
       formData.append('avatar', fileToUpload, 'avatar.jpg');
       
-      const response = await fetch('/api/v1/user/avatar', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
+      // 使用 request.ts 中的 post 函数发送请求
+      const data = await post(api.uploadAvatar, { body: formData });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '\u4e0a\u4f20\u5931\u8d25');
+      if (data.code === 200) {
+        onAvatarChange(data.data.avatar_url);
+        toast.success('头像上传成功');
+        
+        // 重置状态
+        setSelectedFile(null);
+        setPreviewUrl('');
+        setShowCropper(false);
+        setCrop({
+          unit: '%',
+          width: 50,
+          height: 50,
+          x: 25,
+          y: 25,
+        });
+        setCompletedCrop(null);
+      } else {
+        throw new Error(data.msg || '上传失败');
       }
-      
-      const data = await response.json();
-      onAvatarChange(data.data.avatar_url);
-      toast.success('\u5934\u50cf\u4e0a\u4f20\u6210\u529f');
-      
-      // \u91cd\u7f6e\u72b6\u6001
-      setSelectedFile(null);
-      setPreviewUrl('');
-      setShowCropper(false);
-      setCrop({
-        unit: '%',
-        width: 50,
-        height: 50,
-        x: 25,
-        y: 25,
-      });
-      setCompletedCrop(null);
     } catch (error) {
-      console.error('\u4e0a\u4f20\u5934\u50cf\u5931\u8d25:', error);
-      toast.error(error instanceof Error ? error.message : '\u4e0a\u4f20\u5934\u50cf\u5931\u8d25');
+      console.error('上传头像失败:', error);
+      toast.error(error instanceof Error ? error.message : '上传头像失败');
     } finally {
       setIsUploading(false);
     }
@@ -192,10 +193,10 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <UploadIcon className="h-5 w-5" />
-          \u5934\u50cf\u4e0a\u4f20
+          头像上传
         </CardTitle>
         <CardDescription>
-          \u4e0a\u4f20\u5e76\u88c1\u526a\u60a8\u7684\u4e2a\u4eba\u5934\u50cf
+          上传并裁剪您的个人头像
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -210,7 +211,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
         
         {!showCropper ? (
           <div className="space-y-2">
-            <Label htmlFor="avatar-upload">\u9009\u62e9\u56fe\u7247</Label>
+            <Label htmlFor="avatar-upload">选择图片</Label>
             <div className={`border-2 ${fileError ? 'border-red-500' : 'border-gray-300'} rounded-lg p-4 ${fileError ? 'bg-red-50' : 'bg-gray-50'}`}>
               <Input
                 id="avatar-upload"
@@ -235,7 +236,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
             <div className="flex justify-center">
               <ReactCrop
                 crop={crop}
-                onChange={(c) => setCrop(c)}
+                onChange={(c: Crop) => setCrop(c)}
                 onComplete={handleCropComplete}
                 aspect={1}
                 circularCrop
@@ -262,17 +263,17 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
                 {isUploading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    \u4e0a\u4f20\u4e2d...
+                    上传中...
                   </>
                 ) : (
                   <>
                     <CropIcon className="mr-2 h-4 w-4" />
-                    \u88c1\u526a\u5e76\u4e0a\u4f20
+                    裁剪并上传
                   </>
                 )}
               </Button>
               <Button variant="outline" onClick={handleCancel}>
-                \u53d6\u6d88
+                取消
               </Button>
             </div>
           </div>

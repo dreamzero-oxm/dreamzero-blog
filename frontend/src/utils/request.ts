@@ -7,6 +7,11 @@ interface RequestParams {
   headers?: Record<string, any>; // 自定义请求头
 }
 
+// 基础API URL，指向后端服务器
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://your-production-domain.com' 
+  : 'http://localhost:9997';
+
 // 刷新token的函数
 const refreshToken = async (): Promise<boolean> => {
   try {
@@ -15,7 +20,10 @@ const refreshToken = async (): Promise<boolean> => {
       return false;
     }
     
-    const response = await fetch(api.refreshToken, {
+    // 构建完整的URL
+    const fullUrl = api.refreshToken.startsWith('http') ? api.refreshToken : `${API_BASE_URL}${api.refreshToken}`;
+    
+    const response = await fetch(fullUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -80,7 +88,10 @@ const makeRequest = async <T = BaseResponse>(
       ...options.headers,
     };
     
-    return fetch(`${url}${queryParams}`, {
+    // 构建完整的URL，如果url已经是完整URL则直接使用，否则添加基础URL
+    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+    
+    return fetch(`${fullUrl}${queryParams}`, {
       method,
       headers,
       body: options.body instanceof FormData ? options.body : options.body? JSON.stringify(options.body) : undefined,

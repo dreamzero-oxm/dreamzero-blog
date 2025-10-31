@@ -15,6 +15,7 @@ export interface User extends BaseModel {
     location: string;
     birthday: string;
     gender: string;
+    phone: string;
     is_locked: boolean;
     lock_until: string;
 }
@@ -33,6 +34,7 @@ export interface UpdateUserProfileRequest {
     location?: string;
     birthday?: string;
     gender?: string;
+    phone?: string;
 }
 
 export interface ChangePasswordRequest {

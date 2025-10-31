@@ -91,7 +91,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <AntdRegistry>
             <AuthProvider>
-              <div className="w-full min-h-screen  overflow-x-hidden flex flex-col">
+              <div className="w-screen min-h-screen overflow-x-hidden flex flex-col">
                 <main className="flex-1 flex">
                   {children}
                   <Toaster expand={true} position="bottom-right" richColors/>

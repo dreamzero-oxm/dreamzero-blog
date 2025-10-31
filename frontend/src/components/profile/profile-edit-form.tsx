@@ -25,9 +25,9 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     nickname: '',
     email: '',
-    phone: '',
     bio: '',
-    avatar: ''
+    avatar: '',
+    phone: ''
   });
   
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -39,9 +39,9 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
       setFormData({
         nickname: profile.nickname || '',
         email: profile.email || '',
-        phone: profile.phone || '',
         bio: profile.bio || '',
-        avatar: profile.avatar || ''
+        avatar: profile.avatar || '',
+        phone: profile.phone || ''
       });
     }
   }, [profile]);
@@ -69,7 +69,7 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
           if (data.data?.avatar_url) {
             setFormData(prev => ({
               ...prev,
-              avatar: data.data.avatar_url
+              avatar: data.data?.avatar_url || ''
             }));
             toast.success('头像上传成功');
           }
@@ -85,11 +85,11 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
     const validator = createValidator();
     
     validator
-      .required('email', formData.email, '邮箱')
-      .email('email', formData.email)
-      .nickname('nickname', formData.nickname)
-      .phone('phone', formData.phone)
-      .maxLength('bio', formData.bio, 500, '个人简介');
+      .required('email', formData.email || '', '邮箱')
+      .email('email', formData.email || '')
+      .nickname('nickname', formData.nickname || '')
+      .phone('phone', formData.phone || '')
+      .maxLength('bio', formData.bio || '', 500, '个人简介');
     
     const validationErrors = validator.getErrors();
     setErrors(validationErrors);
@@ -145,7 +145,7 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
                   <Input
                     id="nickname"
                     name="nickname"
-                    value={formData.nickname}
+                    value={formData.nickname || ''}
                     onChange={handleInputChange}
                     placeholder="请输入昵称"
                     className={errors.nickname ? 'border-red-500' : ''}
@@ -165,7 +165,7 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
                     id="email"
                     name="email"
                     type="email"
-                    value={formData.email}
+                    value={formData.email || ''}
                     onChange={handleInputChange}
                     placeholder="请输入邮箱地址"
                     required
@@ -187,7 +187,7 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
                 <Input
                   id="phone"
                   name="phone"
-                  value={formData.phone}
+                  value={formData.phone || ''}
                   onChange={handleInputChange}
                   placeholder="请输入手机号码"
                   className={errors.phone ? 'border-red-500' : ''}
@@ -207,7 +207,7 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
                 <Textarea
                   id="bio"
                   name="bio"
-                  value={formData.bio}
+                  value={formData.bio || ''}
                   onChange={handleInputChange}
                   placeholder="请输入个人简介"
                   rows={4}

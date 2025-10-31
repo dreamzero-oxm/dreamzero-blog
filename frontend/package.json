@@ -71,6 +71,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-image-crop": "^8.1.6",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "feed": "^4.2.2",
