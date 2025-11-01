@@ -2,11 +2,9 @@
 
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import ManageSidebar from "@/components/manage-sidebar"
-import AuthProvider from "@/components/provider/auth-provider";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider routeType="manage">
       <SidebarProvider>
         <ManageSidebar />
         <div className="flex-1 flex flex-col">
@@ -19,6 +17,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </SidebarProvider>
-    </AuthProvider>
   );
 }

@@ -1,17 +1,37 @@
-import { allBlogs } from "content-collections";
-import Link from "next/link";
-import count from 'word-count'
-import { config } from "@/lib/config";
-import { Badge } from "@/components/ui/badge"
+/**
+ * @file /Users/mac/code/projects/dreamzero-blog/frontend/src/app/(main)/page.tsx
+ * @description 网站主页组件，展示个人简介、精选博客和技术栈
+ * @mainFunctionality 展示个人简介、精选博客文章和技术栈徽章
+ * @author DreamZero Team
+ * @lastModified 2023-12-01
+ */
 
+// 导入所需的依赖和组件
+import { allBlogs } from "content-collections"; // 导入所有博客文章数据
+import Link from "next/link"; // 导入Next.js的Link组件，用于客户端导航
+import count from 'word-count'; // 导入字数统计工具
+import { config } from "@/lib/config"; // 导入网站配置信息
+import { Badge } from "@/components/ui/badge"; // 导入UI徽章组件
+
+/**
+ * @description 网站主页组件
+ * @component Home
+ * @returns {JSX.Element} 返回主页的JSX结构
+ * 
+ * 页面功能：
+ * - 展示个人简介和技术栈
+ * - 显示精选博客文章（按日期降序排列）
+ * - 提供博客文章导航链接
+ */
 export default function Home() {
+  // 获取精选博客文章：过滤出featured为true的文章，并按日期降序排序
   const blogs = allBlogs
     .filter((blog: any) => blog.featured === true)
     .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col min-h-full">
-      {/* 个人介绍部分 */}
+      {/* 个人介绍部分 - 包含网站标题、个人简介和技术栈 */}
       <div className="mb-16 space-y-4">
         <h1 className="text-4xl font-bold">{config.site.title}</h1>
         <p className="text-md text-gray-600">{config.author.bio}</p>
@@ -51,9 +71,11 @@ export default function Home() {
         </div>
       </div>
 
+      {/* 精选博客文章列表部分 */}
       <div className="space-y-4 flex-1">
         <h2 className="text-2xl font-bold mb-8">推荐阅读</h2>
         <div className="space-y-8">
+          {/* 遍历并渲染每篇精选博客文章 */}
           {blogs.map((blog: any) => (
             <article key={blog.slug} className="">
               <Link href={`/blog/${blog.slug}`}>
@@ -63,6 +85,7 @@ export default function Home() {
                       {blog.title}
                     </h2>
                     <span className="text-sm text-gray-500">
+                      {/* 格式化日期显示为中文格式，并显示文章字数 */}
                       {new Date(blog.date).toLocaleDateString('zh-CN', {
                         year: 'numeric',
                         month: 'numeric',
