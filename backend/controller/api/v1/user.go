@@ -529,6 +529,7 @@ func (controller *UserController) InitRouter(router *gin.RouterGroup) error {
 	// --------------------需要认证-------------------------
 	authGroup := userGroup.Group("")
 	authGroup.Use(middleware.JWTAuthMiddleware())
+	authGroup.POST("/validateAccessToken", ValidateAccessToken)
 	authGroup.GET("/validateAccessToken", ValidateAccessToken)
 	authGroup.GET("/profile", GetUserProfile)
 	authGroup.PUT("/profile", UpdateUserProfile)
