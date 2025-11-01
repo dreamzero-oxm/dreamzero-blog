@@ -64,7 +64,7 @@ export const useCheckAndRefreshToken = (routeType: 'main' | 'manage' = 'main') =
   const refreshToken = useRefreshToken();
   const router = useRouter();
   
-  const checkAndRefresh = async (retryCount: number = 0, maxRetries: number = 3) => {
+  const checkAndRefresh = async () => {
     // 开发模式下跳过登录验证
     // if (process.env.NODE_ENV === 'development') {
     //   console.log('开发模式：跳过登录验证');
@@ -74,6 +74,7 @@ export const useCheckAndRefreshToken = (routeType: 'main' | 'manage' = 'main') =
     try {
       // 首先验证access token是否有效
       const result = await validateToken.mutateAsync();
+      console.log('验证access token结果:', result);
       
       if (result.valid) {
         // access token有效，无需刷新
@@ -85,58 +86,32 @@ export const useCheckAndRefreshToken = (routeType: 'main' | 'manage' = 'main') =
           return true;
         } catch {
           // 刷新失败，根据路由类型执行不同逻辑
-          if (retryCount < maxRetries) {
-            // 指数退避策略：等待时间 = 2^重试次数 * 1000ms
-            const delay = Math.pow(2, retryCount) * 1000;
-            console.warn(`Token验证失败，${delay}ms后重试 (尝试 ${retryCount + 1}/${maxRetries})`);
-            
-            // 等待指定时间后重试
-            await new Promise(resolve => setTimeout(resolve, delay));
-            return checkAndRefresh(retryCount + 1, maxRetries);
+          if (routeType === 'manage') {
+            // 管理路由：强制跳转到登录页面
+            router.push('/login');
           } else {
-            // 达到最大重试次数，根据路由类型执行不同逻辑
-            console.error(`Token验证失败，已达到最大重试次数(${maxRetries})`);
-            
-            if (routeType === 'manage') {
-              // 管理路由：强制跳转到登录页面
-              router.push('/login');
-            } else {
-              // 主路由：不强制跳转，仅清除无效token
-              localStorage.removeItem('access_token');
-              localStorage.removeItem('refresh_token');
-              // 触发tokenChange事件，通知header组件更新登录状态
-              window.dispatchEvent(new Event('tokenChange'));
-            }
-            return false;
+            // 主路由：不强制跳转，仅清除无效token
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            // 触发tokenChange事件，通知header组件更新登录状态
+            window.dispatchEvent(new Event('tokenClearing'));
           }
+          return false;
         }
       }
     } catch {
-      // 验证失败，检查是否达到最大重试次数
-      if (retryCount < maxRetries) {
-        // 指数退避策略：等待时间 = 2^重试次数 * 1000ms
-        const delay = Math.pow(2, retryCount) * 1000;
-        console.warn(`Token验证失败，${delay}ms后重试 (尝试 ${retryCount + 1}/${maxRetries})`);
-        
-        // 等待指定时间后重试
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return checkAndRefresh(retryCount + 1, maxRetries);
+      // 验证失败
+      if (routeType === 'manage') {
+        // 管理路由：强制跳转到登录页面
+        router.push('/login');
       } else {
-        // 达到最大重试次数，根据路由类型执行不同逻辑
-        console.error(`Token验证失败，已达到最大重试次数(${maxRetries})`);
-        
-        if (routeType === 'manage') {
-          // 管理路由：强制跳转到登录页面
-          router.push('/login');
-        } else {
-          // 主路由：不强制跳转，仅清除无效token
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          // 触发tokenChange事件，通知header组件更新登录状态
-          window.dispatchEvent(new Event('tokenChange'));
-        }
-        return false;
+        // 主路由：不强制跳转，仅清除无效token
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        // 触发tokenChange事件，通知header组件更新登录状态
+        window.dispatchEvent(new Event('tokenClearing'));
       }
+      return false;
     }
   };
   

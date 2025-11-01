@@ -60,8 +60,6 @@ const makeRequest = async <T = BaseResponse>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
   options: RequestParams = {},
-  retryCount: number = 0,
-  maxRetries: number = 3
 ): Promise<T> => {
   // 处理查询参数
   const queryParams = options.params 
@@ -134,34 +132,10 @@ const makeRequest = async <T = BaseResponse>(
     }
     
     if (!response.ok) {
-      // 如果是服务器错误(5xx)或网络错误，且未达到最大重试次数，则进行重试
-      if ((response.status >= 500 || !response.status) && retryCount < maxRetries) {
-        // 指数退避策略：等待时间 = 2^重试次数 * 1000ms
-        const delay = Math.pow(2, retryCount) * 1000;
-        console.warn(`[${method}]Request failed with status ${response.status}, retrying in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`);
-        
-        // 等待指定时间后重试
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return makeRequest<T>(method, url, options, retryCount + 1, maxRetries);
-      }
-      
       throw new Error(`[${method}]HTTP error! status: ${response.status}`);
     }
-    
     return await response.json();
   } catch (error) {
-    // 如果是网络错误或超时，且未达到最大重试次数，则进行重试
-    if ((error instanceof Error && (error.name === 'AbortError' || error.message.includes('fetch'))) && retryCount < maxRetries) {
-      // 指数退避策略：等待时间 = 2^重试次数 * 1000ms
-      const delay = Math.pow(2, retryCount) * 1000;
-      console.warn(`[${method}]Request failed with error: ${error.message}, retrying in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`);
-      
-      // 等待指定时间后重试
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return makeRequest<T>(method, url, options, retryCount + 1, maxRetries);
-    }
-    
-    console.error(`[${method}]Request failed after ${retryCount} retries:`, error);
     throw error;
   }
 };

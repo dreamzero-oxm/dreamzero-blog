@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Edit, Eye, EyeOff, Trash2, Heart, MessageCircle, Eye as ViewIcon, Share2, Clock, BarChart3, Check } from 'lucide-react';
+import { ArrowLeft, Edit, Eye, EyeOff, Trash2, Heart, Eye as ViewIcon, Share2, Clock, BarChart3, Check } from 'lucide-react';
 import { useGetArticle, useUpdateArticleStatus, useDeleteArticle, useLikeArticle } from '@/hooks/article-hook';
 import type { Article } from '@/interface/article';
 import { toast } from 'sonner';
@@ -16,7 +16,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 interface ArticleViewProps {
-  articleId: number;
+  articleId: string;
   onBack?: () => void;
   onEdit?: (article: Article) => void;
 }
@@ -50,7 +50,7 @@ export default function ArticleView({ articleId, onBack, onEdit }: ArticleViewPr
       try {
         await navigator.share({
           title: article.title,
-          text: article.excerpt || article.title,
+          text: article.summary || article.title,
           url: shareUrl,
         });
         toast.success('分享成功');
@@ -255,7 +255,7 @@ export default function ArticleView({ articleId, onBack, onEdit }: ArticleViewPr
                   </TooltipContent>
                 </Tooltip>
                 
-                <Tooltip>
+                {/* <Tooltip>
                   <TooltipTrigger>
                     <div className="flex items-center gap-1">
                       <MessageCircle className="h-4 w-4" />
@@ -265,7 +265,7 @@ export default function ArticleView({ articleId, onBack, onEdit }: ArticleViewPr
                   <TooltipContent>
                     <p>评论数</p>
                   </TooltipContent>
-                </Tooltip>
+                </Tooltip> */}
               </div>
             </div>
           </div>
@@ -291,22 +291,22 @@ export default function ArticleView({ articleId, onBack, onEdit }: ArticleViewPr
                 </div>
                 <Progress value={Math.min((article.like_count / 100) * 100, 100)} className="h-2" />
               </div>
-              <div className="space-y-1">
+              {/* <div className="space-y-1">
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>评论数</span>
                   <span>{article.comment_count}</span>
                 </div>
                 <Progress value={Math.min((article.comment_count / 50) * 100, 100)} className="h-2" />
-              </div>
+              </div> */}
             </div>
           </div>
         </CardHeader>
         
         <CardContent className="space-y-6">
-          {article.excerpt && (
+          {article.summary && (
             <div>
               <h3 className="text-lg font-medium mb-2">摘要</h3>
-              <p className="text-muted-foreground">{article.excerpt}</p>
+              <p className="text-muted-foreground">{article.summary}</p>
             </div>
           )}
           

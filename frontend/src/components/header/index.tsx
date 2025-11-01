@@ -17,13 +17,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useUserLogout } from '@/hooks/user-hook'
+import { useUserLogout, useCheckAndRefreshToken } from '@/hooks/auth-hook'
 
 export function Header() {
   const pathname = usePathname();
   const isBlogPage = pathname.includes("/blog/");
   const [isLogin, setIsLogin] = useState(false);
   const logout = useUserLogout();
+  const { checkAndRefresh } = useCheckAndRefreshToken('main');
   
   // 使用函数来初始化状态，避免直接访问 localStorage
   const [dark, setDark] = useState(false);  // 初始值设为 false
@@ -41,18 +42,30 @@ export function Header() {
       document.documentElement.classList.remove('dark')
     }
 
-    // 检测token
-    const accessToken = localStorage.getItem("access_token");
-    console.log("access_token", !!accessToken);
-    setIsLogin(!!accessToken);
+    // 使用统一的认证方法验证登录状态
+    const checkLoginStatus = async () => {
+      try {
+        const isValid = await checkAndRefresh();
+        setIsLogin(isValid);
+      } catch (error) {
+        console.error('登录状态验证失败:', error);
+        setIsLogin(false);
+      }
+    };
+    
+    checkLoginStatus();
   }, []);
 
   // 监听storage事件，以便在其他标签页中清除token时更新登录状态
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'access_token') {
-        const accessToken = localStorage.getItem("access_token");
-        setIsLogin(!!accessToken);
+        // 使用统一的认证方法验证登录状态
+        checkAndRefresh().then(isValid => {
+          setIsLogin(isValid);
+        }).catch(() => {
+          setIsLogin(false);
+        });
       }
     };
 
@@ -60,20 +73,19 @@ export function Header() {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [checkAndRefresh]);
 
   // 监听自定义事件，以便在同一标签页中清除token时更新登录状态
   useEffect(() => {
-    const handleTokenChange = () => {
-      const accessToken = localStorage.getItem("access_token");
-      setIsLogin(!!accessToken);
+    const handleTokenClearing = () => {
+      setIsLogin(false);
     };
 
-    window.addEventListener('tokenChange', handleTokenChange);
+    window.addEventListener('tokenClearing', handleTokenClearing);
     return () => {
-      window.removeEventListener('tokenChange', handleTokenChange);
+      window.removeEventListener('tokenClearing', handleTokenClearing);
     };
-  }, []);
+  }, [checkAndRefresh]);
 
   const handleSwitchTheme = (isDark: boolean) => {
     setDark(isDark);

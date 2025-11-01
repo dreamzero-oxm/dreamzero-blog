@@ -40,7 +40,7 @@ export function useGetArticles(params?: ListArticlesRequest) {
 }
 
 // 获取单个文章
-export function useGetArticle(id: number) {
+export function useGetArticle(id: string) {
   return useQuery({
     queryKey: ['article', id],
     queryFn: async (): Promise<BaseResponse<ArticleResponse>> => {

@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Page() {
     return (
-        <div className="flex-1 grid min-h-svh lg:grid-cols-2">
+        <div className="grid min-h-svh lg:grid-cols-2">
             <div className="flex flex-col gap-4 p-6 md:p-10">
                 <div className="flex justify-center gap-2 md:justify-start">
                     <Link href="/" title="home" className="flex items-center gap-2 font-medium">
