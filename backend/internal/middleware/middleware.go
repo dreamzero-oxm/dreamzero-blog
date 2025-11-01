@@ -2,7 +2,6 @@ package middleware
 
 import "blog-server/internal/server"
 
-func InitMiddleware(s *server.Server) error {
+func InitMiddleware(s *server.Server) {
 	s.GinEngine.Use(CorsMiddleware())
-	return nil
 }
