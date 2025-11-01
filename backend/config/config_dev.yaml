@@ -24,6 +24,7 @@ database:
     password: "10130420"
     db_name: "www_dreamzero_cn"
     sslmode: "disable"
+    auto_create_db: true
   gorm:
     log_level: "ERROR"
     log_output_dir: "temp/logs"

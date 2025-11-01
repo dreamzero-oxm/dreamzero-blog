@@ -23,6 +23,7 @@ database:
     password: "postgres"
     db_name: "blog_test"
     sslmode: "disable"
+    auto_create_db: true
   gorm:
     log_level: "ERROR"
     log_output_dir: "../logs"
