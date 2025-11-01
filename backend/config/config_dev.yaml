@@ -22,7 +22,7 @@ database:
     port: "5432"
     username: "postgres"
     password: "10130420"
-    db_name: "moity_blog"
+    db_name: "www_dreamzero_cn"
     sslmode: "disable"
   gorm:
     log_level: "ERROR"
