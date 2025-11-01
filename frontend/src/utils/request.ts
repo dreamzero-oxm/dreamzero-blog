@@ -9,7 +9,7 @@ interface RequestParams {
 
 // 基础API URL，指向后端服务器
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-domain.com' 
+  ? '' 
   : 'http://localhost:9997';
 
 // 刷新token的函数
@@ -93,7 +93,7 @@ const makeRequest = async <T = BaseResponse>(
     };
     
     // 构建完整的URL，如果url已经是完整URL则直接使用，否则添加基础URL
-    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+    const fullUrl = API_BASE_URL ? `${API_BASE_URL}${url}` : url;
     
     // 设置请求超时
     const controller = new AbortController();
