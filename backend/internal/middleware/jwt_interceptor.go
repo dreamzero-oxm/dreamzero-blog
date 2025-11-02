@@ -50,13 +50,24 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 5. 验证是否到时间可用
-		if claims["nbf"].(int64) > time.Now().Unix() {
+		// 处理JWT中时间字段可能是float64类型的情况
+		nbf, ok := claims["nbf"].(float64)
+		if !ok {
+			internal.APIResponseUnauthorized(c, code.ErrTokenInvalid, "Token中的nbf字段格式错误")
+			return
+		}
+		if int64(nbf) > time.Now().Unix() {
 			internal.APIResponseUnauthorized(c, code.ErrTokenNbfError, nil)
 			return
 		}
 
 		// 6. 验证是否过期
-		if claims["exp"].(int64) < time.Now().Unix() {
+		exp, ok := claims["exp"].(float64)
+		if !ok {
+			internal.APIResponseUnauthorized(c, code.ErrTokenInvalid, "Token中的exp字段格式错误")
+			return
+		}
+		if int64(exp) < time.Now().Unix() {
 			internal.APIResponseUnauthorized(c, code.ErrTokenExpired, nil)
 			return
 		}
