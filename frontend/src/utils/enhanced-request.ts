@@ -43,7 +43,7 @@ const refreshToken = async (): Promise<boolean> => {
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
       // 触发自定义事件，通知其他组件token已更新
-      window.dispatchEvent(new Event('tokenChange'));
+      window.dispatchEvent(new Event('tokenUpdating'));
       return true;
     }
     return false;
@@ -150,7 +150,7 @@ const makeRequest = async <T = BaseResponse>(
           // 刷新失败，清除token并抛出错误
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
-          window.dispatchEvent(new Event('tokenChange'));
+          window.dispatchEvent(new Event('tokenClearing'));
           throw handleError(new Error(`[${method}]Token refresh failed`));
         }
       }

@@ -46,7 +46,7 @@ export const useRefreshToken = () => {
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('refresh_token', data.refresh_token);
         // 触发自定义事件，通知其他组件token已更新
-        window.dispatchEvent(new Event('tokenChange'));
+        window.dispatchEvent(new Event('tokenUpdating'));
       }
     },
     onError: () => {
@@ -126,7 +126,7 @@ export const useUserLogout = () => {
     localStorage.removeItem('refresh_token');
     queryClient.clear();
     // 触发自定义事件，通知其他组件token已清除
-    window.dispatchEvent(new Event('tokenChange'));
+    window.dispatchEvent(new Event('tokenClearing'));
     
     // 开发模式下不跳转到登录页
     if (process.env.NODE_ENV !== 'development') {

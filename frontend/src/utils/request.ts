@@ -10,7 +10,7 @@ interface RequestParams {
 // 基础API URL，指向后端服务器
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? '' 
-  : 'http://localhost:9997';
+  : 'https://dreamzero.cn';
 
 // 刷新token的函数
 const refreshToken = async (): Promise<boolean> => {
@@ -41,7 +41,7 @@ const refreshToken = async (): Promise<boolean> => {
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
       // 触发自定义事件，通知其他组件token已更新
-      window.dispatchEvent(new Event('tokenChange'));
+      window.dispatchEvent(new Event('tokenUpdating'));
       return true;
     }
     return false;
@@ -50,7 +50,7 @@ const refreshToken = async (): Promise<boolean> => {
     // 刷新失败时清除令牌
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    window.dispatchEvent(new Event('tokenChange'));
+    window.dispatchEvent(new Event('tokenClearing'));
     return false;
   }
 };
@@ -126,7 +126,7 @@ const makeRequest = async <T = BaseResponse>(
         // 刷新失败，清除token并抛出错误
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.dispatchEvent(new Event('tokenChange'));
+        window.dispatchEvent(new Event('tokenClearing'));
         throw new Error(`[${method}]Token refresh failed`);
       }
     }

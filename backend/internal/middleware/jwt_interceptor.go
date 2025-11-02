@@ -22,8 +22,20 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// 1.1 检查并处理Bearer前缀
+		tokenString := authHeader
+		const bearerPrefix = "Bearer "
+		if len(authHeader) > len(bearerPrefix) && authHeader[:len(bearerPrefix)] == bearerPrefix {
+			// 如果有Bearer前缀，则去除前缀
+			tokenString = authHeader[len(bearerPrefix):]
+		} else if len(authHeader) > 0 && authHeader[:1] != "e" {
+			// 如果没有Bearer前缀且不是以'e'开头(JWT通常以e开头)，则返回错误
+			internal.APIResponseUnauthorized(c, code.ErrTokenInvalid, "Token格式错误，应以'Bearer '开头")
+			return
+		}
+
 		// 2. 解析 Token
-		claims, err := utils.ValidateJWT(authHeader, rsa.PublicKey)
+		claims, err := utils.ValidateJWT(tokenString, rsa.PublicKey)
 
 		// 3. 验证 Token
 		if err != nil {

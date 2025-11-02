@@ -45,7 +45,7 @@ export function useUserLogin() {
                     localStorage.setItem("access_token", response?.access_token ?? "");
                     localStorage.setItem("refresh_token", response?.refresh_token ?? "");
                     // 触发自定义事件，通知其他组件token已更新
-                    window.dispatchEvent(new Event('tokenChange'));
+                    window.dispatchEvent(new Event('tokenUpdating'));
                     router.push('/');
                 }else{
                     throw new Error(data.msg);
@@ -68,7 +68,7 @@ export function useUserLogout() {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         // 触发自定义事件，通知其他组件token已清除
-        window.dispatchEvent(new Event('tokenChange'));
+        window.dispatchEvent(new Event('tokenClearing'));
         router.refresh();
     }
 }
@@ -298,7 +298,7 @@ export function useChangePassword() {
                 // 清除token，强制重新登录
                 localStorage.removeItem("access_token");
                 localStorage.removeItem("refresh_token");
-                window.dispatchEvent(new Event('tokenChange'));
+                window.dispatchEvent(new Event('tokenClearing'));
                 window.location.href = '/login';
             }
         },
