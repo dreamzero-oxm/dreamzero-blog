@@ -75,43 +75,26 @@ export const useCheckAndRefreshToken = (routeType: 'main' | 'manage' = 'main') =
     try {
       // 首先验证access token是否有效
       const result = await validateToken.mutateAsync();
-      if (result?.data?.valid) {
-        // if (false) {
-        // access token有效，无需刷新
-        return true;
-      } else {
-        // access token无效，尝试刷新
-        try {
-          await refreshToken.mutateAsync();
-          return true;
-        } catch {
-          // 刷新失败，根据路由类型执行不同逻辑
-          if (routeType === 'manage') {
-            // 管理路由：强制跳转到登录页面
-            router.push('/login');
-          } else {
-            // 主路由：不强制跳转，仅清除无效token
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
-            // 触发tokenChange事件，通知header组件更新登录状态
-            window.dispatchEvent(new Event('tokenClearing'));
-          }
-          return false;
-        }
-      }
+      return result.code === 0 && result?.data?.valid;
     } catch {
-      // 验证失败
-      if (routeType === 'manage') {
-        // 管理路由：强制跳转到登录页面
-        router.push('/login');
-      } else {
-        // 主路由：不强制跳转，仅清除无效token
+      console.log('access token无效，尝试刷新');
+      try {
+        await refreshToken.mutateAsync();
+        return true;
+      } catch {
+        // 清除无效token
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         // 触发tokenChange事件，通知header组件更新登录状态
         window.dispatchEvent(new Event('tokenClearing'));
+        
+        // 刷新失败，根据路由类型执行不同逻辑
+        if (routeType === 'manage') {
+          // 管理路由：强制跳转到登录页面
+          router.push('/login');
+        }
+        return false;
       }
-      return false;
     }
   };
   

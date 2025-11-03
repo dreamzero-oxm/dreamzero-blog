@@ -189,7 +189,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <UploadIcon className="h-5 w-5" />
