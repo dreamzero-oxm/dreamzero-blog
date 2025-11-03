@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useUploadAvatar } from '@/hooks/user-hook';
 import { UserProfile } from '@/interface/user';
 import { Camera, Save, X } from 'lucide-react';
@@ -27,10 +28,53 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
     email: '',
     bio: '',
     avatar: '',
-    phone: ''
+    phone: '',
+    gender: '',
+    birthday: '',
+    location: '',
+    website: ''
   });
   
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+  
+  // 分离网站协议和URL部分
+  const [websiteProtocol, setWebsiteProtocol] = useState('https://');
+  const [websiteUrl, setWebsiteUrl] = useState('');
+  
+  // 当网站字段变化时，更新协议和URL部分
+  useEffect(() => {
+    if (formData.website) {
+      if (formData.website.startsWith('http://')) {
+        setWebsiteProtocol('http://');
+        setWebsiteUrl(formData.website.substring(7));
+      } else if (formData.website.startsWith('https://')) {
+        setWebsiteProtocol('https://');
+        setWebsiteUrl(formData.website.substring(8));
+      } else {
+        setWebsiteProtocol('https://');
+        setWebsiteUrl(formData.website);
+      }
+    } else {
+      setWebsiteProtocol('https://');
+      setWebsiteUrl('');
+    }
+  }, [formData.website]);
+  
+  // 当协议或URL部分变化时，更新完整的网站地址
+  const updateWebsite = (protocol: string, url: string) => {
+    const fullWebsite = url ? `${protocol}${url}` : '';
+    setFormData(prev => ({ ...prev, website: fullWebsite }));
+  };
+  
+  const handleProtocolChange = (protocol: string) => {
+    setWebsiteProtocol(protocol);
+    updateWebsite(protocol, websiteUrl);
+  };
+  
+  const handleWebsiteUrlChange = (url: string) => {
+    setWebsiteUrl(url);
+    updateWebsite(websiteProtocol, url);
+  };
   
   const { mutate: uploadAvatar, isPending: uploadPending } = useUploadAvatar();
   
@@ -41,7 +85,11 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
         email: profile.email || '',
         bio: profile.bio || '',
         avatar: profile.avatar || '',
-        phone: profile.phone || ''
+        phone: profile.phone || '',
+        gender: profile.gender || '',
+        birthday: profile.birthday || '',
+        location: profile.location || '',
+        website: profile.website || ''
       });
     }
   }, [profile]);
@@ -91,6 +139,73 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
       .phone('phone', formData.phone || '')
       .maxLength('bio', formData.bio || '', 500, '个人简介');
     
+    // 验证性别（可选）
+    if (formData.gender) {
+      const validGenders = ['male', 'female', 'other'];
+      if (!validGenders.includes(formData.gender)) {
+        validator.addRule('gender', formData.gender, [
+          {
+            test: () => false,
+            message: '请选择有效的性别'
+          }
+        ]);
+      }
+    }
+    
+    // 验证生日（可选）
+    if (formData.birthday) {
+      const birthdayDate = new Date(formData.birthday);
+      const today = new Date();
+      
+      // 检查日期格式是否有效
+      if (isNaN(birthdayDate.getTime())) {
+        validator.addRule('birthday', formData.birthday, [
+          {
+            test: () => false,
+            message: '请输入有效的生日日期'
+          }
+        ]);
+      } else if (birthdayDate > today) {
+        // 检查生日是否在未来
+        validator.addRule('birthday', formData.birthday, [
+          {
+            test: () => false,
+            message: '生日不能是未来日期'
+          }
+        ]);
+      } else {
+        // 检查年龄是否合理（不超过120岁）
+        const maxAge = 120;
+        const maxBirthDate = new Date();
+        maxBirthDate.setFullYear(today.getFullYear() - maxAge);
+        
+        if (birthdayDate < maxBirthDate) {
+          validator.addRule('birthday', formData.birthday, [
+            {
+              test: () => false,
+              message: '请输入有效的生日日期'
+            }
+          ]);
+        }
+      }
+    }
+    
+    // 验证所在地（可选）
+    if (formData.location) {
+      validator.minLength('location', formData.location, 2, '所在地');
+      validator.maxLength('location', formData.location, 100, '所在地');
+    }
+    
+    // 验证网站（可选）
+    if (formData.website) {
+      validator.addRule('website', formData.website, [
+        {
+          test: (val) => val.startsWith('http://') || val.startsWith('https://'),
+          message: '网站地址必须以http://或https://开头'
+        }
+      ]);
+    }
+    
     const validationErrors = validator.getErrors();
     setErrors(validationErrors);
     
@@ -103,7 +218,20 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
       return;
     }
     
-    onSubmit(formData);
+    // 确保提交的数据包含所有字段，包括新添加的性别、生日、所在地和网站
+    const submitData = {
+      nickname: formData.nickname,
+      email: formData.email,
+      bio: formData.bio,
+      avatar: formData.avatar,
+      phone: formData.phone,
+      gender: formData.gender,
+      birthday: formData.birthday,
+      location: formData.location,
+      website: formData.website
+    };
+    
+    onSubmit(submitData);
   };
   
   return (
@@ -218,6 +346,93 @@ export default function ProfileEditForm({ profile, onSubmit, isLoading = false }
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription className="text-sm">
                       {errors.bio[0]}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="gender">性别</Label>
+                  <Select value={formData.gender || ''} onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="请选择性别" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">男</SelectItem>
+                      <SelectItem value="female">女</SelectItem>
+                      <SelectItem value="other">其他</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="birthday">生日</Label>
+                  <Input
+                    id="birthday"
+                    name="birthday"
+                    type="date"
+                    value={formData.birthday || ''}
+                    onChange={handleInputChange}
+                    className={errors.birthday ? 'border-red-500' : ''}
+                  />
+                  {errors.birthday && (
+                    <Alert className="py-2 px-3">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription className="text-sm">
+                        {errors.birthday[0]}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="location">所在地</Label>
+                  <Input
+                    id="location"
+                    name="location"
+                    value={formData.location || ''}
+                    onChange={handleInputChange}
+                    placeholder="请输入所在地"
+                    className={errors.location ? 'border-red-500' : ''}
+                  />
+                  {errors.location && (
+                    <Alert className="py-2 px-3">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription className="text-sm">
+                        {errors.location[0]}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="website">网站</Label>
+                <div className="flex">
+                  <Select value={websiteProtocol} onValueChange={handleProtocolChange}>
+                    <SelectTrigger className="w-32 rounded-r-none border-r-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="http://">http://</SelectItem>
+                      <SelectItem value="https://">https://</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    id="website"
+                    name="website"
+                    value={websiteUrl}
+                    onChange={(e) => handleWebsiteUrlChange(e.target.value)}
+                    placeholder="example.com"
+                    className={`rounded-l-none ${errors.website ? 'border-red-500' : ''}`}
+                  />
+                </div>
+                {errors.website && (
+                  <Alert className="py-2 px-3">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-sm">
+                      {errors.website[0]}
                     </AlertDescription>
                   </Alert>
                 )}

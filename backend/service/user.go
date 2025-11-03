@@ -423,7 +423,7 @@ func (service *GetUserProfileService) GetUserProfile() (*models.User, error) {
 // UpdateUserProfileService 更新用户资料服务结构体
 // 用于处理更新用户资料的请求和业务逻辑
 type UpdateUserProfileService struct {
-	ID       uuid.UUID `json:"id" form:"id"`       // 用户ID，必填
+	ID       uuid.UUID `json:"id" form:"id"`                           // 用户ID，必填
 	Nickname string    `json:"nickname" form:"nickname"`               // 昵称
 	Email    string    `json:"email" form:"email"`                     // 邮箱
 	Phone    string    `json:"phone" form:"phone"`                     // 手机号

@@ -272,28 +272,23 @@ export default function ProfilePage() {
         
         {/* 概览标签页内容：显示用户基本信息 */}
         <TabsContent value="overview" className="space-y-6">
+          {/* 用户头像和基本信息卡片 */}
           <Card>
-            {/* 卡片标题区域 */}
             <CardHeader>
               <CardTitle>个人资料</CardTitle>
               <CardDescription>您的基本信息</CardDescription>
             </CardHeader>
-            {/* 卡片内容区域 */}
             <CardContent className="space-y-6">
-              {/* 用户头像和基本信息布局：移动端垂直排列，桌面端水平排列 */}
+              {/* 用户头像和基本信息布局 */}
               <div className="flex flex-col md:flex-row gap-6">
                 {/* 用户头像区域 */}
                 <div className="flex flex-col items-center space-y-2">
-                  {/* 用户头像组件 */}
                   <Avatar className="h-24 w-24">
-                    {/* 头像图片：如果currentAvatar存在则显示，否则为空 */}
                     <AvatarImage src={currentAvatar || ''} alt={profile?.nickname || '用户头像'} />
-                    {/* 头像占位符：显示用户昵称或用户名的首字母，如果没有则显示'U' */}
                     <AvatarFallback className="text-2xl">
                       {profile?.nickname?.charAt(0) || profile?.user_name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  {/* 更换头像按钮：点击切换到头像标签页 */}
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -305,50 +300,126 @@ export default function ProfilePage() {
                   </Button>
                 </div>
                 
-                {/* 用户基本信息网格：移动端单列，桌面端双列 */}
+                {/* 用户基本信息网格 */}
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* 用户名显示 */}
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">用户名</p>
-                    <p className="text-base">{profile?.user_name || '-'}</p>
+                    <p className="text-base">{profile?.user_name || '未设置'}</p>
                   </div>
-                  {/* 昵称显示 */}
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">昵称</p>
-                    <p className="text-base">{profile?.nickname || '-'}</p>
-                  </div>
-                  {/* 邮箱显示 */}
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">邮箱</p>
-                    <p className="text-base">{profile?.email || '-'}</p>
-                  </div>
-                  {/* 以下为注释掉的代码：角色和状态显示
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">角色</p>
-                    <Badge variant={profile?.role === 'admin' ? 'default' : 'secondary'}>
-                      {profile?.role === 'admin' ? '管理员' : '普通用户'}
-                    </Badge>
+                    <p className="text-base">{profile?.nickname || '未设置'}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">状态</p>
-                    <Badge variant={profile?.status === 'active' ? 'default' : 'destructive'}>
-                      {profile?.status === 'active' ? '正常' : '已锁定'}
-                    </Badge>
+                    <p className="text-sm font-medium text-muted-foreground">性别</p>
+                    <p className="text-base">
+                      {profile?.gender === 'male' ? '男' : 
+                       profile?.gender === 'female' ? '女' : 
+                       profile?.gender === 'other' ? '其他' : '未设置'}
+                    </p>
                   </div>
-                  */}
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">生日</p>
+                    <p className="text-base">{profile?.birthday ? new Date(profile.birthday).toLocaleDateString('zh-CN') : '未设置'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">所在地</p>
+                    <p className="text-base">{profile?.location || '未设置'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">手机号</p>
+                    <p className="text-base">{profile?.phone || '未设置'}</p>
+                  </div>
                 </div>
               </div>
               
-              {/* 分隔线：视觉分隔 */}
+              {/* 个人简介 */}
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">个人简介</p>
+                <p className="text-base bg-muted/50 p-3 rounded-md min-h-[80px]">
+                  {profile?.bio || '未设置个人简介'}
+                </p>
+              </div>
+              
               <Separator />
               
-              {/* 操作按钮区域：右对齐 */}
+              {/* 操作按钮区域 */}
               <div className="flex justify-end">
-                {/* 编辑资料按钮：点击切换到编辑标签页 */}
                 <Button onClick={() => setActiveTab('edit')}>
                   <Edit className="mr-2 h-4 w-4" />
                   编辑资料
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* 联系信息卡片 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>联系信息</CardTitle>
+              <CardDescription>您的联系方式</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">邮箱</p>
+                  <p className="text-base">{profile?.email || '未设置'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">个人网站</p>
+                  {profile?.website ? (
+                    <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-base text-primary hover:underline">
+                      {profile.website}
+                    </a>
+                  ) : (
+                    <p className="text-base">未设置</p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* 账户状态卡片 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>账户状态</CardTitle>
+              <CardDescription>您的账户信息和状态</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">账户状态</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    {profile?.is_locked ? (
+                      <>
+                        <Lock className="h-4 w-4 text-destructive" />
+                        <span className="text-base text-destructive">已锁定</span>
+                        {profile?.lock_until && (
+                          <span className="text-sm text-muted-foreground">
+                            (至 {new Date(profile.lock_until).toLocaleString('zh-CN')})
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                        <span className="text-base">正常</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">注册时间</p>
+                  <p className="text-base">
+                    {profile?.created_at ? new Date(profile.created_at).toLocaleString('zh-CN') : '未知'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">最后更新</p>
+                  <p className="text-base">
+                    {profile?.updated_at ? new Date(profile.updated_at).toLocaleString('zh-CN') : '未知'}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

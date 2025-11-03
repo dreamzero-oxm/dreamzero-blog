@@ -12,7 +12,7 @@ type User struct {
 	Password         string    `json:"-" gorm:"type:varchar(255);;not null"`                                                   // 密码，加密存储
 	Nickname         string    `json:"nickname" gorm:"type:varchar(50);not null"`                                              // 昵称，默认为用户名
 	Email            string    `json:"email" gorm:"type:varchar(100);not null"`                                                // 邮箱,
-	Phone            string    `json:"-" gorm:"type:varchar(20);not null"`                                                     // 手机号,暂不使用
+	Phone            string    `json:"phone" gorm:"type:varchar(20);not null"`                                                 // 手机号,暂不使用
 	Avatar           string    `json:"avatar" gorm:"type:varchar(255)"`                                                        // 头像，默认为空
 	Bio              string    `json:"bio" gorm:"type:varchar(255)"`                                                          // 个人简介
 	Website          string    `json:"website" gorm:"type:varchar(255)"`                                                      // 个人网站
