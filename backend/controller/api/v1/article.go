@@ -39,7 +39,7 @@ func (a *ArticleController) CreateArticle(c *gin.Context) {
 	// 将uuid.UUID转换为字符串
 	createService.UserID = userID.(uuid.UUID).String()
 
-	article, err := createService.Create()
+	article, err := createService.Create(c)
 	if err != nil {
 		internal.APIResponse(c, err, nil)
 		return
@@ -81,7 +81,7 @@ func (a *ArticleController) UpdateArticle(c *gin.Context) {
 	// 将uuid.UUID转换为字符串
 	updateService.UserID = userID.(uuid.UUID).String()
 
-	article, err := updateService.Update()
+	article, err := updateService.Update(c)
 	if err != nil {
 		internal.APIResponse(c, err, nil)
 		return
@@ -114,10 +114,10 @@ func (a *ArticleController) DeleteArticle(c *gin.Context) {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
 	}
-	// 将uuid.UUID转换为字符串
-	deleteService.UserID = userID.(uuid.UUID).String()
+	// 将userID转换为uuid.UUID
+	deleteService.UserID = userID.(uuid.UUID)
 
-	if err := deleteService.Delete(); err != nil {
+	if err := deleteService.Delete(c); err != nil {
 		internal.APIResponse(c, err, nil)
 		return
 	}
@@ -152,7 +152,7 @@ func (a *ArticleController) GetArticle(c *gin.Context) {
 		getService.UserID = userID.(uuid.UUID).String()
 	}
 
-	article, err := getService.Get()
+	article, err := getService.Get(c)
 	if err != nil {
 		internal.APIResponse(c, err, nil)
 		return
@@ -163,18 +163,18 @@ func (a *ArticleController) GetArticle(c *gin.Context) {
 
 // ListArticles 获取文章列表
 // @Summary 获取文章列表
-// @Description 获取文章列表，支持分页和筛选。管理员可以查看所有状态、用户或标签的文章，非管理员只能查看公开文章。
+// @Description 获取文章列表，支持分页和筛选。无需认证即可访问，默认返回已发布文章。
 // @Tags article
 // @Accept json
 // @Produce json
-// @Param Authorization header string false "Bearer token"
 // @Param page query int false "页码" default(1)
 // @Param page_size query int false "每页数量" default(10)
-// @Param status query string false "文章状态" Enums(draft,published,private)
-// @Param user_id query int false "用户ID"
+// @Param nickname query string false "作者昵称" 
 // @Param tag query string false "单个标签"
-// @Param tags query []string false "多个标签"
-// @Success 200 {object} internal.Response{data=object{list=[]models.Article,total=int64}}
+// @Param title query string false "文章标题"
+// @Param sort_by query string false "排序字段" Enums(view_count,like_count,created_at) default(created_at)
+// @Param sort_order query string false "排序顺序" Enums(asc,desc) default(desc)
+// @Success 200 {object} internal.Response{data=object{articles=[]object{id=string,title=string,nickname=string,published_at=time.Time,tags=[]string},total=int64}}
 // @Router /articles [get]
 func (a *ArticleController) ListArticles(c *gin.Context) {
 	var listService service.ListArticleService
@@ -183,7 +183,7 @@ func (a *ArticleController) ListArticles(c *gin.Context) {
 		return
 	}
 
-	// 设置上下文并处理JWT信息
+	// 设置上下文（不再需要JWT信息）
 	listService.SetContext(c)
 
 	articles, total, err := listService.List()
@@ -192,8 +192,20 @@ func (a *ArticleController) ListArticles(c *gin.Context) {
 		return
 	}
 
+	// 只返回必要的字段：文章ID、标题、作者昵称、发布时间和标签列表
+	var simplifiedArticles []gin.H
+	for _, article := range articles {
+		simplifiedArticles = append(simplifiedArticles, gin.H{
+			"id":           article.ID,
+			"title":        article.Title,
+			"nickname":     article.User.Nickname,
+			"published_at": article.PublishedAt,
+			"tags":         article.TagsArray,
+		})
+	}
+
 	internal.APIResponse(c, nil, gin.H{
-		"articles": articles,
+		"articles": simplifiedArticles,
 		"total":    total,
 		"page":     listService.Page,
 		"page_size": listService.PageSize,
@@ -217,7 +229,16 @@ func (a *ArticleController) LikeArticle(c *gin.Context) {
 		return
 	}
 
-	if err := likeService.Like(); err != nil {
+	// 从JWT中获取用户ID
+	userID, exists := c.Get("userID")
+	if !exists {
+		internal.APIResponse(c, code.ErrUserNotFound, nil)
+		return
+	}
+	// 将uuid.UUID转换为字符串
+	likeService.UserID = userID.(uuid.UUID).String()
+
+	if err := likeService.Like(c); err != nil {
 		internal.APIResponse(c, err, nil)
 		return
 	}
@@ -258,7 +279,7 @@ func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
 	// 将uuid.UUID转换为字符串
 	updateStatusService.UserID = userID.(uuid.UUID).String()
 
-	if err := updateStatusService.UpdateStatus(); err != nil {
+	if err := updateStatusService.UpdateStatus(c); err != nil {
 		internal.APIResponse(c, err, nil)
 		return
 	}

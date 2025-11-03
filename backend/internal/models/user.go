@@ -10,7 +10,7 @@ type User struct {
 	SwaggerGormModel `json:",inline" gorm:"embedded"`
 	UserName         string    `json:"user_name" gorm:"type:varchar(50);unique;not null"`                                      // 用户名，唯一
 	Password         string    `json:"-" gorm:"type:varchar(255);;not null"`                                                   // 密码，加密存储
-	Nickname         string    `json:"nickname" gorm:"type:varchar(50);not null"`                                              // 昵称，默认为用户名
+	Nickname         string    `json:"nickname" gorm:"type:varchar(50);not null;index"`                                              // 昵称，默认为用户名
 	Email            string    `json:"email" gorm:"type:varchar(100);not null"`                                                // 邮箱,
 	Phone            string    `json:"phone" gorm:"type:varchar(20);not null"`                                                 // 手机号,暂不使用
 	Avatar           string    `json:"avatar" gorm:"type:varchar(255)"`                                                        // 头像，默认为空

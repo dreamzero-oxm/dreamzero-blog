@@ -81,8 +81,9 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		// 8. 将用户信息保存到上下文
 		// 将字符串类型的用户ID转换为UUID类型
 		userIDStr := claims["sub"].(string)
+		username := claims["username"].(string)
 		c.Set("userID", userIDStr)
 		c.Set("claims", claims)
-
+		c.Set("username", username)
 	}
 }

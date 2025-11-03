@@ -18,17 +18,17 @@ const (
 
 type Article struct {
 	SwaggerGormModel
-	Title       string        `json:"title" gorm:"type:varchar(255);not null;comment:文章标题"`
+	Title       string        `json:"title" gorm:"type:varchar(255);not null;comment:文章标题;index"`
 	Content     string        `json:"content" gorm:"type:text;not null;comment:文章内容(Markdown)"`
 	Summary     string        `json:"summary" gorm:"type:varchar(500);comment:文章摘要"`
-	Status      ArticleStatus `json:"status" gorm:"type:varchar(20);not null;default:'draft';comment:文章状态(draft/published/private)"`
-	ViewCount   uint          `json:"view_count" gorm:"type:int;default:0;comment:浏览次数"`
-	LikeCount   uint          `json:"like_count" gorm:"type:int;default:0;comment:点赞次数"`
-	UserID      uuid.UUID     `json:"user_id" gorm:"type:uuid;not null;comment:用户ID"`
+	Status      ArticleStatus `json:"status" gorm:"type:varchar(20);not null;default:'draft';comment:文章状态(draft/published/private);index"`
+	ViewCount   uint          `json:"view_count" gorm:"type:int;default:0;comment:浏览次数;index"`
+	LikeCount   uint          `json:"like_count" gorm:"type:int;default:0;comment:点赞次数;index"`
+	UserID      uuid.UUID     `json:"user_id" gorm:"type:uuid;not null;comment:用户ID;index"`
 	User        User          `json:"user" gorm:"foreignKey:UserID"`
 	TagsArray   []string      `json:"tags" gorm:"type:text;serializer:json"`
 	CoverImage  string        `json:"cover_image" gorm:"type:varchar(255);comment:封面图片URL"`
-	PublishedAt *time.Time    `json:"published_at" gorm:"comment:发布时间"`
+	PublishedAt *time.Time    `json:"published_at" gorm:"comment:发布时间;index"`
 }
 
 // Validate 验证文章数据
