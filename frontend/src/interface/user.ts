@@ -25,6 +25,11 @@ export interface UserProfile extends User {
     // 所有字段已在User接口中定义
 }
 
+export interface UserProfileResponse {
+    user: UserProfile;
+    success: boolean;
+}
+
 export interface UpdateUserProfileRequest {
     nickname?: string;
     email?: string;

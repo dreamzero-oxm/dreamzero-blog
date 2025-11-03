@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 // JWTAuthMiddleware JWT认证中间件
@@ -82,12 +81,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		// 8. 将用户信息保存到上下文
 		// 将字符串类型的用户ID转换为UUID类型
 		userIDStr := claims["sub"].(string)
-		userID, err := uuid.Parse(userIDStr)
-		if err != nil {
-			internal.APIResponseUnauthorized(c, code.ErrTokenInvalid, fmt.Sprintf("用户ID格式错误: %v", err))
-			return
-		}
-		c.Set("userID", userID)
+		c.Set("userID", userIDStr)
 		c.Set("claims", claims)
 
 		// 9. 继续处理请求

@@ -3,6 +3,7 @@ import { post } from '@/utils/request';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import api from '@/lib/api';
+import { BaseResponse } from '@/interface/base';
 
 // 验证access token的API响应接口
 interface ValidateTokenResponse {
@@ -13,14 +14,13 @@ interface ValidateTokenResponse {
 interface RefreshTokenResponse {
   success: boolean;
   access_token: string;
-  refresh_token: string;
 }
 
 // 验证access token是否有效
 export const useValidateAccessToken = () => {
   return useMutation({
     mutationFn: async () => {
-      const response = await post<ValidateTokenResponse>(api.validateAccessToken);
+      const response = await post<BaseResponse<ValidateTokenResponse>>(api.validateAccessToken);
       return response;
     },
   });
@@ -35,18 +35,19 @@ export const useRefreshToken = () => {
         throw new Error('No refresh token available');
       }
       
-      const response = await post<RefreshTokenResponse>(api.refreshToken, {
+      const response = await post<BaseResponse<RefreshTokenResponse>>(api.refreshToken, {
         body: { refresh_token: refreshToken },
       });
       return response;
     },
     onSuccess: (data) => {
-      if (data.success) {
+      if (data?.data?.success) {
         // 更新localStorage中的token
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('refresh_token', data.refresh_token);
+        localStorage.setItem('access_token', data.data.access_token);
         // 触发自定义事件，通知其他组件token已更新
         window.dispatchEvent(new Event('tokenUpdating'));
+      }else{
+        throw new Error('Token刷新失败');
       }
     },
     onError: () => {
@@ -74,9 +75,8 @@ export const useCheckAndRefreshToken = (routeType: 'main' | 'manage' = 'main') =
     try {
       // 首先验证access token是否有效
       const result = await validateToken.mutateAsync();
-      console.log('验证access token结果:', result);
-      
-      if (result.valid) {
+      if (result?.data?.valid) {
+        // if (false) {
         // access token有效，无需刷新
         return true;
       } else {

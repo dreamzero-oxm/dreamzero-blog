@@ -1,8 +1,8 @@
 'use client'
 
 import api from "@/lib/api";
-import { post, get } from "@/utils/request";
-import type { UserLoginRequest, UserLoginResponse, UserProfile, UpdateUserProfileRequest, ChangePasswordRequest, OperationLog } from "@/interface/user";
+import { post, get, put } from "@/utils/request";
+import type { UserLoginRequest, UserLoginResponse, UserProfile, UpdateUserProfileRequest, ChangePasswordRequest, OperationLog, UserProfileResponse } from "@/interface/user";
 import type { BaseResponse } from "@/interface/base";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from 'next/navigation';
@@ -208,13 +208,13 @@ export function useUserRegister() {
 export function useGetUserProfile() {
     const {isPending, data, error, refetch} = useQuery({
         queryKey: ['userProfile'],
-        queryFn: () => get<BaseResponse<UserProfile>>(getUserProfile),
+        queryFn: () => get<BaseResponse<UserProfileResponse>>(getUserProfile),
         staleTime: 5 * 60 * 1000, // 5分钟
     })
     
     return {
         isPending,
-        data,
+        data: data?.data,
         error,
         refetch,
     }
@@ -224,7 +224,7 @@ export function useGetUserProfile() {
 export function useUpdateUserProfile() {
     const {isPending, data, error, mutate} = useMutation({
         mutationFn: (postData: UpdateUserProfileRequest) => {
-            return post<BaseResponse<UserProfile>>(updateUserProfile, {
+            return put<BaseResponse<UserProfile>>(updateUserProfile, {
                 body: postData
             })
         },
@@ -286,7 +286,7 @@ export function useUploadAvatar() {
 export function useChangePassword() {
     const {isPending, data, error, mutate} = useMutation({
         mutationFn: (postData: ChangePasswordRequest) => {
-            return post<BaseResponse>(changePassword, {
+            return put<BaseResponse>(changePassword, {
                 body: postData
             })
         },

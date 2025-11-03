@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { get, post, put, del } from '@/utils/enhanced-request';
+import { get, post, put, del } from '@/utils/request';
 import api from '@/lib/api';
 import type { 
   CreateArticleRequest, 

@@ -82,12 +82,3 @@ export const config = {
     },
   },
 };
-
-// export const apiAddress = 'myhost'
-export const apiAddress = process.env.NODE_ENV === 'development' 
-  ? '10.21.23.14' 
-  : 'www.dreamzero.cn'
-export const apiPort = process.env.NODE_ENV === 'development' 
-  ? '9997' 
-  : '80'
-export const useSSL = process.env.NODE_ENV === 'production'

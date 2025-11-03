@@ -100,7 +100,7 @@ export default function ProfilePage() {
   const { data: logsData, isPending: logsLoading } = useGetOperationLogs();
   
   // 从响应数据中提取用户信息
-  const profile = profileData?.data;
+  const profile = profileData?.user;
   // 从响应数据中提取操作日志列表，如果没有数据则使用空数组
   const logs = logsData?.data?.logs || [];
   

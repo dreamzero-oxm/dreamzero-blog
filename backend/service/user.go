@@ -402,7 +402,7 @@ func (service *UserEmailService) CheckUserEmail() error {
 // GetUserProfileService 获取用户资料服务结构体
 // 用于处理获取用户资料的请求和业务逻辑
 type GetUserProfileService struct {
-	ID uuid.UUID `json:"id" form:"id" binding:"required"` // 用户ID，必填
+	ID uuid.UUID `json:"id" form:"id"` // 用户ID，必填
 }
 
 // GetUserProfile 获取用户资料
@@ -423,7 +423,7 @@ func (service *GetUserProfileService) GetUserProfile() (*models.User, error) {
 // UpdateUserProfileService 更新用户资料服务结构体
 // 用于处理更新用户资料的请求和业务逻辑
 type UpdateUserProfileService struct {
-	ID       uuid.UUID `json:"id" form:"id" binding:"required"`       // 用户ID，必填
+	ID       uuid.UUID `json:"id" form:"id"`       // 用户ID，必填
 	Nickname string    `json:"nickname" form:"nickname"`               // 昵称
 	Email    string    `json:"email" form:"email"`                     // 邮箱
 	Phone    string    `json:"phone" form:"phone"`                     // 手机号
@@ -484,7 +484,7 @@ func (service *UpdateUserProfileService) UpdateUserProfile() error {
 // UploadAvatarService 上传头像服务结构体
 // 用于处理上传用户头像的请求和业务逻辑
 type UploadAvatarService struct {
-	ID     uuid.UUID `json:"id" form:"id" binding:"required"`     // 用户ID，必填
+	ID     uuid.UUID `json:"id" form:"id"`     // 用户ID，必填
 	Avatar string    `json:"avatar" form:"avatar" binding:"required"` // 头像URL，必填
 }
 
@@ -515,7 +515,7 @@ func (service *UploadAvatarService) UploadAvatar() error {
 // ChangePasswordService 修改密码服务结构体
 // 用于处理修改用户密码的请求和业务逻辑
 type ChangePasswordService struct {
-	ID          uuid.UUID `json:"id" form:"id" binding:"required"`          // 用户ID，必填
+	ID          uuid.UUID `json:"id" form:"id"`          // 用户ID，必填
 	OldPassword string    `json:"old_password" form:"old_password" binding:"required"` // 旧密码，必填
 	NewPassword string    `json:"new_password" form:"new_password" binding:"required"` // 新密码，必填
 }
@@ -558,7 +558,7 @@ func (service *ChangePasswordService) ChangePassword() error {
 // GetOperationLogsService 获取操作日志服务结构体
 // 用于处理获取用户操作日志的请求和业务逻辑
 type GetOperationLogsService struct {
-	ID     uuid.UUID `json:"id" form:"id" binding:"required"`     // 用户ID，必填
+	ID     uuid.UUID `json:"id" form:"id"`     // 用户ID，必填
 	Page   int       `json:"page" form:"page"`                     // 页码
 	Limit  int       `json:"limit" form:"limit"`                   // 每页数量
 	Sort   string    `json:"sort" form:"sort"`                     // 排序字段
