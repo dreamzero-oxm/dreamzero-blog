@@ -330,6 +330,120 @@ func (s *DeleteArticleService) Delete(c *gin.Context) error {
 	return nil
 }
 
+// GetArticlesByRoleService 根据用户角色获取文章服务
+type GetArticlesByRoleService struct {
+	Page     int    `json:"page" form:"page" binding:"min=1"`         // 页码，最小为1
+	PageSize int    `json:"page_size" form:"page_size" binding:"min=1,max=100"` // 每页数量，最小为1，最大为100
+	Status   string `json:"status" form:"status"`                         // 文章状态筛选
+	Tag      string `json:"tag" form:"tag"`                              // 标签筛选
+	Title    string `json:"title" form:"title"`                          // 标题筛选
+	// 排序相关参数
+	SortBy   string `json:"sort_by" form:"sort_by"`                      // 排序字段：created_at, updated_at, title, view_count, like_count, published_at
+	SortDir  string `json:"sort_dir" form:"sort_dir"`                     // 排序方向：asc(升序), desc(降序)
+}
+
+// SortDirection 排序方向枚举
+type SortDirection string
+
+const (
+	SortDirectionAsc  SortDirection = "asc"  // 升序
+	SortDirectionDesc SortDirection = "desc" // 降序
+)
+
+// SortField 排序字段枚举
+type SortField string
+
+const (
+	SortFieldCreatedAt  SortField = "created_at"   // 创建时间
+	SortFieldUpdatedAt  SortField = "updated_at"   // 更新时间
+	SortFieldTitle     SortField = "title"        // 标题
+	SortFieldViewCount SortField = "view_count"   // 浏览次数
+	SortFieldLikeCount SortField = "like_count"   // 点赞次数
+	SortFieldPublished SortField = "published_at" // 发布时间
+)
+
+// GetSortOrder 获取排序字符串，用于GORM的Order方法
+func (service *GetArticlesByRoleService) GetSortOrder() string {
+	// 默认排序字段和方向
+	field := string(SortFieldCreatedAt)
+	direction := string(SortDirectionDesc)
+
+	// 如果指定了排序字段，验证并使用
+	if service.SortBy != "" {
+		switch SortField(service.SortBy) {
+		case SortFieldCreatedAt, SortFieldUpdatedAt, SortFieldTitle,
+			SortFieldViewCount, SortFieldLikeCount, SortFieldPublished:
+			field = service.SortBy
+		}
+	}
+
+	// 如果指定了排序方向，验证并使用
+	if service.SortDir != "" {
+		switch SortDirection(service.SortDir) {
+		case SortDirectionAsc, SortDirectionDesc:
+			direction = service.SortDir
+		}
+	}
+
+	return field + " " + direction
+}
+
+// GetArticlesByRole 根据用户角色获取文章
+// 管理员返回所有用户的全部文章，非管理员返回用户自己创建的文章
+// 支持分页查询、筛选和自定义排序
+// 
+// 排序参数使用说明：
+// - sort_by: 排序字段，可选值：created_at, updated_at, title, view_count, like_count, published_at
+// - sort_dir: 排序方向，可选值：asc(升序), desc(降序)
+// 
+// 示例：
+// - 按创建时间降序：sort_by=created_at&sort_dir=desc
+// - 按浏览次数升序：sort_by=view_count&sort_dir=asc
+// - 按标题降序：sort_by=title&sort_dir=desc
+func (service *GetArticlesByRoleService) GetArticlesByRole(userID string, userRole string) ([]models.Article, int64, error) {
+	postgreDB := models.DB
+	var articles []models.Article
+	var total int64
+
+	// 构建查询
+	query := postgreDB.Model(&models.Article{})
+
+	// 根据用户角色添加筛选条件
+	if userRole != "admin" {
+		// 非管理员只能查看自己的文章
+		query = query.Where("user_id = ?", userID)
+	}
+
+	// 添加状态筛选
+	if service.Status != "" {
+		query = query.Where("status = ?", service.Status)
+	}
+
+	// 添加标签筛选
+	if service.Tag != "" {
+		query = query.Where("? = ANY (tags_array)", service.Tag)
+	}
+
+	// 添加标题筛选
+	if service.Title != "" {
+		query = query.Where("title ILIKE ?", "%"+service.Title+"%")
+	}
+
+	// 获取总数
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, code.ErrDatabase
+	}
+
+	// 添加排序和分页
+	offset := (service.Page - 1) * service.PageSize
+	// 使用GetSortOrder方法获取排序字符串，支持自定义排序
+	if err := query.Order(service.GetSortOrder()).Offset(offset).Limit(service.PageSize).Find(&articles).Error; err != nil {
+		return nil, 0, code.ErrDatabase
+	}
+
+	return articles, total, nil
+}
+
 // GetArticleService 获取文章服务结构体
 // 用于处理获取单个文章的请求和业务逻辑
 type GetArticleService struct {

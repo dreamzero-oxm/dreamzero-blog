@@ -82,8 +82,10 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		// 将字符串类型的用户ID转换为UUID类型
 		userIDStr := claims["sub"].(string)
 		username := claims["username"].(string)
+		role := claims["role"].(string)
 		c.Set("userID", userIDStr)
 		c.Set("claims", claims)
 		c.Set("username", username)
+		c.Set("role", role)
 	}
 }

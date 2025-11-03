@@ -287,6 +287,66 @@ func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
 	internal.APIResponse(c, nil, nil)
 }
 
+// GetArticlesByRole 根据用户角色获取文章
+// @Summary 根据用户角色获取文章
+// @Description 管理员返回所有用户的全部文章，非管理员返回用户自己创建的文章。支持多种排序方式。
+// @Tags article
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer token"
+// @Param page query int false "页码" default(1)
+// @Param page_size query int false "每页数量" default(10)
+// @Param status query string false "文章状态筛选"
+// @Param tag query string false "标签筛选"
+// @Param title query string false "标题筛选"
+// @Param sort_by query string false "排序字段" Enums(created_at,updated_at,title,view_count,like_count,published_at) default("created_at")
+// @Param sort_dir query string false "排序方向" Enums(asc,desc) default("desc")
+// @Success 200 {object} internal.Response{data=object{articles=[]models.Article,total=int64}}
+// @Router /articles/by-role [get]
+func (a *ArticleController) GetArticlesByRole(c *gin.Context) {
+	var getArticlesByRoleService service.GetArticlesByRoleService
+	// 绑定查询参数
+	if err := c.ShouldBindQuery(&getArticlesByRoleService); err != nil {
+		internal.APIResponse(c, code.ErrParam, nil)
+		return
+	}
+
+	// 设置默认值
+	if getArticlesByRoleService.Page == 0 {
+		getArticlesByRoleService.Page = 1
+	}
+	if getArticlesByRoleService.PageSize == 0 {
+		getArticlesByRoleService.PageSize = 10
+	}
+
+	// 从JWT中获取用户ID和角色
+	userID, exists := c.Get("userID")
+	if !exists {
+		internal.APIResponse(c, code.ErrUserNotFound, nil)
+		return
+	}
+
+	userRole, exists := c.Get("role")
+	if !exists {
+		// 如果JWT中没有角色信息，默认为普通用户
+		userRole = "user"
+	}
+
+	// 调用服务获取文章
+	articles, total, err := getArticlesByRoleService.GetArticlesByRole(userID.(uuid.UUID).String(), userRole.(string))
+	if err != nil {
+		internal.APIResponse(c, err, nil)
+		return
+	}
+
+	// 返回结果
+	result := map[string]interface{}{
+		"articles": articles,
+		"total":    total,
+	}
+	internal.APIResponse(c, nil, result)
+}
+
 // InitRouter 初始化文章路由
 func (a *ArticleController) InitRouter(Router *gin.RouterGroup) error {
 	articleRouter := Router.Group("articles")
@@ -301,5 +361,6 @@ func (a *ArticleController) InitRouter(Router *gin.RouterGroup) error {
 	authGroup.DELETE(":id", a.DeleteArticle)              // 删除文章
 	authGroup.POST(":id/like", a.LikeArticle)             // 点赞文章
 	authGroup.PUT(":id/status", a.UpdateArticleStatus)     // 更新文章状态
+	authGroup.GET("by-role", a.GetArticlesByRole)           // 根据用户角色获取文章
 	return nil
 }
