@@ -29,7 +29,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
   const [formData, setFormData] = useState<CreateArticleRequest | UpdateArticleRequest>({
     title: '',
     content: '',
-    excerpt: '',
+    summary: '',
     status: 'draft',
     tags: [],
     cover_image: '',
@@ -86,7 +86,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
         id: article.id,
         title: article.title,
         content: article.content,
-        excerpt: article.excerpt,
+        summary: article.summary,
         status: article.status,
         tags: article.tags,
         cover_image: article.cover_image || '',
@@ -128,7 +128,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
       newErrors.content = '请输入文章内容';
     }
     
-    if (formData.excerpt && formData.excerpt.length > 200) {
+    if (formData.summary && formData.summary.length > 200) {
       newErrors.excerpt = '摘要不能超过200个字符';
     }
     
@@ -281,7 +281,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                   <Label htmlFor="excerpt">文章摘要</Label>
                   <Textarea
                     id="excerpt"
-                    value={formData.excerpt}
+                    value={formData.summary}
                     onChange={(e) => handleInputChange('excerpt', e.target.value)}
                     placeholder="请输入文章摘要"
                     rows={3}
@@ -291,7 +291,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                     <p className="text-sm text-red-500">{errors.excerpt}</p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    {formData.excerpt?.length || 0}/200
+                    {formData.summary?.length || 0}/200
                   </p>
                 </div>
                 
@@ -446,10 +446,10 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                   </h1>
                 </div>
                 
-                {formData.excerpt && (
+                {formData.summary && (
                   <div>
                     <h3 className="text-lg font-medium mb-2">摘要</h3>
-                    <p className="text-muted-foreground">{formData.excerpt}</p>
+                    <p className="text-muted-foreground">{formData.summary}</p>
                   </div>
                 )}
                 

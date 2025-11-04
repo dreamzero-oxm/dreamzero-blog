@@ -1,6 +1,6 @@
 import type { BaseResponse } from "@/interface/base";
-import { useRefreshToken } from '@/hooks/auth-hook';
 import { handleError, ErrorType, isResponseSuccess, getResponseError } from './error-handler';
+import api from '@/lib/api';
 
 interface RequestParams {
   params?: Record<string, any>;  // URL 查询参数
@@ -85,6 +85,43 @@ const makeRequest = async <T = BaseResponse>(
   // 获取token
   const getToken = () => localStorage.getItem('access_token');
   
+  // 刷新token的函数（非Hook版本）
+  const refreshToken = async () => {
+    const refreshTokenValue = localStorage.getItem('refresh_token');
+    if (!refreshTokenValue) {
+      throw new Error('No refresh token available');
+    }
+    
+    // 直接使用fetch避免循环依赖
+    const fullUrl = API_BASE_URL ? `${API_BASE_URL}${api.refreshToken}` : api.refreshToken;
+    const response = await fetchWithTimeout(
+      fullUrl,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: refreshTokenValue }),
+      },
+      timeout
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Token refresh failed with status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data?.data?.success) {
+      localStorage.setItem('access_token', data.data.access_token);
+      window.dispatchEvent(new Event('tokenUpdating'));
+      return data;
+    } else {
+      throw new Error('Token刷新失败');
+    }
+  };
+  
   // 发送请求的函数
   const sendRequest = async (token: string | null, attempt: number = 0): Promise<T> => {
     try {
@@ -115,12 +152,12 @@ const makeRequest = async <T = BaseResponse>(
       
       // 如果是401错误，尝试刷新token并重试
       if (response.status === 401 && token) {
-        const refreshResult = await useRefreshToken().mutateAsync();
-        if (refreshResult?.data?.success) {
-          // 使用新token重试请求
+        console.log('401 error, trying to refresh token');
+        try {
+          await refreshToken();
           const newToken = getToken();
           return sendRequest(newToken, attempt);
-        } else {
+        } catch (refreshError) {
           // 刷新失败，清除token并抛出错误
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');

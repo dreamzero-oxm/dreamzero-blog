@@ -14,6 +14,12 @@ import type {
 } from '@/interface/article';
 import type { BaseResponse } from '@/interface/base';
 import { handleError, ErrorType } from '@/utils/error-handler';
+import type { Article } from '@/interface/article';
+import type { CreateArticleComment } from "@/interface/article-comment"
+
+const {
+    submitArticleComment,
+} = api;
 
 // 获取文章列表
 export function useGetArticles(params?: ListArticlesRequest) {
@@ -212,4 +218,66 @@ export function useLikeArticle() {
       }
     },
   });
+}
+
+
+
+// 根据用户角色获取文章的请求参数
+export interface GetArticlesByRoleRequest {
+  page?: number;
+  page_size?: number;
+  status?: string;
+  tag?: string;
+  tags?: string[];
+  title?: string;
+  sort_by?: string;
+  sort_dir?: string;
+}
+
+// 根据用户角色获取文章的响应数据
+export interface GetArticlesByRoleResponse {
+  articles: Article[];
+  total: number;
+}
+
+// 根据用户角色获取文章的Hook
+export function useGetArticlesByRole(params?: GetArticlesByRoleRequest) {
+  return useQuery({
+    queryKey: ['articles-by-role', params],
+    queryFn: async (): Promise<BaseResponse<GetArticlesByRoleResponse>> => {
+      return get<BaseResponse<GetArticlesByRoleResponse>>('/api/v1/articles/by-role', { 
+        params,
+        timeout: 15000
+      });
+    },
+    staleTime: 5 * 60 * 1000, // 5分钟
+  });
+}
+
+
+export function useSubmitComment() {
+    const {isPending, data, error, mutate} = useMutation({
+        mutationFn: (postData: CreateArticleComment) => {
+            // 创建 FormData 对象
+            const formData = new FormData();
+            formData.append('comment', postData.content);
+            formData.append('article_title', postData.article_title);
+            // fetch 会自动设置正确的 Content-Type 和边界
+            return post<BaseResponse>(submitArticleComment, {
+                body: formData,
+            });
+        },
+        onSuccess(data) {
+            if (data.code !== 0) {
+                // 如果返回的 code 不为 0，则抛出错误
+                throw new Error(data.msg || '评论提交失败');
+            }
+        },
+    });
+    return {
+        isPending,
+        data,
+        error,
+        mutate,
+    }
 }

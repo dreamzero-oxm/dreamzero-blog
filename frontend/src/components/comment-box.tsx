@@ -13,15 +13,17 @@ import {
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
-import type { CreateArticleComment } from "@/interface/article-comment"
+
 import { useSubmitComment } from "@/hooks/article-comment-hook"
 
 interface CommentProps {
     // 文章title
     title: string
+    // 文章ID
+    articleId: string
 }
 
-export default function CommentBox({title}: CommentProps) {
+export default function CommentBox({title, articleId}: CommentProps) {
     const [comment, setComment] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const { isPending, error, mutate: mutateAddComment } = useSubmitComment()
@@ -50,9 +52,10 @@ export default function CommentBox({title}: CommentProps) {
         try {
             setIsSubmitting(true)
             mutateAddComment({
-                comment: comment,
-                articleTitle: title
-            } as CreateArticleComment)
+                content: comment,
+                article_title: title,
+                article_id: articleId
+            })
             setComment("")
         } catch (error) {
             console.error('提交评论失败:', error)

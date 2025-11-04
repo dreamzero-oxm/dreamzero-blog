@@ -123,7 +123,7 @@ export default async function BlogPage(props: BlogsPageProps) {
 
         <div className="w-full h-10 flex justify-center">
           <div className="w-auto h-full rounded-xl border-1 flex justify-center items-center px-3">
-            <CommentBox title={slug.join('/')}/>
+            <CommentBox title={slug.join('/')} articleId={slug.join('/')} />
           </div>
         </div>
       </div>
