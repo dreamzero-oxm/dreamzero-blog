@@ -332,14 +332,15 @@ func (s *DeleteArticleService) Delete(c *gin.Context) error {
 
 // GetArticlesByRoleService 根据用户角色获取文章服务
 type GetArticlesByRoleService struct {
-	Page     int    `json:"page" form:"page" binding:"min=1"`         // 页码，最小为1
-	PageSize int    `json:"page_size" form:"page_size" binding:"min=1,max=100"` // 每页数量，最小为1，最大为100
-	Status   string `json:"status" form:"status"`                         // 文章状态筛选
-	Tag      string `json:"tag" form:"tag"`                              // 标签筛选
-	Title    string `json:"title" form:"title"`                          // 标题筛选
+	Page     int      `json:"page" form:"page" binding:"min=1"`         // 页码，最小为1
+	PageSize int      `json:"page_size" form:"page_size" binding:"min=1,max=100"` // 每页数量，最小为1，最大为100
+	Status   string   `json:"status" form:"status"`                         // 文章状态筛选
+	Tag      string   `json:"tag" form:"tag"`                              // 标签筛选
+	Tags     []string `json:"tags" form:"tags"`                            // 多个标签筛选
+	Title    string   `json:"title" form:"title"`                          // 标题筛选
 	// 排序相关参数
-	SortBy   string `json:"sort_by" form:"sort_by"`                      // 排序字段：created_at, updated_at, title, view_count, like_count, published_at
-	SortDir  string `json:"sort_dir" form:"sort_dir"`                     // 排序方向：asc(升序), desc(降序)
+	SortBy   string   `json:"sort_by" form:"sort_by"`                      // 排序字段：created_at, updated_at, title, view_count, like_count, published_at
+	SortDir  string   `json:"sort_dir" form:"sort_dir"`                     // 排序方向：asc(升序), desc(降序)
 }
 
 // SortDirection 排序方向枚举
@@ -422,6 +423,14 @@ func (service *GetArticlesByRoleService) GetArticlesByRole(userID string, userRo
 	// 添加标签筛选
 	if service.Tag != "" {
 		query = query.Where("? = ANY (tags_array)", service.Tag)
+	}
+
+	// 添加多个标签筛选
+	if len(service.Tags) > 0 {
+		// 使用AND条件，确保文章包含所有指定的标签
+		for _, tag := range service.Tags {
+			query = query.Where("? = ANY (tags_array)", tag)
+		}
 	}
 
 	// 添加标题筛选

@@ -187,6 +187,8 @@ func (service *LoginUserService) Login() (*models.User, string, string, error) {
 		"nbf": time.Now().Unix(),
 		// 签发时间
 		"iat": time.Now().Unix(),
+		// 用户名
+		"username": user.UserName,
 	}
 	accessJwtToken, err := utils.GenerateJWT(accessClaims, rsa.PrivateKey)
 	if err != nil {

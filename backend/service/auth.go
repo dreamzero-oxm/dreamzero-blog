@@ -79,6 +79,7 @@ func (service *RefreshTokenService) RefreshToken() (*models.User, string, error)
 		"exp":  time.Now().Add(time.Duration(config.Conf.App.JwtExpirationTime) * time.Minute).Unix(), // 过期时间
 		"nbf":  time.Now().Unix(), // 生效时间
 		"iat":  time.Now().Unix(), // 签发时间
+		"username": user.UserName, // 用户名
 	}
 	accessJwtToken, err := utils.GenerateJWT(accessClaims, rsa.PrivateKey)
 	if err != nil {

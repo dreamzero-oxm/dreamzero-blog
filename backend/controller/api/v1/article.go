@@ -37,7 +37,7 @@ func (a *ArticleController) CreateArticle(c *gin.Context) {
 		return
 	}
 	// 将uuid.UUID转换为字符串
-	createService.UserID = userID.(uuid.UUID).String()
+	createService.UserID = userID.(string)
 
 	article, err := createService.Create(c)
 	if err != nil {
@@ -79,7 +79,7 @@ func (a *ArticleController) UpdateArticle(c *gin.Context) {
 		return
 	}
 	// 将uuid.UUID转换为字符串
-	updateService.UserID = userID.(uuid.UUID).String()
+	updateService.UserID = userID.(string)
 
 	article, err := updateService.Update(c)
 	if err != nil {
@@ -114,8 +114,13 @@ func (a *ArticleController) DeleteArticle(c *gin.Context) {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
 	}
-	// 将userID转换为uuid.UUID
-	deleteService.UserID = userID.(uuid.UUID)
+	// 将userID转换为字符串
+	if res, err := uuid.Parse(userID.(string)); err == nil {
+		deleteService.UserID = res
+	}else{
+		internal.APIResponse(c, code.ErrParam, nil)
+		return
+	}
 
 	if err := deleteService.Delete(c); err != nil {
 		internal.APIResponse(c, err, nil)
@@ -149,7 +154,7 @@ func (a *ArticleController) GetArticle(c *gin.Context) {
 		getService.UserID = ""
 	} else {
 		// 将uuid.UUID转换为字符串
-		getService.UserID = userID.(uuid.UUID).String()
+		getService.UserID = userID.(string)
 	}
 
 	article, err := getService.Get(c)
@@ -236,7 +241,7 @@ func (a *ArticleController) LikeArticle(c *gin.Context) {
 		return
 	}
 	// 将uuid.UUID转换为字符串
-	likeService.UserID = userID.(uuid.UUID).String()
+	likeService.UserID = userID.(string)
 
 	if err := likeService.Like(c); err != nil {
 		internal.APIResponse(c, err, nil)
@@ -277,7 +282,7 @@ func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
 		return
 	}
 	// 将uuid.UUID转换为字符串
-	updateStatusService.UserID = userID.(uuid.UUID).String()
+	updateStatusService.UserID = userID.(string)
 
 	if err := updateStatusService.UpdateStatus(c); err != nil {
 		internal.APIResponse(c, err, nil)
@@ -298,6 +303,7 @@ func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
 // @Param page_size query int false "每页数量" default(10)
 // @Param status query string false "文章状态筛选"
 // @Param tag query string false "标签筛选"
+// @Param tags query []string false "多个标签筛选"
 // @Param title query string false "标题筛选"
 // @Param sort_by query string false "排序字段" Enums(created_at,updated_at,title,view_count,like_count,published_at) default("created_at")
 // @Param sort_dir query string false "排序方向" Enums(asc,desc) default("desc")
@@ -309,6 +315,12 @@ func (a *ArticleController) GetArticlesByRole(c *gin.Context) {
 	if err := c.ShouldBindQuery(&getArticlesByRoleService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
+	}
+
+	// 处理tags参数
+	tags := c.QueryArray("tags")
+	if len(tags) > 0 {
+		getArticlesByRoleService.Tags = tags
 	}
 
 	// 设置默认值
@@ -333,7 +345,7 @@ func (a *ArticleController) GetArticlesByRole(c *gin.Context) {
 	}
 
 	// 调用服务获取文章
-	articles, total, err := getArticlesByRoleService.GetArticlesByRole(userID.(uuid.UUID).String(), userRole.(string))
+	articles, total, err := getArticlesByRoleService.GetArticlesByRole(userID.(string), userRole.(string))
 	if err != nil {
 		internal.APIResponse(c, err, nil)
 		return
