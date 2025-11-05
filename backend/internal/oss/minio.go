@@ -180,7 +180,8 @@ func GeneratePresignedURLMinio(bucketName, objectName string, expires time.Durat
 // objectName: 对象名
 // 返回值: 公开访问的URL
 func GeneratePublicURLMinio(bucketName, objectName string) string {
-	return minioClient.EndpointURL().String() + "/" + bucketName + "/" + objectName
+	// return minioClient.EndpointURL().String() + "/" + bucketName + "/" + objectName
+	return "/" + bucketName + "/" + objectName
 }
 
 // SetBucketPublicPolicy 设置桶的公共访问策略

@@ -72,6 +72,8 @@ var (
 	ErrArticleListFailed        = &Errno{Code: 20509, Message: "文章列表获取失败"}
 	ErrArticleGetFailed         = &Errno{Code: 20510, Message: "文章获取失败"}
 	ErrArticlePermissionDenied  = &Errno{Code: 20511, Message: "没有权限操作此文章"}
+	ErrArticleCoverImageInvalid = &Errno{Code: 20512, Message: "封面图片必须是有效的URL或Base64编码的图片"}
+	ErrInvalidArticleID         = &Errno{Code: 20513, Message: "无效的文章ID"}
 
 )
 

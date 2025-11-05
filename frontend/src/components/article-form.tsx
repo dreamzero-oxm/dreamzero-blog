@@ -1,7 +1,7 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
-import Image from 'next/image';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -35,55 +35,80 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
     cover_image: '',
   });
   
+  // 标签输入处理
   const [tagInput, setTagInput] = useState('');
+  // 错误信息状态
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // 上次保存时间状态
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
+  // 封面图片预览状态
   const [coverImagePreview, setCoverImagePreview] = useState<string>('');
+  // 活动标签状态
   const [activeTab, setActiveTab] = useState('edit');
+  // URL前缀状态
+  const [urlPrefix, setUrlPrefix] = useState<string>('https://');
   
-  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // 自动保存定时器引用
+  // const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // 表单是否已改变引用
   const formChangedRef = useRef(false);
   
+  // 创建文章 mutation
   const createArticleMutation = useCreateArticle();
+  // 更新文章 mutation
   const updateArticleMutation = useUpdateArticle();
   
+  // 是否正在编辑文章
   const isEditing = !!article;
+  // 是否正在加载中
   const isLoading = createArticleMutation.isPending || updateArticleMutation.isPending;
   
-  const handleAutoSave = useCallback(async () => {
-    if (!formData.title?.trim() || !formData.content?.trim()) {
-      return; // 标题或内容为空时不自动保存
-    }
+  // 处理自动保存
+  // const handleAutoSave = useCallback(async () => {
+  //   if (!formData.title?.trim() || !formData.content?.trim()) {
+  //     return; // 标题或内容为空时不自动保存
+  //   }
     
-    try {
-      if (isEditing) {
-        await updateArticleMutation.mutateAsync({
-          ...formData as UpdateArticleRequest,
-          status: 'draft' // 自动保存时总是保存为草稿
-        });
-      } else {
-        // 如果是新文章，创建一个草稿
-        const result = await createArticleMutation.mutateAsync({
-          ...formData as CreateArticleRequest,
-          status: 'draft'
-        });
-        // 更新表单数据，添加新创建的文章ID
-        if (result?.data?.id) {
-          setFormData(prev => ({ ...prev, id: result.data.id }));
-        }
-      }
-      setLastSaved(new Date());
-      formChangedRef.current = false;
-    } catch (error) {
-      console.error('自动保存失败:', error);
-    }
-  }, [formData, isEditing, updateArticleMutation, createArticleMutation]);
+  //   try {
+  //     // 如果是编辑文章，更新草稿；如果是新文章，创建草稿
+  //     if (isEditing) {
+  //       await updateArticleMutation.mutateAsync({
+  //         ...formData as UpdateArticleRequest,
+  //         status: 'draft' // 自动保存时总是保存为草稿
+  //       });
+  //     } else {
+  //       // 如果是新文章，创建一个草稿
+  //       const result = await createArticleMutation.mutateAsync({
+  //         ...formData as CreateArticleRequest,
+  //         status: 'draft'
+  //       });
+  //       // 更新表单数据，添加新创建的文章ID
+  //       if (result?.data?.id) {
+  //         setFormData(prev => ({ ...prev, id: result.data?.id} as UpdateArticleRequest));
+  //       }
+  //     }
+  //     setLastSaved(new Date());
+  //     formChangedRef.current = false;
+  //   } catch (error) {
+  //     console.error('自动保存失败:', error);
+  //   }
+  // }, [formData, isEditing, updateArticleMutation, createArticleMutation]);
   
+  // 初始化表单数据
   useEffect(() => {
     if (article) {
+      // 设置URL前缀
+      if (article.cover_image) {
+        if (article.cover_image.startsWith('http://')) {
+          setUrlPrefix('http://');
+        } else if (article.cover_image.startsWith('https://')) {
+          setUrlPrefix('https://');
+        }
+      }
+      
       setFormData({
-        id: article.id,
+        id: article.id || '', 
         title: article.title,
         content: article.content,
         summary: article.summary,
@@ -96,23 +121,23 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
   }, [article]);
   
   // 自动保存草稿
-  useEffect(() => {
-    if (formChangedRef.current) {
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
-      }
+  // useEffect(() => {
+  //   if (formChangedRef.current) {
+  //     if (autoSaveTimerRef.current) {
+  //       clearTimeout(autoSaveTimerRef.current);
+  //     }
       
-      autoSaveTimerRef.current = setTimeout(() => {
-        handleAutoSave();
-      }, 3000); // 3秒后自动保存
-    }
+  //     autoSaveTimerRef.current = setTimeout(() => {
+  //       handleAutoSave();
+  //     }, 1000 * 60); // 3秒后自动保存
+  //   }
     
-    return () => {
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
-      }
-    };
-  }, [formData, handleAutoSave]);
+  //   return () => {
+  //     if (autoSaveTimerRef.current) {
+  //       clearTimeout(autoSaveTimerRef.current);
+  //     }
+  //   };
+  // }, [formData, handleAutoSave]);
   
   // 表单验证
   const validateForm = (): boolean => {
@@ -140,6 +165,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
     return Object.keys(newErrors).length === 0;
   };
   
+  // 处理输入变化
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     formChangedRef.current = true;
@@ -156,6 +182,17 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
     // 如果是封面图片URL，更新预览
     if (field === 'cover_image') {
       setCoverImagePreview(value);
+    }
+  };
+  
+  // 处理封面图片URL变化
+  const handleCoverImageChange = (value: string) => {
+    // 如果用户输入的URL已经包含http://或https://，则不添加前缀
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      handleInputChange('cover_image', value);
+    } else {
+      // 否则添加选择的前缀
+      handleInputChange('cover_image', urlPrefix + value);
     }
   };
   
@@ -223,6 +260,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
         await createArticleMutation.mutateAsync(formData as CreateArticleRequest);
         toast.success('文章创建成功');
       }
+      setLastSaved(new Date());
       onSave?.();
     } catch {
       toast.error(isEditing ? '文章更新失败' : '文章创建失败');
@@ -278,17 +316,17 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="excerpt">文章摘要</Label>
+                  <Label htmlFor="summary">文章摘要</Label>
                   <Textarea
-                    id="excerpt"
+                    id="summary"
                     value={formData.summary}
-                    onChange={(e) => handleInputChange('excerpt', e.target.value)}
+                    onChange={(e) => handleInputChange('summary', e.target.value)}
                     placeholder="请输入文章摘要"
                     rows={3}
-                    className={errors.excerpt ? 'border-red-500' : ''}
+                    className={errors.summary ? 'border-red-500' : ''}
                   />
-                  {errors.excerpt && (
-                    <p className="text-sm text-red-500">{errors.excerpt}</p>
+                  {errors.summary && (
+                    <p className="text-sm text-red-500">{errors.summary}</p>
                   )}
                   <p className="text-xs text-muted-foreground">
                     {formData.summary?.length || 0}/200
@@ -314,10 +352,21 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                   <Label htmlFor="cover_image">封面图片</Label>
                   <div className="space-y-3">
                     <div className="flex gap-2">
+                      <Select value={urlPrefix} onValueChange={setUrlPrefix}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="选择前缀" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="http://">http://</SelectItem>
+                          <SelectItem value="https://">https://</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <Input
                         id="cover_image"
-                        value={formData.cover_image}
-                        onChange={(e) => handleInputChange('cover_image', e.target.value)}
+                        value={(formData.cover_image && (formData.cover_image.startsWith('http://') || formData.cover_image.startsWith('https://')) 
+                          ? formData.cover_image.replace(/^(https?:\/\/)/, '') 
+                          : formData.cover_image) || ''}
+                        onChange={(e) => handleCoverImageChange(e.target.value)}
                         placeholder="请输入封面图片URL"
                       />
                       <div className="relative">
@@ -339,15 +388,14 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                       <div className="mt-3">
                         <p className="text-sm font-medium mb-2">封面预览</p>
                         <div className="relative w-full h-48 rounded-md overflow-hidden border">
-                          <Image
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
                             src={coverImagePreview}
                             alt="封面预览"
-                            width={400}
-                            height={200}
                             className="w-full h-full object-cover"
                             onError={() => {
                               toast.error('图片加载失败，请检查URL是否正确');
-                              setCoverImagePreview('');
+                              // setCoverImagePreview('');
                             }}
                           />
                         </div>
@@ -457,11 +505,10 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                   <div>
                     <h3 className="text-lg font-medium mb-2">封面图片</h3>
                     <div className="relative overflow-hidden rounded-md">
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={coverImagePreview}
                         alt="封面图片"
-                        width={800}
-                        height={400}
                         className="w-full max-h-96 object-cover transition-transform hover:scale-105 duration-300"
                       />
                     </div>

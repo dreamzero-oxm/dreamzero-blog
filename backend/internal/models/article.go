@@ -25,7 +25,7 @@ type Article struct {
 	ViewCount   uint          `json:"view_count" gorm:"type:int;default:0;comment:浏览次数;index"`
 	LikeCount   uint          `json:"like_count" gorm:"type:int;default:0;comment:点赞次数;index"`
 	UserID      uuid.UUID     `json:"user_id" gorm:"type:uuid;not null;comment:用户ID;index"`
-	User        User          `json:"user" gorm:"foreignKey:UserID"`
+	User        User          `json:"-" gorm:"foreignKey:UserID"`
 	TagsArray   []string      `json:"tags" gorm:"type:text;serializer:json"`
 	CoverImage  string        `json:"cover_image" gorm:"type:varchar(255);comment:封面图片URL"`
 	PublishedAt *time.Time    `json:"published_at" gorm:"comment:发布时间;index"`

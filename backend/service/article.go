@@ -3,11 +3,20 @@ package service
 import (
 	"blog-server/internal/code"
 	"blog-server/internal/models"
+	"blog-server/internal/oss"
 	"blog-server/internal/redis"
+	"blog-server/internal/logger"
+	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"image"
+	"io"
+	"log"
+	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -15,6 +24,152 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
+
+// validateImageURL 验证是否为有效的HTTP/HTTPS链接
+func validateImageURL(imageURL string) bool {
+	if imageURL == "" {
+		return false
+	}
+
+	// 使用正则表达式验证URL格式
+	urlPattern := `^https?://[\w\-]+(\.[\w\-]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?$`
+	matched, err := regexp.MatchString(urlPattern, imageURL)
+	if err != nil || !matched {
+		return false
+	}
+
+	// 尝试解析URL
+	_, err = url.Parse(imageURL)
+	return err == nil
+}
+
+// validateBase64Image 验证是否为有效的Base64编码图片
+func validateBase64Image(base64Data string) bool {
+	if base64Data == "" {
+		return false
+	}
+
+	// 检查是否包含data:image前缀
+	if !strings.HasPrefix(base64Data, "data:image/") {
+		return false
+	}
+
+	// 提取Base64编码部分
+	parts := strings.SplitN(base64Data, ",", 2)
+	if len(parts) != 2 {
+		return false
+	}
+
+	// 尝试解码Base64数据
+	_, err := base64.StdEncoding.DecodeString(parts[1])
+	return err == nil
+}
+
+// uploadBase64ImageToOSS 将Base64编码的图片上传到OSS
+func uploadBase64ImageToOSS(base64Data string) (string, error) {
+	// 提取Base64编码部分
+	parts := strings.SplitN(base64Data, ",", 2)
+	if len(parts) != 2 {
+		log.Printf("无效的Base64图片格式: 缺少data:image前缀或编码部分")
+		return "", code.ErrArticleCoverImageInvalid
+	}
+
+	// 解码Base64数据
+	imageData, err := base64.StdEncoding.DecodeString(parts[1])
+	if err != nil {
+		log.Printf("Base64解码失败: %v", err)
+		return "", code.ErrArticleCoverImageInvalid
+	}
+
+	// 创建一个Reader
+	reader := bytes.NewReader(imageData)
+
+	// 尝试解码图片以验证其有效性
+	_, format, err := image.Decode(reader)
+	if err != nil {
+		log.Printf("无效的图片格式: %v", err)
+		return "", code.ErrArticleCoverImageInvalid
+	}
+
+	// 重置Reader位置
+	reader.Seek(0, io.SeekStart)
+
+	// 生成唯一的对象名称
+	objectName := fmt.Sprintf("article-cover-%s.%s", uuid.New().String(), format)
+	bucketName := "moity-blog" // 与photo.go中保持一致
+
+	// 确定内容类型
+	contentType := "image/" + format
+	if format == "jpg" {
+		contentType = "image/jpeg"
+	}
+
+	// 记录上传开始
+	log.Printf("开始上传图片到OSS: bucket=%s, object=%s, contentType=%s", bucketName, objectName, contentType)
+
+	// 上传到OSS，添加重试机制
+	maxRetries := 3
+	var uploadErr error
+	for i := 0; i < maxRetries; i++ {
+		// 重置Reader位置
+		reader.Seek(0, io.SeekStart)
+		
+		if uploadErr = oss.UploadFileMinio(bucketName, objectName, reader, contentType); uploadErr != nil {
+			log.Printf("上传图片到OSS失败 (尝试 %d/%d): %v", i+1, maxRetries, uploadErr)
+			if i < maxRetries-1 {
+				// 等待一段时间后重试
+				time.Sleep(time.Second * time.Duration(i+1))
+			}
+			continue
+		}
+		break
+	}
+	
+	if uploadErr != nil {
+		log.Printf("上传图片到OSS最终失败: %v", uploadErr)
+		return "", code.ErrArticleCoverImageInvalid
+	}
+
+	// 生成公开访问URL
+	imageURL := oss.GeneratePublicURLMinio(bucketName, objectName)
+	log.Printf("成功上传图片到OSS: %s", imageURL)
+	return imageURL, nil
+}
+
+// processCoverImage 处理封面图片
+// 根据输入类型（空、URL或Base64）返回最终的图片URL
+func processCoverImage(coverImage string) (string, error) {
+	// 如果为空，直接返回空字符串
+	if coverImage == "" {
+		return "", nil
+	}
+
+	// 如果是有效的URL，直接返回
+	if validateImageURL(coverImage) {
+		return coverImage, nil
+	}
+
+	// 如果是有效的Base64图片，上传到OSS并返回URL
+	if validateBase64Image(coverImage) {
+		// 记录日志 - 开始上传Base64图片
+		log.Printf("开始上传Base64编码的封面图片到OSS")
+		
+		imageURL, err := uploadBase64ImageToOSS(coverImage)
+		if err != nil {
+			// 记录错误日志
+			log.Printf("上传Base64图片到OSS失败: %v", err)
+			return "", code.ErrArticleCoverImageInvalid
+		}
+		
+		// 记录成功日志
+		log.Printf("成功上传Base64图片到OSS: %s", imageURL)
+		return imageURL, nil
+	}
+
+	// 既不是URL也不是Base64，返回错误
+	log.Printf("无效的封面图片格式: %s", code.ErrArticleCoverImageInvalid.Message)
+	return "", code.ErrArticleCoverImageInvalid
+}
 
 // CreateArticleService 创建文章服务结构体
 // 用于处理创建文章的请求和业务逻辑
@@ -52,6 +207,18 @@ func (s *CreateArticleService) Create(c *gin.Context) (*models.Article, error) {
 		}
 	}
 
+	// 处理封面图片
+	coverImageURL, err := processCoverImage(s.CoverImage)
+	if err != nil {
+		// 记录操作日志 - 封面图片处理失败
+		if c != nil {
+			go func() {
+				_ = LogArticleCreate(c, userID, userName, "", s.Title, false, code.ErrArticleCoverImageInvalid.Message)
+			}()
+		}
+		return nil, code.ErrArticleCoverImageInvalid
+	}
+
 	// 创建文章对象
 	article := &models.Article{
 		Title:      s.Title,
@@ -59,7 +226,7 @@ func (s *CreateArticleService) Create(c *gin.Context) (*models.Article, error) {
 		Summary:    s.Summary,
 		Status:     s.Status,
 		TagsArray:  s.Tags,
-		CoverImage: s.CoverImage,
+		CoverImage: coverImageURL,
 		UserID:     userID,
 	}
 
@@ -134,7 +301,7 @@ func (s *UpdateArticleService) Update(c *gin.Context) (*models.Article, error) {
 
 	// 查找要更新的文章
 	var article models.Article
-	if err := models.DB.First(&article, s.ID).Error; err != nil {
+	if err := models.DB.Where("id = ?", s.ID).First(&article).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 记录操作日志 - 文章不存在
 			if c != nil {
@@ -209,36 +376,26 @@ func (s *UpdateArticleService) Update(c *gin.Context) (*models.Article, error) {
 	if s.Status != models.ArticleStatus("") {
 		article.Status = s.Status
 	}
-	if s.Tags != nil {
+	if s.Tags != nil && len(s.Tags) > 0 {
 		article.TagsArray = s.Tags
 	}
 	if s.CoverImage != "" {
-		article.CoverImage = s.CoverImage
-	}
-
-	// 构建要更新的字段列表
-	updateFields := make(map[string]interface{})
-	if s.Title != "" {
-		updateFields["title"] = s.Title
-	}
-	if s.Content != "" {
-		updateFields["content"] = s.Content
-	}
-	if s.Summary != "" {
-		updateFields["summary"] = s.Summary
-	}
-	if s.Status != models.ArticleStatus("") {
-		updateFields["status"] = s.Status
-	}
-	if s.Tags != nil {
-		updateFields["tags_array"] = s.Tags
-	}
-	if s.CoverImage != "" {
-		updateFields["cover_image"] = s.CoverImage
+		// 处理封面图片
+		coverImageURL, err := processCoverImage(s.CoverImage)
+		if err != nil {
+			// 记录操作日志 - 封面图片处理失败
+			if c != nil {
+				go func() {
+					_ = LogArticleUpdate(c, userID, userName, s.ID, s.Title, false, code.ErrArticleCoverImageInvalid.Message)
+				}()
+			}
+			return nil, code.ErrArticleCoverImageInvalid
+		}
+		article.CoverImage = coverImageURL
 	}
 
 	// 保存更新后的文章 - 只更新指定的字段
-	if err := models.DB.Model(&article).Updates(updateFields).Error; err != nil {
+	if err := models.DB.Updates(&article).Error; err != nil {
 		// 记录操作日志 - 更新失败
 		if c != nil {
 			go func() {
@@ -279,7 +436,7 @@ func (s *DeleteArticleService) Delete(c *gin.Context) error {
 
 	// 查找要删除的文章
 	var article models.Article
-	if err := models.DB.First(&article, s.ID).Error; err != nil {
+	if err := models.DB.Where("id = ?", s.ID).First(&article).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 记录操作日志 - 文章不存在
 			if c != nil {
@@ -335,7 +492,6 @@ type GetArticlesByRoleService struct {
 	Page     int      `json:"page" form:"page" binding:"min=1"`         // 页码，最小为1
 	PageSize int      `json:"page_size" form:"page_size" binding:"min=1,max=100"` // 每页数量，最小为1，最大为100
 	Status   string   `json:"status" form:"status"`                         // 文章状态筛选
-	Tag      string   `json:"tag" form:"tag"`                              // 标签筛选
 	Tags     []string `json:"tags" form:"tags"`                            // 多个标签筛选
 	Title    string   `json:"title" form:"title"`                          // 标题筛选
 	// 排序相关参数
@@ -360,7 +516,7 @@ const (
 	SortFieldTitle     SortField = "title"        // 标题
 	SortFieldViewCount SortField = "view_count"   // 浏览次数
 	SortFieldLikeCount SortField = "like_count"   // 点赞次数
-	SortFieldPublished SortField = "published_at" // 发布时间
+	SortFieldPublishedAt SortField = "published_at" // 发布时间
 )
 
 // GetSortOrder 获取排序字符串，用于GORM的Order方法
@@ -373,7 +529,7 @@ func (service *GetArticlesByRoleService) GetSortOrder() string {
 	if service.SortBy != "" {
 		switch SortField(service.SortBy) {
 		case SortFieldCreatedAt, SortFieldUpdatedAt, SortFieldTitle,
-			SortFieldViewCount, SortFieldLikeCount, SortFieldPublished:
+			SortFieldViewCount, SortFieldLikeCount, SortFieldPublishedAt:
 			field = service.SortBy
 		}
 	}
@@ -420,11 +576,6 @@ func (service *GetArticlesByRoleService) GetArticlesByRole(userID string, userRo
 		query = query.Where("status = ?", service.Status)
 	}
 
-	// 添加标签筛选
-	if service.Tag != "" {
-		query = query.Where("? = ANY (tags_array)", service.Tag)
-	}
-
 	// 添加多个标签筛选
 	if len(service.Tags) > 0 {
 		// 使用AND条件，确保文章包含所有指定的标签
@@ -447,6 +598,8 @@ func (service *GetArticlesByRoleService) GetArticlesByRole(userID string, userRo
 	offset := (service.Page - 1) * service.PageSize
 	// 使用GetSortOrder方法获取排序字符串，支持自定义排序
 	if err := query.Order(service.GetSortOrder()).Offset(offset).Limit(service.PageSize).Find(&articles).Error; err != nil {
+		// 日志打印 完整sql语句
+		logger.Logger.Error("获取文章列表失败", err)
 		return nil, 0, code.ErrDatabase
 	}
 
@@ -464,9 +617,9 @@ type GetArticleService struct {
 // 验证权限并返回文章数据，同时增加浏览次数
 // 返回文章对象和可能的错误
 func (s *GetArticleService) Get(c *gin.Context) (*models.Article, error) {
-	// 查找文章
+	// 查询文章是否存在
 	var article models.Article
-	if err := models.DB.First(&article, s.ID).Error; err != nil {
+	if err := models.DB.Where("id = ?", s.ID).First(&article).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 记录操作日志 - 文章不存在
 			var userID uuid.UUID
@@ -709,7 +862,7 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 
 	// 查找要点赞的文章
 	var article models.Article
-	if err := models.DB.First(&article, s.ID).Error; err != nil {
+	if err := models.DB.Where("id = ?", s.ID).First(&article).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 记录操作日志 - 文章不存在
 			if c != nil {

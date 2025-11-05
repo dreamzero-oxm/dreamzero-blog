@@ -1,5 +1,5 @@
 import type { BaseResponse } from "@/interface/base";
-import { handleError, ErrorType, isResponseSuccess, getResponseError } from './error-handler';
+import { handleError, isResponseSuccess, getResponseError } from './error-handler';
 import api from '@/lib/api';
 
 interface RequestParams {
@@ -23,11 +23,6 @@ const isRemoteAPI = false
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
   ? '' 
   : isRemoteAPI ? 'https://dreamzero.cn' : 'http://localhost:9997';
-
-// 延迟函数
-const delay = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
 
 // 带超时的fetch
 const fetchWithTimeout = async (
@@ -61,8 +56,6 @@ const makeRequest = async <T = BaseResponse>(
     params = {},
     body,
     headers = {},
-    retries = 0,
-    retryDelay = 1000,
     timeout = 10000,
     signal
   } = options;
@@ -157,12 +150,12 @@ const makeRequest = async <T = BaseResponse>(
           await refreshToken();
           const newToken = getToken();
           return sendRequest(newToken, attempt);
-        } catch (refreshError) {
+        } catch (error) {
           // 刷新失败，清除token并抛出错误
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
           window.dispatchEvent(new Event('tokenClearing'));
-          throw handleError(new Error(`[${method}]Token refresh failed`));
+          throw handleError(error);
         }
       }
       
@@ -180,17 +173,6 @@ const makeRequest = async <T = BaseResponse>(
       return data;
     } catch (error) {
       const apiError = handleError(error);
-      
-      // 如果是网络错误或服务器错误，且还有重试次数，则重试
-      if (
-        (apiError.type === ErrorType.NETWORK_ERROR || apiError.type === ErrorType.SERVER_ERROR) &&
-        attempt < retries
-      ) {
-        console.warn(`Request failed, retrying in ${retryDelay}ms (attempt ${attempt + 1}/${retries}):`, apiError.message);
-        await delay(retryDelay);
-        return sendRequest(token, attempt + 1);
-      }
-      
       throw apiError;
     }
   };

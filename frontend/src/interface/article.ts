@@ -87,9 +87,3 @@ export interface ArticleResponse extends BaseModel {
   is_liked?: boolean;
   published_at?: string;
 }
-
-export interface BaseArticleResponse {
-  code: number;
-  msg: string;
-  data?: any;
-}
