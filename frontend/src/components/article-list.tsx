@@ -13,8 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Edit, Trash2, Eye, EyeOff, FileText, X, Heart, ChevronLeft, ChevronRight, Search, RefreshCw } from 'lucide-react';
-import { useGetArticles, useDeleteArticle, useUpdateArticleStatus } from '@/hooks/article-hook';
+import { Plus, Edit, Trash2, Eye, EyeOff, FileText, X, Heart, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { useDeleteArticle, useUpdateArticleStatus } from '@/hooks/article-hook';
 import { useGetArticlesByRole, type GetArticlesByRoleRequest } from '@/hooks/article-hook';
 import type { Article } from '@/interface/article';
 import { toast } from 'sonner';
@@ -314,25 +314,25 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
     setDebouncedParams(filterParams(newParams));
   };
   
-  const handlePageSizeChange = (pageSize: number) => {
-    const newParams = { ...searchParams, page_size: pageSize, page: 1, title: searchParams.title };
-    setSearchParams(newParams);
-    // 页面大小变化不需要防抖，立即更新
-    setDebouncedParams(filterParams(newParams));
-  };
+  // const handlePageSizeChange = (pageSize: number) => {
+  //   const newParams = { ...searchParams, page_size: pageSize, page: 1, title: searchParams.title };
+  //   setSearchParams(newParams);
+  //   // 页面大小变化不需要防抖，立即更新
+  //   setDebouncedParams(filterParams(newParams));
+  // };
   
-  const handleSort = (sortBy: string) => {
-    const newParams = {
-      ...searchParams,
-      page: 1,
-      sort_by: sortBy as 'created_at' | 'updated_at' | 'title' | 'view_count' | 'like_count',
-      sort_dir: searchParams.sort_by === sortBy && searchParams.sort_dir === 'desc' ? 'asc' : 'desc',
-      title: searchParams.title
-    };
-    setSearchParams(newParams);
-    // 排序变化不需要防抖，立即更新
-    setDebouncedParams(filterParams(newParams));
-  };
+  // const handleSort = (sortBy: string) => {
+  //   const newParams = {
+  //     ...searchParams,
+  //     page: 1,
+  //     sort_by: sortBy as 'created_at' | 'updated_at' | 'title' | 'view_count' | 'like_count',
+  //     sort_dir: searchParams.sort_by === sortBy && searchParams.sort_dir === 'desc' ? 'asc' : 'desc',
+  //     title: searchParams.title
+  //   };
+  //   setSearchParams(newParams);
+  //   // 排序变化不需要防抖，立即更新
+  //   setDebouncedParams(filterParams(newParams));
+  // };
   
   const allTags = getAllTags(articles);
 

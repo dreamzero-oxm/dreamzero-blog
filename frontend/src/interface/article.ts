@@ -44,11 +44,11 @@ export interface GetArticleRequest {
 export interface ListArticlesRequest {
   page?: number;
   page_size?: number;
-  status?: 'draft' | 'published' | 'private';
-  tag?: string;  // 单个标签查询
+  nickname?: string;  // 作者昵称查询
   tags?: string[];  // 多个标签查询
-  user_id?: string;  // 用户ID查询
-  keyword?: string;  // 关键词搜索
+  title?: string;  // 文章标题查询
+  sort_by?: 'created_at' | 'view_count' | 'like_count';  // 排序字段
+  sort_order?: 'asc' | 'desc';  // 排序顺序
 }
 
 export interface ListArticlesResponse {
@@ -74,5 +74,4 @@ export interface ArticleListResponse {
   page_size: number;
 }
 
-export interface ArticleResponse extends Article {
-}
+export type ArticleResponse = Article 

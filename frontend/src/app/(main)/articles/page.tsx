@@ -13,14 +13,16 @@ export default function ArticlesPage() {
   const { data: articlesResponse, isLoading, error } = useGetArticles({
     page,
     page_size: pageSize,
-    status: 'published'
+    sort_by: 'created_at',
+    sort_order: 'desc',
   });
 
   // 获取推荐文章（最近发布的文章）
   const { data: recommendedResponse } = useGetArticles({
     page: 1,
     page_size: 5,
-    status: 'published'
+    sort_by: 'like_count',
+    sort_order: 'desc',
   });
 
   const articles = articlesResponse?.data;
@@ -136,9 +138,9 @@ export default function ArticlesPage() {
           <div className="lg:col-span-1">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-bold text-gray-900 mb-4">推荐阅读</h3>
-              {recommendedArticles && recommendedArticles.length > 0 ? (
+              {recommendedArticles && recommendedArticles.articles.length > 0 ? (
                 <div className="space-y-4">
-                  {recommendedArticles.map((article: Article) => (
+                  {recommendedArticles.articles.map((article: Article) => (
                     <div key={article.id} className="pb-4 border-b border-gray-200 last:border-0">
                       <h4 className="text-base font-medium text-gray-900 mb-1">
                         <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">

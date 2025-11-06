@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
-import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +26,6 @@ interface ArticleFormProps {
 }
 
 export default function ArticleForm({ article, onSave, onCancel }: ArticleFormProps) {
-  const router = useRouter();
   
   // 如果提供了articleId，使用useGetArticle钩子获取文章详情
   const { data: articleData, isLoading: isArticleLoading, error: articleError, refetch: refetchArticle } = useGetArticle(article?.id || '');

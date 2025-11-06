@@ -376,7 +376,7 @@ func (s *UpdateArticleService) Update(c *gin.Context) (*models.Article, error) {
 	if s.Status != models.ArticleStatus("") {
 		article.Status = s.Status
 	}
-	if s.Tags != nil && len(s.Tags) > 0 {
+	if len(s.Tags) > 0 {
 		article.TagsArray = s.Tags
 	}
 	if s.CoverImage != "" {
@@ -708,7 +708,7 @@ type ListArticleService struct {
 	Page      int          `form:"page" binding:"min=1"`              // 页码，最小为1
 	PageSize  int          `form:"page_size" binding:"min=1,max=100"` // 每页数量，最小1，最大100
 	Nickname  string       `form:"nickname"`                          // 可选，用于按作者昵称模糊匹配
-	Tag       string       `form:"tag"`                               // 可选，用于按标签模糊匹配
+	Tags      []string     `form:"tags"`                              // 可选，用于按标签模糊匹配
 	Title     string       `form:"title"`                             // 可选，用于按文章标题模糊匹配
 	SortBy    string       `form:"sort_by"`                           // 可选，排序字段(view_count,like_count,created_at)
 	SortOrder string       `form:"sort_order"`                        // 可选，排序顺序(asc,desc)
@@ -767,8 +767,10 @@ func (s *ListArticleService) List() ([]models.Article, int64, error) {
 	}
 
 	// 如果指定了标签，则按标签模糊匹配
-	if s.Tag != "" {
-		query = query.Where("JSON_CONTAINS(tags_array, ?)", fmt.Sprintf(`"%s"`, s.Tag))
+	if len(s.Tags) > 0 {
+		for _, tag := range s.Tags {
+			query = query.Where("JSON_CONTAINS(tags_array, ?)", fmt.Sprintf(`"%s"`, tag))
+		}
 	}
 
 	// 如果指定了标题，则按标题模糊匹配
@@ -825,7 +827,7 @@ func (s *ListArticleService) List() ([]models.Article, int64, error) {
 func (s *ListArticleService) generateCacheKey() string {
 	// 使用查询参数生成唯一的缓存键
 	return fmt.Sprintf("articles:list:%s:%s:%s:%s:%s:%d:%d",
-		s.Nickname, s.Tag, s.Title, s.SortBy, s.SortOrder, s.Page, s.PageSize)
+		s.Nickname, strings.Join(s.Tags, ","), s.Title, s.SortBy, s.SortOrder, s.Page, s.PageSize)
 }
 
 // LikeArticleService 点赞文章服务结构体
