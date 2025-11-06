@@ -198,19 +198,12 @@ func (a *ArticleController) ListArticles(c *gin.Context) {
 	}
 
 	// 只返回必要的字段：文章ID、标题、作者昵称、发布时间和标签列表
-	var simplifiedArticles []gin.H
-	for _, article := range articles {
-		simplifiedArticles = append(simplifiedArticles, gin.H{
-			"id":           article.ID,
-			"title":        article.Title,
-			"nickname":     article.User.Nickname,
-			"published_at": article.PublishedAt,
-			"tags":         article.TagsArray,
-		})
+	for i := range articles {
+		articles[i].Content = ""
 	}
 
 	internal.APIResponse(c, nil, gin.H{
-		"articles": simplifiedArticles,
+		"articles": articles,
 		"total":    total,
 		"page":     listService.Page,
 		"page_size": listService.PageSize,
