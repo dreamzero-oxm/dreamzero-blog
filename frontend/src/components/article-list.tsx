@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Edit, Trash2, Eye, EyeOff, FileText, X, Heart, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, FileText, X, Heart, ChevronLeft, ChevronRight, Search, RefreshCw } from 'lucide-react';
 import { useGetArticles, useDeleteArticle, useUpdateArticleStatus } from '@/hooks/article-hook';
 import { useGetArticlesByRole, type GetArticlesByRoleRequest } from '@/hooks/article-hook';
 import type { Article } from '@/interface/article';
@@ -343,10 +343,21 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
           <h2 className="text-2xl font-bold">文章管理</h2>
           <p className="text-muted-foreground">管理您的所有文章</p>
         </div>
-        <Button onClick={onCreate} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          新建文章
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => refetch()} 
+            className="flex items-center gap-2"
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            刷新
+          </Button>
+          <Button onClick={onCreate} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            新建文章
+          </Button>
+        </div>
       </div>
       
       <Card>

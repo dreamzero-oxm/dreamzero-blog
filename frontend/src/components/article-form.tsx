@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,8 +12,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { X, Save, Eye, Upload } from 'lucide-react';
-import { useCreateArticle, useUpdateArticle } from '@/hooks/article-hook';
+import { X, Save, Eye, Upload, ArrowLeft, RefreshCw } from 'lucide-react';
+import { useCreateArticle, useUpdateArticle, useGetArticle } from '@/hooks/article-hook';
 import type { Article, CreateArticleRequest, UpdateArticleRequest } from '@/interface/article';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
@@ -26,6 +27,14 @@ interface ArticleFormProps {
 }
 
 export default function ArticleForm({ article, onSave, onCancel }: ArticleFormProps) {
+  const router = useRouter();
+  
+  // 如果提供了articleId，使用useGetArticle钩子获取文章详情
+  const { data: articleData, isLoading: isArticleLoading, error: articleError, refetch: refetchArticle } = useGetArticle(article?.id || '');
+  
+  // 使用传入的article对象或从API获取的文章数据
+  const [currentArticle, setCurrentArticle] = useState<Article | null>(article || articleData?.data || null);
+  
   const [formData, setFormData] = useState<CreateArticleRequest | UpdateArticleRequest>({
     title: '',
     content: '',
@@ -34,7 +43,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
     tags: [],
     cover_image: '',
   });
-  
+
   // 标签输入处理
   const [tagInput, setTagInput] = useState('');
   // 错误信息状态
@@ -62,7 +71,7 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
   // 是否正在编辑文章
   const isEditing = !!article;
   // 是否正在加载中
-  const isLoading = createArticleMutation.isPending || updateArticleMutation.isPending;
+  const isLoading = createArticleMutation.isPending || updateArticleMutation.isPending || isArticleLoading;
   
   // 处理自动保存
   // const handleAutoSave = useCallback(async () => {
@@ -94,31 +103,41 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
   //     console.error('自动保存失败:', error);
   //   }
   // }, [formData, isEditing, updateArticleMutation, createArticleMutation]);
+
+  useEffect(()=>{
+    if (articleData?.data && !articleError) {
+      setCurrentArticle(articleData.data)
+    }
+  }, [articleData])
   
+  useEffect(()=>{
+    console.log(formData.status)
+  },[formData])
+
   // 初始化表单数据
   useEffect(() => {
-    if (article) {
+    if (currentArticle) {
       // 设置URL前缀
-      if (article.cover_image) {
-        if (article.cover_image.startsWith('http://')) {
+      if (currentArticle.cover_image) {
+        if (currentArticle.cover_image.startsWith('http://')) {
           setUrlPrefix('http://');
-        } else if (article.cover_image.startsWith('https://')) {
+        } else if (currentArticle.cover_image.startsWith('https://')) {
           setUrlPrefix('https://');
         }
       }
       
       setFormData({
-        id: article.id || '', 
-        title: article.title,
-        content: article.content,
-        summary: article.summary,
-        status: article.status,
-        tags: article.tags,
-        cover_image: article.cover_image || '',
+        id: currentArticle.id || '', 
+        title: currentArticle.title,
+        content: currentArticle.content,
+        summary: currentArticle.summary,
+        status: currentArticle.status,
+        tags: currentArticle.tags,
+        cover_image: currentArticle.cover_image || '',
       });
-      setCoverImagePreview(article.cover_image || '');
+      setCoverImagePreview(currentArticle.cover_image || '');
     }
-  }, [article]);
+  }, [currentArticle]);
   
   // 自动保存草稿
   // useEffect(() => {
@@ -254,10 +273,31 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
     
     try {
       if (isEditing) {
-        await updateArticleMutation.mutateAsync(formData as UpdateArticleRequest);
+        // 确保更新请求包含文章ID
+        const currentArticleId = currentArticle?.id ||'';
+        const { ...updateFields } = formData;
+        const updateData: UpdateArticleRequest = {
+            id: currentArticleId,
+            title: updateFields.title,
+            content: updateFields.content,
+            summary: updateFields.summary,
+            status: updateFields.status,
+            tags: updateFields.tags,
+            cover_image: updateFields.cover_image
+          };
+        await updateArticleMutation.mutateAsync(updateData);
         toast.success('文章更新成功');
       } else {
-        await createArticleMutation.mutateAsync(formData as CreateArticleRequest);
+        // 创建新文章时，不包含ID字段
+        const createData: CreateArticleRequest = {
+          title: formData.title || '',
+          content: formData.content || '',
+          summary: formData.summary || '',
+          status: formData.status || 'draft',
+          tags: formData.tags || [],
+          cover_image: formData.cover_image || ''
+        };
+        await createArticleMutation.mutateAsync(createData);
         toast.success('文章创建成功');
       }
       setLastSaved(new Date());
@@ -266,17 +306,73 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
       toast.error(isEditing ? '文章更新失败' : '文章创建失败');
     }
   };
+
+  const handleRefreshArticle = async () => {
+    if (article?.id) {
+      await refetchArticle();
+    }
+  };
   
+  // 如果正在加载文章数据，显示加载状态
+  if (isArticleLoading) {
+    return (
+      <div className="w-full max-w-6xl mx-auto">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">正在加载文章数据...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // 如果获取文章数据出错，显示错误信息
+  if (articleError) {
+    return (
+      <div className="w-full max-w-6xl mx-auto">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <p className="text-red-500 mb-4">加载文章数据失败</p>
+            <Button onClick={onCancel}>返回</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-6xl mx-auto">
       <Card className="mb-6">
-        <CardHeader className="pb-3">
+        <CardHeader >
           <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>{isEditing ? '编辑文章' : '创建文章'}</CardTitle>
-              <CardDescription>
-                {isEditing ? '修改文章内容和设置' : '填写文章信息并发布'}
-              </CardDescription>
+            <div className="flex flex-col items-start space-y-4">
+              <div className='flex items-center gap-4'>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onCancel}
+                  className="flex items-center space-x-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>返回</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRefreshArticle}
+                  className="flex items-center space-x-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  <span>刷新</span>
+                </Button>
+              </div>
+              <div>
+                <CardTitle>{isEditing ? '编辑文章' : '创建文章'}</CardTitle>
+                <CardDescription>
+                  {isEditing ? '修改文章内容和设置' : '填写文章信息并发布'}
+                </CardDescription>
+              </div>
             </div>
             {lastSaved && (
               <div className="flex items-center text-sm text-muted-foreground">
@@ -415,9 +511,9 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                         <SelectValue placeholder="选择文章状态" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="draft">草稿</SelectItem>
-                        <SelectItem value="published">已发布</SelectItem>
-                        <SelectItem value="private">私密</SelectItem>
+                        <SelectItem value='draft'>草稿</SelectItem>
+                        <SelectItem value='published'>已发布</SelectItem>
+                        <SelectItem value='private'>私密</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -445,10 +541,17 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
                         {formData.tags.map((tag) => (
                           <Badge key={tag} variant="secondary" className="flex items-center gap-1">
                             {tag}
-                            <X
-                              className="h-3 w-3 cursor-pointer"
-                              onClick={() => handleRemoveTag(tag)}
-                            />
+                            <button
+                              type="button"
+                              className="h-4 w-4 p-0.5 rounded-full hover:bg-red-100 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveTag(tag);
+                              }}
+                              aria-label={`删除标签 ${tag}`}
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
                           </Badge>
                         ))}
                       </div>

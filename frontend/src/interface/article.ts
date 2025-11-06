@@ -74,16 +74,5 @@ export interface ArticleListResponse {
   page_size: number;
 }
 
-export interface ArticleResponse extends BaseModel {
-  title: string;
-  content: string;
-  summary: string;
-  status: 'draft' | 'published' | 'private';
-  user_id: string;
-  view_count: number;
-  like_count: number;
-  tags: string[];
-  cover_image?: string;
-  is_liked?: boolean;
-  published_at?: string;
+export interface ArticleResponse extends Article {
 }

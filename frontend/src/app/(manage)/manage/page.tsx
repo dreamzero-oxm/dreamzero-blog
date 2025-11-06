@@ -79,8 +79,8 @@ export default function ManagePage() {
    * 保存后返回列表模式并清空选中的文章
    */
   const handleSaveArticle = () => {
-    setViewMode('list');
-    setSelectedArticle(null);
+    // setViewMode('list');
+    // setSelectedArticle(null);
   };
   
   return (

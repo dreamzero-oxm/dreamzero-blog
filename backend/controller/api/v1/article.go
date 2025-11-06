@@ -264,12 +264,7 @@ func (a *ArticleController) LikeArticle(c *gin.Context) {
 // @Router /articles/{id}/status [put]
 func (a *ArticleController) UpdateArticleStatus(c *gin.Context) {
 	var updateStatusService service.UpdateArticleStatusService
-	// 先绑定URI参数中的ID
-	if err := c.ShouldBindUri(&updateStatusService); err != nil {
-		internal.APIResponse(c, code.ErrParam, nil)
-		return
-	}
-	// 再绑定JSON请求体中的其他字段
+	// 绑定JSON请求体中的其他字段
 	if err := c.ShouldBindJSON(&updateStatusService); err != nil {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return

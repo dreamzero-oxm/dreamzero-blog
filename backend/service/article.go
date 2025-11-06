@@ -603,6 +603,11 @@ func (service *GetArticlesByRoleService) GetArticlesByRole(userID string, userRo
 		return nil, 0, code.ErrDatabase
 	}
 
+	// 结果不需要内容字段
+	for i := range articles {
+		articles[i].Content = ""
+	}
+
 	return articles, total, nil
 }
 
@@ -663,31 +668,20 @@ func (s *GetArticleService) Get(c *gin.Context) (*models.Article, error) {
 		if err != nil {
 			// 记录操作日志 - 无效的用户ID
 			LogArticleAccessAttempt(c, uuid.Nil, "unknown", s.ID, article.Title, false, "无效的用户ID")
-			return nil, code.ErrInvalidUserID
-		}
-		
-		// 获取用户名（可以从上下文或数据库获取）
-		userName = "unknown" // 可以从上下文获取用户名
-		if user, exists := c.Get("user"); exists {
-			if u, ok := user.(*models.User); ok {
-				userName = u.Nickname
+			userName = "guest"
+			isGuest = true
+		} else {
+			// 获取用户名（可以从上下文或数据库获取）
+			userName = "unknown" // 可以从上下文获取用户名
+			if user, exists := c.Get("user"); exists {
+				if u, ok := user.(*models.User); ok {
+					userName = u.Nickname
+				}
 			}
+			isGuest = false
 		}
-		isGuest = false
 	}
 	
-	// 检查权限：
-	// 1. 如果是文章作者本人，无条件获取
-	// 2. 如果是游客，只能访问已发布的文章
-	// 3. 如果是登录用户但不是作者，只能访问已发布的文章
-	if !isGuest && article.UserID == userID {
-		// 文章作者本人，允许访问
-	} else if article.Status != models.ArticleStatusPublished {
-		// 游客或非作者访问未发布文章，权限不足
-		LogArticleAccessAttempt(c, userID, userName, s.ID, article.Title, false, "权限不足：文章未发布")
-		return nil, code.ErrArticlePermissionDenied
-	}
-
 	// 如果不是文章作者本人，则增加浏览次数（包括游客）
 	if isGuest || article.UserID != userID {
 		article.ViewCount++
@@ -806,6 +800,11 @@ func (s *ListArticleService) List() ([]models.Article, int64, error) {
 		return nil, 0, err
 	}
 
+	// 结果不需要内容字段
+	for i := range articles {
+		articles[i].Content = ""
+	}
+
 	// 将结果存入缓存，缓存5分钟
 	cacheData := struct {
 		Articles []models.Article `json:"articles"`
@@ -906,7 +905,7 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 // UpdateArticleStatusService 更新文章状态服务结构体
 // 用于处理更新文章状态的请求和业务逻辑
 type UpdateArticleStatusService struct {
-	ID     string               `uri:"id" binding:"required"`      // 文章ID，从URL路径获取，必填
+	ID     string               `uri:"id" json:"id" binding:"required"`      // 文章ID，从URL路径获取，必填
 	Status models.ArticleStatus `json:"status" binding:"required"` // 新的文章状态，必填
 	UserID string               `json:"user_id"`                   // 作者用户ID，用于权限验证
 }
