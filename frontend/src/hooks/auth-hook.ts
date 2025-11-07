@@ -27,7 +27,7 @@ export const useValidateAccessToken = () => {
 };
 
 // 刷新access token
-export const useRefreshToken = () => {
+export const useRefreshToken = (showToast = true) => {
   return useMutation({
     mutationFn: async () => {
       const refreshToken = localStorage.getItem('refresh_token');
@@ -51,7 +51,9 @@ export const useRefreshToken = () => {
       }
     },
     onError: () => {
-      toast.error('Token刷新失败，请重新登录');
+      if(showToast){
+        toast.error('Token刷新失败，请重新登录');
+      }
       // 刷新失败，清除所有token
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
@@ -62,22 +64,16 @@ export const useRefreshToken = () => {
 // 检查并刷新token的hook
 export const useCheckAndRefreshToken = (routeType: 'main' | 'manage' = 'main') => {
   const validateToken = useValidateAccessToken();
-  const refreshToken = useRefreshToken();
+  const refreshToken = useRefreshToken(routeType === 'manage');
   const router = useRouter();
   
   const checkAndRefresh = async () => {
-    // 开发模式下跳过登录验证
-    // if (process.env.NODE_ENV === 'development') {
-    //   console.log('开发模式：跳过登录验证');
-    //   return true;
-    // }
     
     try {
       // 首先验证access token是否有效
       const result = await validateToken.mutateAsync();
       return result.code === 0 && result?.data?.valid;
     } catch {
-      console.log('access token无效，尝试刷新');
       try {
         await refreshToken.mutateAsync();
         return true;
@@ -110,13 +106,6 @@ export const useUserLogout = () => {
     queryClient.clear();
     // 触发自定义事件，通知其他组件token已清除
     window.dispatchEvent(new Event('tokenClearing'));
-    
-    // 开发模式下不跳转到登录页
-    if (process.env.NODE_ENV !== 'development') {
-      router.push('/login');
-    } else {
-      console.log('开发模式：已登出，但不跳转到登录页');
-    }
   };
   return logout;
 };

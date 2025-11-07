@@ -46,7 +46,7 @@ export function Header() {
     const checkLoginStatus = async () => {
       try {
         const isValid = await checkAndRefresh();
-        setIsLogin(isValid);
+        setIsLogin(isValid || false);
       } catch (error) {
         console.error('登录状态验证失败:', error);
         setIsLogin(false);
@@ -62,7 +62,7 @@ export function Header() {
       if (e.key === 'access_token') {
         // 使用统一的认证方法验证登录状态
         checkAndRefresh().then(isValid => {
-          setIsLogin(isValid);
+          setIsLogin(isValid || false);
         }).catch(() => {
           setIsLogin(false);
         });

@@ -60,8 +60,8 @@ export default function ArticlesPage() {
             {articles?.articles && articles.articles.length > 0 ? (
                 <div className="space-y-8">
                   {articles.articles.map((article: Article) => (
-                    <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
-                      <div key={article.id} className="bg-white p-6 rounded-lg shadow-md">
+                    <Link href={`/articles/${article.id}`} key={article.id} className="hover:text-blue-600 transition-colors">
+                      <div className="bg-white p-6 rounded-lg shadow-md">
                         <h2 className="text-xl font-bold text-gray-900 mb-2">
                             {article.title}
                         </h2>
@@ -136,14 +136,14 @@ export default function ArticlesPage() {
           </div>
           
           {/* 推荐阅读 */}
-          <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="lg:col-span-1 h-full flex flex-col justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-md ">
               <h3 className="text-lg font-bold text-gray-900 mb-4">推荐阅读</h3>
               {recommendedArticles && recommendedArticles.articles.length > 0 ? (
                 <div className="space-y-4">
                   {recommendedArticles.articles.map((article: Article) => (
-                    <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
-                      <div key={article.id} className="pb-4 border-b border-gray-200 last:border-0">
+                    <Link key={article.id} href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
+                      <div className="pb-4 border-b border-gray-200 last:border-0">
                         <h4 className="text-base font-medium text-gray-900 mb-1">
                             {article.title}
                         </h4>
