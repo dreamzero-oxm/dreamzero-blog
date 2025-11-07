@@ -23,6 +23,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+    _ "image/jpeg"
+    _ "image/png"
+    _ "image/gif"
+    _ "golang.org/x/image/tiff"
+    _ "golang.org/x/image/bmp"
+    _ "golang.org/x/image/webp"
 )
 
 // validateImageURL 验证是否为有效的HTTP/HTTPS链接

@@ -58,38 +58,39 @@ export default function ArticlesPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-8">文章列表</h1>
             
             {articles?.articles && articles.articles.length > 0 ? (
-              <div className="space-y-8">
-                {articles.articles.map((article: Article) => (
-                  <div key={article.id} className="bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">
-                      <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
-                        {article.title}
-                      </Link>
-                    </h2>
-                    
-                    <p className="text-gray-600 mb-4 line-clamp-3">
-                      {article.summary}
-                    </p>
-                    
-                    <div className="flex items-center text-sm text-gray-500 mb-4">
-                      {/* <span className="mr-4">作者: {article.user?.nickname}</span> */}
-                      <span className="mr-4">发布时间: {formatDate(article.created_at)}</span>
-                      <span className="mr-4">浏览量: {article.view_count}</span>
-                      <span>点赞数: {article.like_count}</span>
-                    </div>
-                    
-                    {article.tags && article.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {article.tags.map((tag: string) => (
-                          <span key={tag} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                            {tag}
-                          </span>
-                        ))}
+                <div className="space-y-8">
+                  {articles.articles.map((article: Article) => (
+                    <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
+                      <div key={article.id} className="bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-bold text-gray-900 mb-2">
+                            {article.title}
+                        </h2>
+                        
+                        <p className="text-gray-600 mb-4 line-clamp-3">
+                          {article.summary}
+                        </p>
+                        
+                        <div className="flex items-center text-sm text-gray-500 mb-4">
+                          {/* <span className="mr-4">作者: {article.user?.nickname}</span> */}
+                          <span className="mr-4">发布时间: {formatDate(article.created_at)}</span>
+                          <span className="mr-4">浏览量: {article.view_count}</span>
+                          <span>点赞数: {article.like_count}</span>
+                        </div>
+                        
+                        {article.tags && article.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {article.tags.map((tag: string) => (
+                              <span key={tag} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </Link>
+                  ))}
+                </div>
+
             ) : (
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
                 <p className="text-gray-500">暂无文章</p>
@@ -97,7 +98,7 @@ export default function ArticlesPage() {
             )}
             
             {/* 分页 */}
-            {totalPages > 1 && (
+            {totalPages > 0 && (
               <div className="mt-8 flex justify-center">
                 <nav className="flex items-center space-x-2">
                   <button
@@ -141,16 +142,16 @@ export default function ArticlesPage() {
               {recommendedArticles && recommendedArticles.articles.length > 0 ? (
                 <div className="space-y-4">
                   {recommendedArticles.articles.map((article: Article) => (
-                    <div key={article.id} className="pb-4 border-b border-gray-200 last:border-0">
-                      <h4 className="text-base font-medium text-gray-900 mb-1">
-                        <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
-                          {article.title}
-                        </Link>
-                      </h4>
-                      <p className="text-sm text-gray-500">
-                        {formatDate(article.created_at)}
-                      </p>
-                    </div>
+                    <Link href={`/articles/${article.id}`} className="hover:text-blue-600 transition-colors">
+                      <div key={article.id} className="pb-4 border-b border-gray-200 last:border-0">
+                        <h4 className="text-base font-medium text-gray-900 mb-1">
+                            {article.title}
+                        </h4>
+                        <p className="text-sm text-gray-500">
+                          {formatDate(article.created_at)}
+                        </p>
+                      </div>
+                    </Link>
                   ))}
                 </div>
               ) : (

@@ -1,8 +1,7 @@
 'use client'
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useGetArticle, useGetArticles } from '@/hooks/article-hook';
-import { Article } from '@/interface/article';
+import { useGetArticle } from '@/hooks/article-hook';
 import { formatDate } from '@/utils/date';
 
 export default function ArticleDetailPage() {
@@ -11,17 +10,10 @@ export default function ArticleDetailPage() {
   const id = params.id as string;
 
   // 获取文章详情
-  const { data: articleResponse, isLoading, error } = useGetArticle({ id });
+  const { data: articleResponse, isLoading, error } = useGetArticle(id);
   
-  // 获取相关文章（这里可以根据实际需求调整参数）
-  const { data: relatedResponse } = useGetArticles({
-    page: 1,
-    page_size: 5,
-    status: 'published'
-  });
 
   const article = articleResponse?.data;
-  const relatedArticles = relatedResponse?.data;
 
   if (isLoading) {
     return (
@@ -39,7 +31,7 @@ export default function ArticleDetailPage() {
     );
   }
 
-  if (!articleResponse?.data) {
+  if (!articleResponse?.data || !article) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
@@ -91,7 +83,7 @@ export default function ArticleDetailPage() {
               <span className="mr-4">发布时间: {formatDate(article.created_at)}</span>
               <span className="mr-4">浏览量: {article.view_count}</span>
               <span className="mr-4">点赞数: {article.like_count}</span>
-              <span>作者: {article.user?.nickname}</span>
+              {/* <span>作者: {article.user?.nickname}</span> */}
             </div>
 
             {/* 文章标签 */}
@@ -120,30 +112,6 @@ export default function ArticleDetailPage() {
           </div>
         </article>
 
-        {/* 相关文章推荐 */}
-        {relatedArticles && relatedArticles.length > 0 && (
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">相关文章</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {relatedArticles.map((relatedArticle: Article) => (
-                <div key={relatedArticle.id} className="bg-white p-6 rounded-lg shadow-md">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">
-                    <Link href={`/articles/${relatedArticle.id}`} className="hover:text-blue-600 transition-colors">
-                      {relatedArticle.title}
-                    </Link>
-                  </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">
-                    {relatedArticle.summary}
-                  </p>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <span className="mr-4">{formatDate(relatedArticle.created_at)}</span>
-                    <span>浏览量: {relatedArticle.view_count}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
