@@ -112,13 +112,13 @@ func main() {
 		mainServer := server.NewServer()
 
 		// init middleware
-		if err := middleware.InitMiddleware(mainServer); err != nil {
-			return err
-		}
+		middleware.InitMiddleware(mainServer)
+
+		// init logger 
+		RegisterLoggerForGin(mainServer)
 
 		// init router
 		router.InitRouter(mainServer)
-		RegisterLoggerForGin(mainServer)
 
 		// start server
 		if err := mainServer.GinEngine.Run(fmt.Sprintf("%s:%s", config.Conf.App.Addr, config.Conf.App.Port)); err != nil {

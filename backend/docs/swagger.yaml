@@ -8,6 +8,39 @@ definitions:
       msg:
         type: string
     type: object
+  models.Article:
+    properties:
+      content:
+        type: string
+      cover_image:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      like_count:
+        type: integer
+      published_at:
+        type: string
+      status:
+        $ref: '#/definitions/models.ArticleStatus'
+      summary:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: string
+      view_count:
+        type: integer
+    type: object
   models.ArticleComment:
     properties:
       article_title:
@@ -21,13 +54,31 @@ definitions:
       is_read:
         type: boolean
     type: object
+  models.ArticleStatus:
+    enum:
+    - draft
+    - published
+    - private
+    type: string
+    x-enum-comments:
+      ArticleStatusDraft: 草稿
+      ArticleStatusPrivate: 私有
+      ArticleStatusPublished: 已发布
+    x-enum-descriptions:
+    - 草稿
+    - 已发布
+    - 私有
+    x-enum-varnames:
+    - ArticleStatusDraft
+    - ArticleStatusPublished
+    - ArticleStatusPrivate
   models.DailyPhotograph:
     description: 日常照片
     properties:
       created_at:
         type: string
       id:
-        type: integer
+        type: string
       image_url:
         type: string
       title:
@@ -35,17 +86,189 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.User:
+    properties:
+      avatar:
+        description: 头像，默认为空
+        type: string
+      bio:
+        description: 个人简介
+        type: string
+      birthday:
+        description: 生日
+        type: string
+      created_at:
+        type: string
+      email:
+        description: 邮箱,
+        type: string
+      gender:
+        description: 性别
+        type: string
+      id:
+        type: string
+      is_locked:
+        description: 是否锁定
+        type: boolean
+      location:
+        description: 所在地
+        type: string
+      lock_until:
+        description: 锁定截止时间
+        type: string
+      nickname:
+        description: 昵称，默认为用户名
+        type: string
+      updated_at:
+        type: string
+      user_name:
+        description: 用户名，唯一
+        type: string
+      website:
+        description: 个人网站
+        type: string
+    type: object
   service.AddCommentService:
     properties:
-      artical_title:
+      article_title:
+        description: 文章标题，必填
+        type: string
+      comment:
+        description: 评论内容，必填
+        type: string
+    required:
+    - article_title
+    - comment
+    type: object
+  service.ChangePasswordService:
+    properties:
+      id:
+        description: 用户ID，必填
+        type: string
+      new_password:
+        description: 新密码，必填
+        type: string
+      old_password:
+        description: 旧密码，必填
+        type: string
+    required:
+    - id
+    - new_password
+    - old_password
+    type: object
+  service.CreateArticleService:
+    properties:
+      content:
+        description: 文章内容，必填
+        type: string
+      cover_image:
+        description: 文章封面图片URL，可选
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.ArticleStatus'
+        description: 文章状态，必填
+      summary:
+        description: 文章摘要，可选
+        type: string
+      tags:
+        description: 文章标签数组，可选
         items:
           type: string
         type: array
-      comment:
+      title:
+        description: 文章标题，必填
+        type: string
+      user_id:
+        description: 作者用户ID，必填
         type: string
     required:
-    - artical_title
-    - comment
+    - content
+    - status
+    - title
+    type: object
+  service.UpdateArticleService:
+    properties:
+      content:
+        description: 文章内容，必填
+        type: string
+      cover_image:
+        description: 文章封面图片URL，可选
+        type: string
+      id:
+        description: 文章ID，从URL路径获取，必填
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.ArticleStatus'
+        description: 文章状态，必填
+      summary:
+        description: 文章摘要，可选
+        type: string
+      tags:
+        description: 文章标签数组，可选
+        items:
+          type: string
+        type: array
+      title:
+        description: 文章标题，必填
+        type: string
+      user_id:
+        description: 作者用户ID，用于权限验证
+        type: string
+    required:
+    - content
+    - id
+    - status
+    - title
+    type: object
+  service.UpdateArticleStatusService:
+    properties:
+      id:
+        description: 文章ID，从URL路径获取，必填
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/models.ArticleStatus'
+        description: 新的文章状态，必填
+      user_id:
+        description: 作者用户ID，用于权限验证
+        type: string
+    required:
+    - id
+    - status
+    type: object
+  service.UpdateUserProfileService:
+    properties:
+      bio:
+        description: 个人简介
+        type: string
+      birthday:
+        description: 生日
+        type: string
+      email:
+        description: 邮箱
+        type: string
+      gender:
+        description: 性别
+        type: string
+      id:
+        description: 用户ID，必填
+        type: string
+      location:
+        description: 所在地
+        type: string
+      nickname:
+        description: 昵称
+        type: string
+      phone:
+        description: 手机号
+        type: string
+      website:
+        description: 个人网站
+        type: string
+    required:
+    - id
     type: object
 host: 127.0.0.1:9997
 info:
@@ -61,21 +284,15 @@ info:
   title: Blog-server
   version: "1.0"
 paths:
-  /artical_comment/add:
+  /article_comment/add:
     post:
       consumes:
       - application/json
       description: 添加评论
       parameters:
-      - description: 评论内容
+      - description: 评论信息
         in: body
         name: comment
-        required: true
-        schema:
-          $ref: '#/definitions/service.AddCommentService'
-      - description: 文章标题列表
-        in: body
-        name: artical_title
         required: true
         schema:
           $ref: '#/definitions/service.AddCommentService'
@@ -102,16 +319,16 @@ paths:
               type: object
       summary: 添加评论
       tags:
-      - artical_comment
-  /artical_comment/list:
+      - article_comment
+  /article_comment/list:
     get:
       consumes:
       - application/json
       description: 获取评论列表
       parameters:
-      - description: 文章标题列表
+      - description: 文章标题
         in: query
-        name: artical_title
+        name: article_title
         type: string
       - description: 是否通知
         in: query
@@ -162,7 +379,244 @@ paths:
               type: object
       summary: 获取评论列表
       tags:
-      - artical_comment
+      - article_comment
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: 获取文章列表，支持分页和筛选。管理员可以查看所有状态、用户或标签的文章，非管理员只能查看公开文章。
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        type: string
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页数量
+        in: query
+        name: page_size
+        type: integer
+      - description: 文章状态
+        enum:
+        - draft
+        - published
+        - private
+        in: query
+        name: status
+        type: string
+      - description: 用户ID
+        in: query
+        name: user_id
+        type: integer
+      - description: 单个标签
+        in: query
+        name: tag
+        type: string
+      - collectionFormat: csv
+        description: 多个标签
+        in: query
+        items:
+          type: string
+        name: tags
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  properties:
+                    list:
+                      items:
+                        $ref: '#/definitions/models.Article'
+                      type: array
+                    total:
+                      format: int64
+                      type: integer
+                  type: object
+              type: object
+      summary: 获取文章列表
+      tags:
+      - article
+    post:
+      consumes:
+      - application/json
+      description: 创建一篇新文章
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文章信息
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/service.CreateArticleService'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Article'
+              type: object
+      summary: 创建文章
+      tags:
+      - article
+  /articles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除一篇已存在的文章
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.Response'
+      summary: 删除文章
+      tags:
+      - article
+    get:
+      consumes:
+      - application/json
+      description: 获取一篇文章的详细信息
+      parameters:
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Article'
+              type: object
+      summary: 获取文章详情
+      tags:
+      - article
+    put:
+      consumes:
+      - application/json
+      description: 更新一篇已存在的文章
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 文章信息
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateArticleService'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Article'
+              type: object
+      summary: 更新文章
+      tags:
+      - article
+  /articles/{id}/like:
+    post:
+      consumes:
+      - application/json
+      description: 为一篇文章点赞
+      parameters:
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.Response'
+      summary: 点赞文章
+      tags:
+      - article
+  /articles/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: 更新一篇文章的状态（发布/草稿）
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 文章ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 文章状态(draft/published/private)
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateArticleStatusService'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal.Response'
+      summary: 更新文章状态
+      tags:
+      - article
   /photo/list:
     get:
       consumes:
@@ -192,26 +646,6 @@ paths:
                   type: string
               type: object
       summary: 获取图片列表
-      tags:
-      - photo
-  /photo/test:
-    get:
-      consumes:
-      - application/json
-      description: 测试
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/internal.Response'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 测试
       tags:
       - photo
   /photo/upload:
@@ -249,6 +683,52 @@ paths:
       summary: 上传图片
       tags:
       - photo
+  /user/avatar:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传当前登录用户的头像
+      parameters:
+      - description: 头像文件
+        in: formData
+        name: avatar
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20101":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 上传头像
+      tags:
+      - user
   /user/checkUserEmail:
     get:
       consumes:
@@ -374,6 +854,201 @@ paths:
       summary: 用户登录
       tags:
       - user
+  /user/operation-logs:
+    get:
+      consumes:
+      - application/json
+      description: 获取用户操作日志
+      parameters:
+      - description: 操作类型
+        in: query
+        name: operation_type
+        type: string
+      - description: 开始日期
+        in: query
+        name: start_date
+        type: string
+      - description: 结束日期
+        in: query
+        name: end_date
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页数量
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20101":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取操作日志
+      tags:
+      - user
+  /user/password:
+    put:
+      consumes:
+      - application/json
+      description: 修改当前登录用户的密码
+      parameters:
+      - description: 密码信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/service.ChangePasswordService'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20101":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 修改密码
+      tags:
+      - user
+  /user/profile:
+    get:
+      consumes:
+      - application/json
+      description: 获取当前登录用户的详细信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20101":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取用户信息
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: 更新当前登录用户的个人信息
+      parameters:
+      - description: 用户信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateUserProfileService'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20101":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 更新用户信息
+      tags:
+      - user
   /user/refreshToken:
     post:
       consumes:
@@ -473,6 +1148,64 @@ paths:
                   type: string
               type: object
       summary: 用户注册
+      tags:
+      - user
+  /user/validateAccessToken:
+    get:
+      consumes:
+      - application/json
+      description: 验证access token是否有效
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "20002":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20117":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20118":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "20119":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 验证Access Token
       tags:
       - user
   /user/verifyEmailVerificationCode:

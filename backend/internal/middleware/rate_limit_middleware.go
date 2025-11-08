@@ -19,7 +19,7 @@ func RateLimitMiddleware(limit int, duration time.Duration) gin.HandlerFunc {
 
 		// 使用Redis实现计数器
 		redisClient := redis.GetRedisClient()
-		key := config.Conf.Redis.KeyPrifex + ":rate_limit:" + clientIP
+		key := config.Conf.Redis.KeyPrefix + ":rate_limit:" + clientIP
 
 		// 获取当前计数
 		count, err := redisClient.Get(context.Background(), key).Int()
