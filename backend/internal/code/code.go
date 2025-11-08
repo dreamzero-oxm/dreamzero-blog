@@ -32,6 +32,7 @@ var (
 	// user errors
 	ErrEncrypt                   = &Errno{Code: 20201, Message: "密码加密错误"}
 	ErrUserNotFound              = &Errno{Code: 20202, Message: "用户不存在"}
+	ErrInvalidUserID             = &Errno{Code: 20203, Message: "无效的用户ID"}
 	ErrPasswordIncorrect         = &Errno{Code: 20204, Message: "密码错误"}
 	ErrUserExistBefore           = &Errno{Code: 20205, Message: "用户已存在"}
 	ErrUserCreate                = &Errno{Code: 20206, Message: "用户创建错误"}
@@ -71,6 +72,9 @@ var (
 	ErrArticleListFailed        = &Errno{Code: 20509, Message: "文章列表获取失败"}
 	ErrArticleGetFailed         = &Errno{Code: 20510, Message: "文章获取失败"}
 	ErrArticlePermissionDenied  = &Errno{Code: 20511, Message: "没有权限操作此文章"}
+	ErrArticleCoverImageInvalid = &Errno{Code: 20512, Message: "封面图片必须是有效的URL或Base64编码的图片"}
+	ErrInvalidArticleID         = &Errno{Code: 20513, Message: "无效的文章ID"}
+
 )
 
 // Errno ...

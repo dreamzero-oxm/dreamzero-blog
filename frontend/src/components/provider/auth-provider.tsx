@@ -1,27 +1,33 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useCheckAndRefreshToken } from '@/hooks/auth-hook';
+import router from 'next/router';
 
 interface AuthProviderProps {
   children: React.ReactNode;
+  routeType?: 'main' | 'manage';
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { checkAndRefresh, isLoading } = useCheckAndRefreshToken();
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children, routeType = 'main' }) => {
+  const { checkAndRefresh, isLoading } = useCheckAndRefreshToken(routeType);
+  const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
-    // 检查是否有access token
-    const accessToken = localStorage.getItem('access_token');
     
-    if (accessToken) {
-      // 如果有access token，验证它是否有效
-      checkAndRefresh();
-    }
-  }, [checkAndRefresh]);
+    // 使用统一的认证方法验证登录状态
+    checkAndRefresh().then((result) => {
+      // 如果认证成功，设置isLogin为true，如果失败，则跳转到登录页面
+      if (result) {
+        setIsLogin(true);
+      } else {
+        router.push('/login');
+      }
+    });
+  }, []);
 
   // 如果正在验证token，可以显示加载状态
-  if (isLoading) {
+  if (!isLogin || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

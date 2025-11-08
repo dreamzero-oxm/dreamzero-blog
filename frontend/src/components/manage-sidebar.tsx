@@ -27,12 +27,12 @@ const items = [
   },
   {
     title: "个人信息",
-    url: "/manage/profile",
+    url: "/profile",
     icon: User,
   },
   {
     title: "设置",
-    url: "/manage/settings",
+    url: "/settings",
     icon: Settings,
   },
 ]

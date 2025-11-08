@@ -21,6 +21,7 @@ import React, {
     nextButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
     backButtonText?: string;
     nextButtonText?: string;
+    completeButtonText?: string;
     disableStepIndicators?: boolean;
     renderStepIndicator?: (props: {
       step: number;
@@ -40,6 +41,7 @@ import React, {
     footerClassName = "",
     backButtonProps = {},
     nextButtonProps = {},
+    completeButtonText = "Complete",
     backButtonText = "Back",
     nextButtonText = "Continue",
     disableStepIndicators = false,
@@ -160,7 +162,7 @@ import React, {
                   className="duration-350 flex items-center justify-center rounded-full bg-primary py-1.5 px-3.5 font-medium tracking-tight text-primary-foreground transition cursor-pointer disabled:cursor-not-allowed disabled:bg-secondary disabled:text-secondary-foreground active:bg-green-700"
                   {...nextButtonProps}
                 >
-                  {isLastStep ? "Complete" : nextButtonText}
+                  {isLastStep ? completeButtonText : nextButtonText}
                 </button>
               </div>
             </div>

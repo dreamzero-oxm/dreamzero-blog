@@ -20,6 +20,12 @@ const api = {
     userCheckEmail: `/${apiHost}/${user}/checkUserEmail`,
     validateAccessToken: `/${apiHost}/${user}/validateAccessToken`,
     refreshToken: `/${apiHost}/${user}/refreshToken`,
+    // user profile
+    getUserProfile: `/${apiHost}/${user}/profile`,
+    updateUserProfile: `/${apiHost}/${user}/profile`,
+    uploadAvatar: `/${apiHost}/${user}/avatar`,
+    changePassword: `/${apiHost}/${user}/password`,
+    getOperationLogs: `/${apiHost}/${user}/operation-logs`,
     // others   
 }
 

@@ -23,6 +23,7 @@ database:
     password: 
     db_name: 
     sslmode: "disable"
+    auto_create_db: false
   gorm:
     log_level: "ERROR"
     log_output_dir: 
@@ -65,4 +66,4 @@ email:
   smtp_password: 
   sender_name: 
   sender_email: 
-  email_template: 
+  email_template:

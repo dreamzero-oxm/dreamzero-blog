@@ -10,10 +10,10 @@ const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             refetchOnWindowFocus: false,
-            retry: 1 // 设置重试次数为1次
+            retry: 0 // 设置重试次数为1次
         },
         mutations: {
-            retry: 1 // 设置mutation的重试次数为1次
+            retry: 0 // 设置mutation的重试次数为1次
         }
     }
 })

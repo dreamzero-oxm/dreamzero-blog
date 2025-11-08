@@ -21,23 +21,28 @@ func APIResponse(ctx *gin.Context, err error, data interface{}) {
 }
 
 func APIResponseUnauthorized(ctx *gin.Context, err error, data interface{}) {
-	APIResponseWithStatus(ctx, err, data, http.StatusUnauthorized)
+    APIResponseWithStatus(ctx, err, data, http.StatusUnauthorized)
+    ctx.Abort() // 添加这行
 }
 
 func APIResponseForbidden(ctx *gin.Context, err error, data interface{}) {
 	APIResponseWithStatus(ctx, err, data, http.StatusForbidden)
+	ctx.Abort() // 添加这行
 }
 
 func APIResponseNotFound(ctx *gin.Context, err error, data interface{}) {
 	APIResponseWithStatus(ctx, err, data, http.StatusNotFound)
+	ctx.Abort() // 添加这行
 }
 
 func APIResponseBadRequest(ctx *gin.Context, err error, data interface{}) {
 	APIResponseWithStatus(ctx, err, data, http.StatusBadRequest)
+	ctx.Abort() // 添加这行
 }
 
 func APIResponseInternalServerError(ctx *gin.Context, err error, data interface{}) {
 	APIResponseWithStatus(ctx, err, data, http.StatusInternalServerError)
+	ctx.Abort() // 添加这行
 }
 
 func APIResponseWithStatus(ctx *gin.Context, err error, data interface{}, statusCode int) {

@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner"
 import React from 'react';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 
-import AuthProvider from "@/components/provider/auth-provider";
+// import AuthProvider from "@/components/provider/auth-provider";
 
 export const metadata: Metadata = {
   // 标题
@@ -90,14 +90,14 @@ export default function RootLayout({
       <body>
         <ReactQueryProvider>
           <AntdRegistry>
-            <AuthProvider>
-              <div className="w-full min-h-screen  overflow-x-hidden flex flex-col">
-                <main className="flex-1 flex">
+            {/* <AuthProvider> */}
+              <div className="w-screen min-h-screen overflow-x-hidden flex flex-col">
+                <main className="flex-1 flex flex-col">
                   {children}
                   <Toaster expand={true} position="bottom-right" richColors/>
                 </main>
               </div>
-            </AuthProvider>
+            {/* </AuthProvider> */}
           </AntdRegistry>
         </ReactQueryProvider>
       </body>

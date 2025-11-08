@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"blog-server/internal/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +10,6 @@ func CorsMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		origin := context.Request.Header.Get("Origin")
 		if origin != "" {
-			logger.Logger.Debugf("[CORS] Request from: %s", origin)
 			// 允许所有来源
 			context.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		} else {
@@ -35,7 +33,6 @@ func CorsMiddleware() gin.HandlerFunc {
 
 		// 处理预检请求
 		if context.Request.Method == "OPTIONS" {
-			logger.Logger.Infof("[OPTIONS] Request from: %s", origin)
 			context.AbortWithStatus(http.StatusNoContent)
 			return
 		}
