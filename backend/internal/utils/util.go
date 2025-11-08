@@ -2,11 +2,13 @@ package utils
 
 import (
 	"crypto/rand"
+	"fmt"
 	"math/big"
 	"regexp"
 	"strconv"
 	"time"
 	"github.com/google/uuid"
+	"github.com/gin-gonic/gin"
 )
 
 // ValidatePassword 验证密码强度
@@ -94,4 +96,22 @@ func StringToUint(s string) (uint, error) {
 // StringToUUID 将字符串转换为UUID类型
 func StringToUUID(s string) (uuid.UUID, error) {
 	return uuid.Parse(s)
+}
+
+// GetUserIDFromContext 从gin.Context中获取用户ID并转换为UUID
+func GetUserIDFromContext(c *gin.Context) (uuid.UUID, error) {
+	// 从JWT中获取用户ID
+	userID, exists := c.Get("userID")
+	if !exists {
+		return uuid.Nil, fmt.Errorf("user ID not found in context")
+	}
+	
+	// 转换用户ID
+	userIDStr, ok := userID.(string)
+	if !ok {
+		return uuid.Nil, fmt.Errorf("user ID is not a string")
+	}
+	
+	// 将字符串转换为UUID
+	return StringToUUID(userIDStr)
 }

@@ -31,6 +31,10 @@ func InitEmailConsumer() error {
 		}
 		return nil
 	})
-	go consumer.Start(context.Background())
+	go func() {
+		if err := consumer.Start(context.Background()); err != nil {
+			logger.Logger.Errorf("启动邮件消费者失败: %v", err)
+		}
+	}()
 	return nil
 }

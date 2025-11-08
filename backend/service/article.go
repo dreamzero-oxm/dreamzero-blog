@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"image"
 	"io"
-	"log"
 	"net/url"
 	"regexp"
 	"strings"
@@ -76,14 +75,14 @@ func uploadBase64ImageToOSS(base64Data string) (string, error) {
 	// 提取Base64编码部分
 	parts := strings.SplitN(base64Data, ",", 2)
 	if len(parts) != 2 {
-		log.Printf("无效的Base64图片格式: 缺少data:image前缀或编码部分")
+		logger.Logger.Errorf("无效的Base64图片格式: 缺少data:image前缀或编码部分")
 		return "", code.ErrArticleCoverImageInvalid
 	}
 
 	// 解码Base64数据
 	imageData, err := base64.StdEncoding.DecodeString(parts[1])
 	if err != nil {
-		log.Printf("Base64解码失败: %v", err)
+		logger.Logger.Errorf("Base64解码失败: %v", err)
 		return "", code.ErrArticleCoverImageInvalid
 	}
 
@@ -93,12 +92,14 @@ func uploadBase64ImageToOSS(base64Data string) (string, error) {
 	// 尝试解码图片以验证其有效性
 	_, format, err := image.Decode(reader)
 	if err != nil {
-		log.Printf("无效的图片格式: %v", err)
+		logger.Logger.Errorf("无效的图片格式: %v", err)
 		return "", code.ErrArticleCoverImageInvalid
 	}
 
 	// 重置Reader位置
-	reader.Seek(0, io.SeekStart)
+	if _, err := reader.Seek(0, io.SeekStart); err != nil {
+		return "", fmt.Errorf("重置读取器位置失败: %w", err)
+	}
 
 	// 生成唯一的对象名称
 	objectName := fmt.Sprintf("article-cover-%s.%s", uuid.New().String(), format)
@@ -111,17 +112,20 @@ func uploadBase64ImageToOSS(base64Data string) (string, error) {
 	}
 
 	// 记录上传开始
-	log.Printf("开始上传图片到OSS: bucket=%s, object=%s, contentType=%s", bucketName, objectName, contentType)
+	logger.Logger.Errorf("开始上传图片到OSS: bucket=%s, object=%s, contentType=%s", bucketName, objectName, contentType)
 
 	// 上传到OSS，添加重试机制
 	maxRetries := 3
 	var uploadErr error
 	for i := 0; i < maxRetries; i++ {
 		// 重置Reader位置
-		reader.Seek(0, io.SeekStart)
+		if _, err := reader.Seek(0, io.SeekStart); err != nil {
+			uploadErr = fmt.Errorf("重置读取器位置失败: %w", err)
+			continue
+		}
 		
 		if uploadErr = oss.UploadFileMinio(bucketName, objectName, reader, contentType); uploadErr != nil {
-			log.Printf("上传图片到OSS失败 (尝试 %d/%d): %v", i+1, maxRetries, uploadErr)
+			logger.Logger.Errorf("上传图片到OSS失败 (尝试 %d/%d): %v", i+1, maxRetries, uploadErr)
 			if i < maxRetries-1 {
 				// 等待一段时间后重试
 				time.Sleep(time.Second * time.Duration(i+1))
@@ -132,13 +136,13 @@ func uploadBase64ImageToOSS(base64Data string) (string, error) {
 	}
 	
 	if uploadErr != nil {
-		log.Printf("上传图片到OSS最终失败: %v", uploadErr)
+		logger.Logger.Errorf("上传图片到OSS最终失败: %v", uploadErr)
 		return "", code.ErrArticleCoverImageInvalid
 	}
 
 	// 生成公开访问URL
 	imageURL := oss.GeneratePublicURLMinio(bucketName, objectName)
-	log.Printf("成功上传图片到OSS: %s", imageURL)
+	logger.Logger.Errorf("成功上传图片到OSS: %s", imageURL)
 	return imageURL, nil
 }
 
@@ -158,22 +162,22 @@ func processCoverImage(coverImage string) (string, error) {
 	// 如果是有效的Base64图片，上传到OSS并返回URL
 	if validateBase64Image(coverImage) {
 		// 记录日志 - 开始上传Base64图片
-		log.Printf("开始上传Base64编码的封面图片到OSS")
+		logger.Logger.Errorf("开始上传Base64编码的封面图片到OSS")
 		
 		imageURL, err := uploadBase64ImageToOSS(coverImage)
 		if err != nil {
 			// 记录错误日志
-			log.Printf("上传Base64图片到OSS失败: %v", err)
+			logger.Logger.Errorf("上传Base64图片到OSS失败: %v", err)
 			return "", code.ErrArticleCoverImageInvalid
 		}
 		
 		// 记录成功日志
-		log.Printf("成功上传Base64图片到OSS: %s", imageURL)
+		logger.Logger.Errorf("成功上传Base64图片到OSS: %s", imageURL)
 		return imageURL, nil
 	}
 
 	// 既不是URL也不是Base64，返回错误
-	log.Printf("无效的封面图片格式: %s", code.ErrArticleCoverImageInvalid.Message)
+	logger.Logger.Errorf("无效的封面图片格式: %s", code.ErrArticleCoverImageInvalid.Message)
 	return "", code.ErrArticleCoverImageInvalid
 }
 
@@ -651,7 +655,9 @@ func (s *GetArticleService) Get(c *gin.Context) (*models.Article, error) {
 				}
 			}
 			
-			LogArticleAccessAttempt(c, userID, userName, s.ID, "", false, "文章不存在")
+			if err := LogArticleAccessAttempt(c, userID, userName, s.ID, "", false, "文章不存在"); err != nil {
+				logger.Logger.Errorf("记录文章访问尝试失败: %v", err)
+			}
 			return nil, code.ErrArticleNotFound
 		}
 		return nil, code.ErrArticleGetFailed
@@ -673,7 +679,9 @@ func (s *GetArticleService) Get(c *gin.Context) (*models.Article, error) {
 		userID, err = uuid.Parse(s.UserID)
 		if err != nil {
 			// 记录操作日志 - 无效的用户ID
-			LogArticleAccessAttempt(c, uuid.Nil, "unknown", s.ID, article.Title, false, "无效的用户ID")
+			if err := LogArticleAccessAttempt(c, uuid.Nil, "unknown", s.ID, article.Title, false, "无效的用户ID"); err != nil {
+				logger.Logger.Errorf("记录文章访问尝试失败: %v", err)
+			}
 			userName = "guest"
 			isGuest = true
 		} else {
@@ -703,7 +711,9 @@ func (s *GetArticleService) Get(c *gin.Context) (*models.Article, error) {
 	} else {
 		accessDesc = "用户访问"
 	}
-	LogArticleAccessAttempt(c, userID, userName, s.ID, article.Title, true, accessDesc)
+	if err := LogArticleAccessAttempt(c, userID, userName, s.ID, article.Title, true, accessDesc); err != nil {
+		logger.Logger.Errorf("记录文章访问尝试失败: %v", err)
+	}
 
 	return &article, nil
 }
@@ -851,11 +861,13 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 	userID, err := uuid.Parse(s.UserID)
 	if err != nil {
 		// 记录操作日志 - 无效的用户ID
-		if c != nil {
-			go func() {
-				_ = LogArticleLike(c, uuid.Nil, "unknown", s.ID, "", false, "无效的用户ID")
-			}()
-		}
+			if c != nil {
+				go func() {
+					if err := LogArticleLike(c, uuid.Nil, "unknown", s.ID, "未知文章", false, "无效的用户ID"); err != nil {
+						logger.Logger.Errorf("记录文章点赞操作失败: %v", err)
+					}
+				}()
+			}
 		return code.ErrInvalidUserID
 	}
 
@@ -874,7 +886,9 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 			// 记录操作日志 - 文章不存在
 			if c != nil {
 				go func() {
-					_ = LogArticleLike(c, userID, userName, s.ID, "", false, "文章不存在")
+					if err := LogArticleLike(c, userID, userName, s.ID, "未知文章", false, "文章不存在"); err != nil {
+						logger.Logger.Errorf("记录文章点赞操作失败: %v", err)
+					}
 				}()
 			}
 			return code.ErrArticleNotFound
@@ -882,7 +896,9 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 		// 记录操作日志 - 查询失败
 		if c != nil {
 			go func() {
-				_ = LogArticleLike(c, userID, userName, s.ID, "", false, "查询文章失败")
+				if err := LogArticleLike(c, userID, userName, s.ID, "未知文章", false, "查询文章失败"); err != nil {
+					logger.Logger.Errorf("记录文章点赞操作失败: %v", err)
+				}
 			}()
 		}
 		return code.ErrArticleGetFailed
@@ -894,7 +910,9 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 		// 记录操作日志 - 点赞失败
 		if c != nil {
 			go func() {
-				_ = LogArticleLike(c, userID, userName, s.ID, article.Title, false, "点赞失败")
+				if err := LogArticleLike(c, userID, userName, s.ID, article.Title, false, "点赞失败"); err != nil {
+					logger.Logger.Errorf("记录文章点赞操作失败: %v", err)
+				}
 			}()
 		}
 		return code.ErrArticleUpdateFailed
@@ -903,7 +921,9 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 	// 记录操作日志 - 点赞成功
 	if c != nil {
 		go func() {
-			_ = LogArticleLike(c, userID, userName, article.ID.String(), article.Title, true, "")
+			if err := LogArticleLike(c, userID, userName, article.ID.String(), article.Title, true, ""); err != nil {
+				logger.Logger.Errorf("记录文章点赞操作失败: %v", err)
+			}
 		}()
 	}
 
@@ -928,7 +948,7 @@ func (s *UpdateArticleStatusService) UpdateStatus(c *gin.Context) error {
 		// 记录操作日志 - 无效的文章ID
 		if c != nil {
 			go func() {
-				_ = LogArticleStatusUpdate(c, uuid.Nil, "unknown", s.ID, "", "", "", false, "无效的文章ID")
+				_ = LogArticleStatusUpdate(c, uuid.Nil, "unknown", s.ID, "未知文章", "", "", false, "无效的文章ID")
 			}()
 		}
 		return code.ErrParam
@@ -940,7 +960,7 @@ func (s *UpdateArticleStatusService) UpdateStatus(c *gin.Context) error {
 		// 记录操作日志 - 无效的用户ID
 		if c != nil {
 			go func() {
-				_ = LogArticleStatusUpdate(c, uuid.Nil, "unknown", s.ID, "", "", "", false, "无效的用户ID")
+				_ = LogArticleStatusUpdate(c, uuid.Nil, "unknown", s.ID, "未知文章", "", "", false, "无效的用户ID")
 			}()
 		}
 		return code.ErrInvalidUserID
@@ -961,7 +981,7 @@ func (s *UpdateArticleStatusService) UpdateStatus(c *gin.Context) error {
 			// 记录操作日志 - 文章不存在
 		if c != nil {
 			go func() {
-				_ = LogArticleStatusUpdate(c, userID, userName, s.ID, "", "", "", false, "文章不存在")
+				_ = LogArticleStatusUpdate(c, userID, userName, s.ID, "未知文章", "", "", false, "文章不存在")
 			}()
 		}
 		return code.ErrArticleNotFound
@@ -969,7 +989,7 @@ func (s *UpdateArticleStatusService) UpdateStatus(c *gin.Context) error {
 		// 记录操作日志 - 查询失败
 		if c != nil {
 			go func() {
-				_ = LogArticleStatusUpdate(c, userID, userName, s.ID, "", "", "", false, "查询文章失败")
+				_ = LogArticleStatusUpdate(c, userID, userName, s.ID, "未知文章", "", "", false, "查询文章失败")
 			}()
 		}
 		return code.ErrDatabase
@@ -1014,7 +1034,7 @@ func (s *UpdateArticleStatusService) UpdateStatus(c *gin.Context) error {
 	// 记录操作日志 - 更新成功
 	if c != nil {
 		go func() {
-			_ = LogArticleStatusUpdate(c, userID, userName, article.ID.String(), article.Title, string(oldStatus), string(s.Status), true, "")
+			_ = LogArticleStatusUpdate(c, userID, userName, s.ID, article.Title, string(oldStatus), string(s.Status), true, "")
 		}()
 	}
 

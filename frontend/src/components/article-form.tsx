@@ -106,11 +106,11 @@ export default function ArticleForm({ article, onSave, onCancel }: ArticleFormPr
     if (articleData?.data && !articleError) {
       setCurrentArticle(articleData.data)
     }
-  }, [articleData])
+  }, [articleData, articleError])
   
   useEffect(()=>{
     console.log(formData.status)
-  },[formData])
+  },[formData.status])
 
   // 初始化表单数据
   useEffect(() => {

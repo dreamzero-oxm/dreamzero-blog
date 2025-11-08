@@ -99,7 +99,6 @@ export const useCheckAndRefreshToken = (routeType: 'main' | 'manage' = 'main') =
 
 export const useUserLogout = () => {
   const queryClient = useQueryClient();
-  const router = useRouter();
   const logout = async () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');

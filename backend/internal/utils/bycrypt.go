@@ -11,8 +11,5 @@ func GenerateEncryptedPassword(password string) (string, error) {
 
 func ComparePassword(password string, encryptedPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(encryptedPassword), []byte(password))
-	if err == nil {
-		return true
-	}
-	return false
+	return err == nil
 }

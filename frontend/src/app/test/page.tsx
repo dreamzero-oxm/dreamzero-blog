@@ -26,7 +26,7 @@ export default function Page() {
     const {checkAndRefresh} = useCheckAndRefreshToken('main')
     useEffect(()=>{
         checkAndRefresh()
-    }, [])
+    }, [checkAndRefresh])
 
     // 返回简单的测试页面
     return <div>test</div>

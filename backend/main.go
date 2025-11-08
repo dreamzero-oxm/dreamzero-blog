@@ -96,7 +96,11 @@ func main() {
 		if err := redis.Init(config.Conf.Redis); err != nil {
 			return err
 		}
-		defer redis.Close()
+		defer func() {
+			if err := redis.Close(); err != nil {
+				logger.Logger.Errorf("关闭Redis连接失败: %v", err)
+			}
+		}()
 
 		// init email
 		if err := email.InitEmail(); err != nil {
