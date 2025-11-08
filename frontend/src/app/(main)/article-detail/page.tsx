@@ -1,18 +1,26 @@
 'use client'
-import { useParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useGetArticle } from '@/hooks/article-hook';
 import { formatDate } from '@/utils/date';
+import { useEffect, Suspense } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { components } from '@/components/mdx-components';
 
-export default function ArticleDetailPage() {
-  const params = useParams();
+function ArticleDetailContent() {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const id = params.id as string;
+  const id = searchParams.get('id');
+
+  // 如果没有ID，重定向到文章列表
+  useEffect(() => {
+    if (!id) {
+      router.push('/articles');
+    }
+  }, [id, router]);
 
   // 获取文章详情
-  const { data: articleResponse, isLoading, error } = useGetArticle(id);
-  
-
+  const { data: articleResponse, isLoading, error } = useGetArticle(id || '');
   const article = articleResponse?.data;
 
   if (isLoading) {
@@ -107,12 +115,26 @@ export default function ArticleDetailPage() {
 
             {/* 文章正文 */}
             <div className="prose prose-lg max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: article.content || '' }} />
+              {/* <div dangerouslySetInnerHTML={{ __html: article.content || '' }} /> */}
+              <ReactMarkdown components={components}>
+                {article.content || '暂无内容'}
+              </ReactMarkdown>
             </div>
           </div>
         </article>
-
       </div>
     </div>
+  );
+}
+
+export default function ArticleDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    }>
+      <ArticleDetailContent />
+    </Suspense>
   );
 }

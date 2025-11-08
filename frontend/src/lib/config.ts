@@ -14,15 +14,15 @@ export const config = {
       appleTouchIcon: "/favicon.png",
     },
     manifest: "/site.webmanifest",
-    rss: {
-      title: "DreamZero的博客",
-      description: "Practice of Full Stack Engineer",
-      feedLinks: {
-        rss2: "/rss.xml",
-        json: "/feed.json",
-        atom: "/atom.xml",
-      },
-    },
+    // rss: {
+    //   title: "DreamZero的博客",
+    //   description: "Practice of Full Stack Engineer",
+    //   feedLinks: {
+    //     rss2: "/rss.xml",
+    //     json: "/feed.json",
+    //     atom: "/atom.xml",
+    //   },
+    // },
   },
   author: {
     name: "DreamZero",
@@ -47,11 +47,11 @@ export const config = {
     main: [
       { 
         title: "文章", 
-        href: "/blog",
+        href: "/article",
       },
       { 
         title: "友商", 
-        href: "/blog",
+        // href: "/blog",
         submenu: [
           {
             title: "Aimerick",

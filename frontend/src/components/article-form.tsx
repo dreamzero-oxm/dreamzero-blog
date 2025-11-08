@@ -15,9 +15,9 @@ import { X, Save, Eye, Upload, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useCreateArticle, useUpdateArticle, useGetArticle } from '@/hooks/article-hook';
 import type { Article, CreateArticleRequest, UpdateArticleRequest } from '@/interface/article';
 import { toast } from 'sonner';
-import ReactMarkdown from 'react-markdown';
 
 import { components } from '@/components/mdx-components';
+import ReactMarkdown from 'react-markdown';
 
 interface ArticleFormProps {
   article?: Article;
