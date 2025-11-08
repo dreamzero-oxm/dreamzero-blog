@@ -1,0 +1,201 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/${{ github.event.repository.name }}
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '24'
+        cache: 'pnpm'
+        cache-dependency-path: frontend/pnpm-lock.yaml
+        
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+          
+    - name: Install dependencies
+      run: pnpm install
+      
+    - name: Run linting
+      run: pnpm lint
+      
+    - name: Run type checking
+      run: pnpm tsc --noEmit
+      
+    - name: Build frontend
+      run: pnpm build
+      
+    - name: Compress frontend build
+      run: tar -czf frontend-build.tar.gz out/
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: frontend-build.tar.gz
+        
+  backend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24.0'
+        
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+          
+    - name: Download dependencies
+      run: go mod download
+      
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v8
+      with:
+        version: v2.1.0
+        working-directory: backend
+        args: --timeout=5m
+        
+    - name: Install swag
+      run: go install github.com/swaggo/swag/cmd/swag@latest
+      
+    - name: Build backend
+      run: make
+      
+    - name: Upload backend build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-build
+        path: backend/build/
+      
+  build-images:
+    needs: [frontend-tests, backend-tests]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        labels: ${{ steps.meta.outputs.labels }}
+        load: true
+        
+    - name: Save Docker image
+      run: |
+        mkdir -p docker-images
+        docker save ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -o docker-images/dreamzero-blog.tar
+        
+    - name: Upload Docker image artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: docker-image
+        path: docker-images/
+        
+  # deploy:
+  #   needs: build-images
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'
+  #   environment: production
+    
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v5
+      
+  #   - name: Deploy to production
+  #     uses: appleboy/ssh-action@v1.0.0
+  #     with:
+  #       host: ${{ secrets.PROD_HOST }}
+  #       username: ${{ secrets.PROD_USERNAME }}
+  #       key: ${{ secrets.PROD_SSH_KEY }}
+  #       script: |
+  #         cd /opt/dreamzero-blog
+          
+  #         # 备份当前环境变量文件
+  #         cp docker/.env.prod docker/.env.prod.backup
+          
+  #         # 拉取最新代码
+  #         git pull origin main
+          
+  #         # 构建新镜像
+  #         docker-compose -f docker/docker-compose.prod.yml build
+          
+  #         # 停止旧容器
+  #         docker-compose -f docker/docker-compose.prod.yml down
+          
+  #         # 启动新容器
+  #         docker-compose -f docker/docker-compose.prod.yml up -d
+          
+  #         # 等待服务启动
+  #         sleep 30
+          
+  #         # 检查服务状态
+  #         docker-compose -f docker/docker-compose.prod.yml ps
+          
+  #         # 清理未使用的镜像和容器
+  #         docker system prune -f
+          
+  #         # 显示容器日志
+  #         docker-compose -f docker/docker-compose.prod.yml logs --tail=50

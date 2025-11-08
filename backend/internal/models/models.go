@@ -77,7 +77,9 @@ func createDB(databaseConfig config.DataBaseConfig) error {
 			logger.Logger.Errorf("Failed to get underlying sql.DB for default connection! [Error]: %v", err)
 			return err
 		}
-		sqlDB.Close()
+		if err := sqlDB.Close(); err != nil {
+			logger.Logger.Errorf("关闭默认数据库连接失败: %v", err)
+		}
 	}
 	
 	// 连接到目标数据库
@@ -198,5 +200,7 @@ func Close() {
 	if err != nil {
 		logger.Logger.Errorf("Failed to close DB! [Error]: %v", err)
 	}
-	sqlDB.Close()
+	if err := sqlDB.Close(); err != nil {
+		logger.Logger.Errorf("关闭数据库连接失败: %v", err)
+	}
 }

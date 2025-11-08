@@ -321,7 +321,10 @@ func (service *EmailVerificationCodeService) SendEmailVerificationCode() error {
 			return code.ErrSendEmailVerificationCode
 		}
 		// 设置email为key，使同一个邮箱都到同一个分区中
-		producer.SendMessage(context.Background(), "email_verification", service.Email, messageJSON)
+		if err := producer.SendMessage(context.Background(), "email_verification", service.Email, messageJSON); err != nil {
+			logger.Logger.Errorf("send message to mq failed: %v", err)
+			return code.ErrSendEmailVerificationCode
+		}
 	}
 	// if err := email.SentVerifyCode(service.Email, verificationCode); err != nil {
 	// 	logger.Logger.Errorf("send email verification code failed: %v", err)

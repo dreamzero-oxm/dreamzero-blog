@@ -9,7 +9,7 @@
  */
 
 // 导入所需的依赖和组件
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Link from "next/link"; // 导入Next.js的Link组件，用于客户端导航
 import { config } from "@/lib/config"; // 导入网站配置信息
 import { Badge } from "@/components/ui/badge"; // 导入UI徽章组件
@@ -77,8 +77,8 @@ export default function Home() {
   }, [fetchError]);
 
   // 防抖加载更多
-  const loadMore = useCallback(
-    debounce(() => {
+  const debouncedLoadMore = useMemo(
+    () => debounce(() => {
       if (!isLoadingMore && hasMore) {
         setIsLoadingMore(true);
         setPage(prev => prev + 1);
@@ -86,6 +86,10 @@ export default function Home() {
     }, 300),
     [isLoadingMore, hasMore]
   );
+  
+  const loadMore = useCallback(() => {
+    debouncedLoadMore();
+  }, [debouncedLoadMore]);
 
   // 设置Intersection Observer实现懒加载
   useEffect(() => {

@@ -1,0 +1,60 @@
+services:
+  blog-web-frontend:
+    image: dreamzero-blog:${{ github.sha }}
+    container_name: www-dreamzero-web-prod
+    ports:
+      - "80:3000"
+    env_file: .env.prod
+    environment:
+      - TZ=Asia/Shanghai
+      - NODE_ENV=production
+    networks:
+      - blog
+    restart: always
+    extra_hosts:
+      - "myhost:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  blog-backend:
+    image: dreamzero-blog-backend:${{ github.sha }}
+    container_name: dreamzero-backend-prod
+    ports:
+      - "8080:8080"
+    env_file: .env.prod
+    environment:
+      - TZ=Asia/Shanghai
+      - GIN_MODE=release
+    networks:
+      - blog
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: dreamzero-nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - blog-web-frontend
+      - blog-backend
+    networks:
+      - blog
+    restart: always
+
+networks:
+  blog:
+    driver: bridge

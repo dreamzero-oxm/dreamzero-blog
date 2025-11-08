@@ -125,6 +125,8 @@ func CheckUserName(c *gin.Context) {
 		} else {
 			internal.APIResponse(c, code.OK, nil)
 		}
+	} else {
+		internal.APIResponse(c, code.ErrBind, nil)
 	}
 }
 
@@ -208,22 +210,8 @@ func ValidateAccessToken(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Router /user/profile [get]
 func GetUserProfile(c *gin.Context) {
-	// 从JWT中获取用户ID
-	userID, exists := c.Get("userID")
-	if !exists {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 转换用户ID
-	userIDStr, ok := userID.(string)
-	if !ok {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 将字符串转换为UUID
-	uid, err := utils.StringToUUID(userIDStr)
+	// 从JWT中获取用户ID并转换为UUID
+	uid, err := utils.GetUserIDFromContext(c)
 	if err != nil {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
@@ -259,22 +247,8 @@ func GetUserProfile(c *gin.Context) {
 // @Failure 20101 {object} internal.Response{data=string}
 // @Router /user/profile [put]
 func UpdateUserProfile(c *gin.Context) {
-	// 从JWT中获取用户ID
-	userID, exists := c.Get("userID")
-	if !exists {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 转换用户ID
-	userIDStr, ok := userID.(string)
-	if !ok {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 将字符串转换为UUID
-	uid, err := utils.StringToUUID(userIDStr)
+	// 从JWT中获取用户ID并转换为UUID
+	uid, err := utils.GetUserIDFromContext(c)
 	if err != nil {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
@@ -316,22 +290,8 @@ func UpdateUserProfile(c *gin.Context) {
 // @Failure 20101 {object} internal.Response{data=string}
 // @Router /user/avatar [post]
 func UploadAvatar(c *gin.Context) {
-	// 从JWT中获取用户ID
-	userID, exists := c.Get("userID")
-	if !exists {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 转换用户ID
-	userIDStr, ok := userID.(string)
-	if !ok {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 将字符串转换为UUID
-	uid, err := utils.StringToUUID(userIDStr)
+	// 从JWT中获取用户ID并转换为UUID
+	uid, err := utils.GetUserIDFromContext(c)
 	if err != nil {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
@@ -343,7 +303,12 @@ func UploadAvatar(c *gin.Context) {
 		internal.APIResponse(c, code.ErrBind, nil)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			// 记录关闭文件时的错误，但不影响主要流程
+			fmt.Printf("关闭文件时出错: %v\n", err)
+		}
+	}()
 	
 	// 检查文件大小（限制为5MB）
 	if header.Size > 5*1024*1024 {
@@ -403,22 +368,8 @@ func UploadAvatar(c *gin.Context) {
 // @Failure 20101 {object} internal.Response{data=string}
 // @Router /user/password [put]
 func ChangePassword(c *gin.Context) {
-	// 从JWT中获取用户ID
-	userID, exists := c.Get("userID")
-	if !exists {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 转换用户ID
-	userIDStr, ok := userID.(string)
-	if !ok {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 将字符串转换为UUID
-	uid, err := utils.StringToUUID(userIDStr)
+	// 从JWT中获取用户ID并转换为UUID
+	uid, err := utils.GetUserIDFromContext(c)
 	if err != nil {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return
@@ -470,22 +421,8 @@ func GetOperationLogs(c *gin.Context) {
 		return
 	}
 	
-	// 从JWT中获取用户ID
-	userID, exists := c.Get("userID")
-	if !exists {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 转换用户ID
-	userIDStr, ok := userID.(string)
-	if !ok {
-		internal.APIResponse(c, code.ErrUserNotFound, nil)
-		return
-	}
-	
-	// 将字符串转换为UUID
-	uid, err := utils.StringToUUID(userIDStr)
+	// 从JWT中获取用户ID并转换为UUID
+	uid, err := utils.GetUserIDFromContext(c)
 	if err != nil {
 		internal.APIResponse(c, code.ErrUserNotFound, nil)
 		return

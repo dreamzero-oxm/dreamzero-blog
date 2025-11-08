@@ -54,7 +54,7 @@ export function Header() {
     };
     
     checkLoginStatus();
-  }, []);
+  }, [checkAndRefresh]);
 
   // 监听storage事件，以便在其他标签页中清除token时更新登录状态
   useEffect(() => {
@@ -85,7 +85,7 @@ export function Header() {
     return () => {
       window.removeEventListener('tokenClearing', handleTokenClearing);
     };
-  }, [checkAndRefresh]);
+  }, []);
 
   const handleSwitchTheme = (isDark: boolean) => {
     setDark(isDark);

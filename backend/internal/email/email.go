@@ -46,21 +46,22 @@ func SendEmail(to string, subject string, body string) error {
 	smtpAddr := fmt.Sprintf("%s:%d", config.Conf.Email.SmtpHost, config.Conf.Email.SmtpPort)
 
 	// 根据端口选择发送方式
-	if config.Conf.Email.SmtpPort == 465 {
+	switch config.Conf.Email.SmtpPort {
+	case 465:
 		// SSL 方式
 		tlsConfig := &tls.Config{
 			ServerName:         config.Conf.Email.SmtpHost,
-			InsecureSkipVerify: true, // 如果服务器证书有问题，可以临时设置为true
+			InsecureSkipVerify: true, // 警告：跳过证书验证存在安全风险，仅用于测试环境
 		}
 		if err := e.SendWithTLS(smtpAddr, getStmpAuth(), tlsConfig); err != nil && !strings.Contains(err.Error(), "short response") {
 			return fmt.Errorf("SSL发送失败: %v", err)
 		}
 		return nil
-	} else if config.Conf.Email.SmtpPort == 587 {
+	case 587:
 		// TLS 方式
 		tlsConfig := &tls.Config{
 			ServerName:         config.Conf.Email.SmtpHost,
-			InsecureSkipVerify: true, // 如果服务器证书有问题，可以临时设置为true
+			InsecureSkipVerify: true, // 警告：跳过证书验证存在安全风险，仅用于测试环境
 		}
 		if err := e.SendWithStartTLS(smtpAddr, getStmpAuth(), tlsConfig); err != nil && !strings.Contains(err.Error(), "short response") {
 			return fmt.Errorf("TLS发送失败: %v", err)

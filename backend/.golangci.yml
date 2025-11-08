@@ -1,4 +1,4 @@
-version: 2
+version: "2"
 
 linters:
   default: standard
@@ -28,7 +28,7 @@ linters:
         main:
           list-mode: lax
           files:
-            - "!**/*_a _file.go"
+            - "!**/*_a_file.go"
           allow:
             - $gostd
             - github.com/urfave/cli

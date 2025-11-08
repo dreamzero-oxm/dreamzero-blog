@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { Textarea } from "@/components/ui/textarea"
 
-import { useSubmitComment } from "@/hooks/article-comment-hook"
+import { useSubmitComment } from "@/hooks/article-hook"
 
 interface CommentProps {
     // 文章title
@@ -23,7 +23,7 @@ interface CommentProps {
     articleId: string
 }
 
-export default function CommentBox({title, articleId}: CommentProps) {
+export default function CommentBox({ articleId}: CommentProps) {
     const [comment, setComment] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const { isPending, error, mutate: mutateAddComment } = useSubmitComment()
@@ -53,8 +53,7 @@ export default function CommentBox({title, articleId}: CommentProps) {
             setIsSubmitting(true)
             mutateAddComment({
                 content: comment,
-                article_title: title,
-                article_id: articleId
+                articleId: articleId
             })
             setComment("")
         } catch (error) {

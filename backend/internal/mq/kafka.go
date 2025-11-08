@@ -14,6 +14,42 @@ import (
 	"github.com/IBM/sarama"
 )
 
+// configureTLS 配置TLS设置
+func configureTLS(config *sarama.Config) error {
+	if !serverConfig.Conf.Kafka.TLS.Enable {
+		return nil
+	}
+
+	config.Net.TLS.Enable = true
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
+	}
+
+	if serverConfig.Conf.Kafka.TLS.CaFile != "" {
+		caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
+		if err != nil {
+			return fmt.Errorf("读取CA证书失败: %w", err)
+		}
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(caCert)
+		tlsConfig.RootCAs = caCertPool
+	}
+
+	if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
+		cert, err := tls.LoadX509KeyPair(
+			serverConfig.Conf.Kafka.TLS.CertFile,
+			serverConfig.Conf.Kafka.TLS.KeyFile,
+		)
+		if err != nil {
+			return fmt.Errorf("加载客户端证书失败: %w", err)
+		}
+		tlsConfig.Certificates = []tls.Certificate{cert}
+	}
+
+	config.Net.TLS.Config = tlsConfig
+	return nil
+}
+
 var (
 	instance         *KafkaProducer
 	once             sync.Once
@@ -48,34 +84,8 @@ func initKafkaProducer() (*KafkaProducer, error) {
 	config := sarama.NewConfig()
 
 	// TLS配置
-	if serverConfig.Conf.Kafka.TLS.Enable {
-		config.Net.TLS.Enable = true
-		tlsConfig := &tls.Config{
-			InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
-		}
-
-		if serverConfig.Conf.Kafka.TLS.CaFile != "" {
-			caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
-			if err != nil {
-				return nil, fmt.Errorf("读取CA证书失败: %w", err)
-			}
-			caCertPool := x509.NewCertPool()
-			caCertPool.AppendCertsFromPEM(caCert)
-			tlsConfig.RootCAs = caCertPool
-		}
-
-		if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
-			cert, err := tls.LoadX509KeyPair(
-				serverConfig.Conf.Kafka.TLS.CertFile,
-				serverConfig.Conf.Kafka.TLS.KeyFile,
-			)
-			if err != nil {
-				return nil, fmt.Errorf("加载客户端证书失败: %w", err)
-			}
-			tlsConfig.Certificates = []tls.Certificate{cert}
-		}
-
-		config.Net.TLS.Config = tlsConfig
+	if err := configureTLS(config); err != nil {
+		return nil, err
 	}
 
 	// 版本设置
@@ -248,34 +258,8 @@ func initKafkaAsyncProducer() (*KafkaAsyncProducer, error) {
 	config := sarama.NewConfig()
 
 	// TLS配置
-	if serverConfig.Conf.Kafka.TLS.Enable {
-		config.Net.TLS.Enable = true
-		tlsConfig := &tls.Config{
-			InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
-		}
-
-		if serverConfig.Conf.Kafka.TLS.CaFile != "" {
-			caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
-			if err != nil {
-				return nil, fmt.Errorf("读取CA证书失败: %w", err)
-			}
-			caCertPool := x509.NewCertPool()
-			caCertPool.AppendCertsFromPEM(caCert)
-			tlsConfig.RootCAs = caCertPool
-		}
-
-		if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
-			cert, err := tls.LoadX509KeyPair(
-				serverConfig.Conf.Kafka.TLS.CertFile,
-				serverConfig.Conf.Kafka.TLS.KeyFile,
-			)
-			if err != nil {
-				return nil, fmt.Errorf("加载客户端证书失败: %w", err)
-			}
-			tlsConfig.Certificates = []tls.Certificate{cert}
-		}
-
-		config.Net.TLS.Config = tlsConfig
+	if err := configureTLS(config); err != nil {
+		return nil, err
 	}
 
 	// 版本设置
@@ -482,34 +466,8 @@ func initConsumer(groupID string, topics []string) (*KafkaConsumer, error) {
 	config := sarama.NewConfig()
 
 	// TLS配置
-	if serverConfig.Conf.Kafka.TLS.Enable {
-		config.Net.TLS.Enable = true
-		tlsConfig := &tls.Config{
-			InsecureSkipVerify: serverConfig.Conf.Kafka.TLS.SkipVerify,
-		}
-
-		if serverConfig.Conf.Kafka.TLS.CaFile != "" {
-			caCert, err := os.ReadFile(serverConfig.Conf.Kafka.TLS.CaFile)
-			if err != nil {
-				return nil, fmt.Errorf("读取CA证书失败: %w", err)
-			}
-			caCertPool := x509.NewCertPool()
-			caCertPool.AppendCertsFromPEM(caCert)
-			tlsConfig.RootCAs = caCertPool
-		}
-
-		if serverConfig.Conf.Kafka.TLS.CertFile != "" && serverConfig.Conf.Kafka.TLS.KeyFile != "" {
-			cert, err := tls.LoadX509KeyPair(
-				serverConfig.Conf.Kafka.TLS.CertFile,
-				serverConfig.Conf.Kafka.TLS.KeyFile,
-			)
-			if err != nil {
-				return nil, fmt.Errorf("加载客户端证书失败: %w", err)
-			}
-			tlsConfig.Certificates = []tls.Certificate{cert}
-		}
-
-		config.Net.TLS.Config = tlsConfig
+	if err := configureTLS(config); err != nil {
+		return nil, err
 	}
 
 	// 版本设置

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"blog-server/internal/logger"
 	"blog-server/internal/models"
 	"blog-server/internal/oss"
 	"fmt"
@@ -33,7 +34,7 @@ func (service *UploadPhotoService) UploadPhoto() (int, int, error) {
 		objectName := fmt.Sprintf("%s-%s", uuid.New().String(), file.Filename)
 		
 		// 使用数据库事务确保数据一致性
-		models.DB.Transaction(func(tx *gorm.DB) error {
+		if err := models.DB.Transaction(func(tx *gorm.DB) error {
 			// 打开上传的文件
 			src, err := file.Open()
 			if err != nil {
@@ -41,7 +42,11 @@ func (service *UploadPhotoService) UploadPhoto() (int, int, error) {
 				fail++
 				return err
 			}
-			defer src.Close()
+			defer func() {
+				if closeErr := src.Close(); closeErr != nil {
+					logger.Logger.Errorf("close file failed: %v", closeErr)
+				}
+			}()
 			
 			// 上传文件到对象存储服务
 			if err := oss.UploadFileMinio(bucketName, objectName, src, contentType); err != nil {
@@ -63,7 +68,10 @@ func (service *UploadPhotoService) UploadPhoto() (int, int, error) {
 			
 			success++
 			return nil
-		})
+		}); err != nil {
+			finalError = err
+			fail++
+		}
 	}
 	return success, fail, finalError
 }
