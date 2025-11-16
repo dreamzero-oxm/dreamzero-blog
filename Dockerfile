@@ -50,9 +50,12 @@ ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
 ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
-# NEED_MIRROR=1 时，设置goproxy
+# 启用 Go Modules 功能
+ENV GO111MODULE=on
+
+# NEED_MIRROR=1 时，设置goproxy， 优先使用阿里云镜像，其次使用goproxy.cn，最后使用direct
 RUN if [ "$NEED_MIRROR" == "1" ]; then \
-        export GOPROXY=https://goproxy.cn,direct; \
+        export GOPROXY=https://mirrors.aliyun.com/goproxy/,https://goproxy.cn,direct; \
     fi;
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest
