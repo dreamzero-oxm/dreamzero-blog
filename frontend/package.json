@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev -p 9999",
     "build": "next build",
-    "start": "next start -p 9999",
+    "start": "npx serve@latest out",
     "lint": "next lint",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "generate-rss": "node scripts/generate-rss.js"

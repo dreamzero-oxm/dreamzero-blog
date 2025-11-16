@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, routeType 
         router.push('/login');
       }
     });
-  }, [checkAndRefresh]);
+  }, []);
 
   // 如果正在验证token，可以显示加载状态
   if (!isLogin || isLoading) {

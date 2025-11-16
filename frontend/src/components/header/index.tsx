@@ -54,7 +54,7 @@ export function Header() {
     };
     
     checkLoginStatus();
-  }, [checkAndRefresh]);
+  }, []);
 
   // 监听storage事件，以便在其他标签页中清除token时更新登录状态
   useEffect(() => {
@@ -166,6 +166,18 @@ export function Header() {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>登录</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {isLogin && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/manage" title="管理界面">
+                    <GithubIcon />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>管理界面</p>
                 </TooltipContent>
               </Tooltip>
             )}

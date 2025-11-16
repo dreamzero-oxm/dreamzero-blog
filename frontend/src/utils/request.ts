@@ -17,7 +17,7 @@ interface RequestOptions extends RequestParams {
   url: string;
 }
 
-const isRemoteAPI = false
+const isRemoteAPI = true
 
 // 基础API URL，指向后端服务器
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
