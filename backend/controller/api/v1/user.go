@@ -162,7 +162,7 @@ func CheckUserEmail(c *gin.Context) {
 func RefreshToken(c *gin.Context) {
 	// 传入Refresh_Token
 	var service service.RefreshTokenService
-	if err := c.ShouldBind(&service); err == nil {
+	if err := c.ShouldBindJSON(&service); err == nil {
 		user, accessToken, err := service.RefreshToken()
 		if err != nil {
 			internal.APIResponse(c, err, gin.H{
