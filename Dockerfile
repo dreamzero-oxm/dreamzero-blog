@@ -10,10 +10,16 @@ WORKDIR /blog
 RUN mkdir -p /blog/frontend
 
 # apt设置国内清华源
-RUN if [ "$NEED_MIRROR" == "1" ]; then \
-        sed -i 's|http://ports.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
-        sed -i 's|http://archive.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
-    fi; 
+#RUN if [ "$NEED_MIRROR" == "1" ]; then \
+#        sed -i 's|http://ports.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
+#        sed -i 's|http://archive.ubuntu.com|http://mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
+#    fi; 
+
+RUN if [ "$NEED_MIRROR" = "1" ]; then \
+        sed -i 's|http://ports.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list && \
+        sed -i 's|http://archive.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list; \
+    fi
+
 
 RUN --mount=type=cache,id=blog,target=/var/cache/apt,sharing=locked \
         apt-get update && \
@@ -50,10 +56,15 @@ ENV GOROOT=/usr/local/go
 ENV GOPATH=/go
 ENV PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 
-# NEED_MIRROR=1 时，设置goproxy
-RUN if [ "$NEED_MIRROR" == "1" ]; then \
-        export GOPROXY=https://goproxy.cn,direct; \
-    fi;
+# 启用 Go Modules 功能
+ENV GO111MODULE=on
+
+# NEED_MIRROR=1 时，设置goproxy， 优先使用阿里云镜像，其次使用goproxy.cn，最后使用direct
+#RUN if [ "$NEED_MIRROR" == "1" ]; then \
+#        export GOPROXY=https://mirrors.aliyun.com/goproxy/,https://goproxy.cn,direct; \
+#    fi;
+
+ENV GOPROXY="https://mirrors.aliyun.com/goproxy/,https://goproxy.cn,direct"
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 
