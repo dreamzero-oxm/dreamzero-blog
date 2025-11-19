@@ -58,7 +58,7 @@ export default function ArticlesPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-8">文章列表</h1>
             
             {articles?.articles && articles.articles.length > 0 ? (
-                <div className="space-y-8">
+                <div className="flex flex-col gap-4">
                   {articles.articles.map((article: Article) => (
                     <Link href={`/article-detail?id=${article.id}`} key={article.id} className="hover:text-blue-600 transition-colors">
                       <div className="bg-white p-6 rounded-lg shadow-md">

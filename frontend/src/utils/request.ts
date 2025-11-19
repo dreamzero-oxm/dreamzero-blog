@@ -21,7 +21,7 @@ const isRemoteAPI = false
 
 // 基础API URL，指向后端服务器
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '' 
+  ? 'https://dreamzero.cn' 
   : isRemoteAPI ? 'https://dreamzero.cn' : 'http://localhost:9997';
 
 // 带超时的fetch

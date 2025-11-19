@@ -30,7 +30,7 @@ export const config = {
     bio: "XiangMing Ou(DreamZero)",
   },
   social: {
-    github: "https://github.com/This-MOI",
+    github: "https://github.com/dreamzero-oxm",
     x: "https://x.com/xxx",
     xiaohongshu: "https://www.xiaohongshu.com/user/profile/xxx",
     wechat: "https://u.wechat.com/MEJWuTspfYpz_TR8Do3CmKY",
@@ -38,7 +38,7 @@ export const config = {
   },
   // 评论，需要在在 GitHub 上安装 Giscus 应用，暂时不用
   giscus: {
-    repo: "guangzhengli/hugo-ladder-exampleSite",
+    repo: "dreamzero-oxm/dreamzero-blog",
     repoId: "R_kgDOHyVOjg",
     categoryId: "DIC_kwDOHyVOjs4CQsH7",
   },
@@ -47,7 +47,7 @@ export const config = {
     main: [
       { 
         title: "文章", 
-        href: "/article",
+        href: "/articles",
       },
       { 
         title: "友商", 
