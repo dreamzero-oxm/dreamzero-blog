@@ -3,7 +3,8 @@ app:
   run_mode: "local"
   addr: "0.0.0.0"
   port: "9997"
-  jwt_expiration_time: 1  # 1 hour
+  jwt_expiration_time: 5  # 5 minutes
+  refresh_token_expiration: 1440  # 1 day
   rsa_private_key_path: "/etc/moity-blog/rsa_private_key.pem"
   rsa_public_key_path: "/etc/moity-blog/rsa_public_key.pem"
   log_output_dir: "/var/log/moity_blog_backend"
@@ -26,7 +27,7 @@ database:
     auto_create_db: true
   gorm:
     log_level: "ERROR"
-    log_output_dir: "/var/log/moity_blog_backend"
+    log_output_dir: "/var/log/dreamzero_blog_backend"
 kafka:
   brokers:
     - "172.18.0.1:9092"

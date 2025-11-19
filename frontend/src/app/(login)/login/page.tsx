@@ -12,7 +12,7 @@
 import { Shell } from "lucide-react"; // 导入Shell图标组件，用于品牌标识
 import LoginForm from "@/components/login-form"; // 导入自定义登录表单组件
 import Link from "next/link"; // 导入Next.js的Link组件，用于客户端导航
-import Image from "next/image"; // 导入Next.js的Image组件，用于优化图片加载
+
 
 /**
  * 登录页面组件
@@ -56,12 +56,10 @@ export default function Page() {
             
             {/* 右侧列：背景图片区域（仅在桌面设备显示） */}
             <div className="relative hidden bg-muted lg:block ">
-                {/* 背景图片：使用Next.js的Image组件进行优化 */}
-                <Image 
+                {/* 背景图片：使用原始img标签 */}
+                <img 
                     src="/images/loginBanner.jpeg" // 图片路径
                     alt="loginBanner" // 图片替代文本，提高可访问性
-                    width={1920} // 图片原始宽度
-                    height={1080} // 图片原始高度
                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6] dark:grayscale" // 样式类：覆盖整个容器，保持比例，暗色模式下降低亮度并添加灰度效果
                 />
             </div>
