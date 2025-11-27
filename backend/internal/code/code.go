@@ -55,6 +55,9 @@ var (
 	ErrPhotoUpload = &Errno{Code: 20301, Message: "图片上传失败"}
 	ErrPhotoDelete = &Errno{Code: 20302, Message: "图片删除失败"}
 	ErrPhotoList   = &Errno{Code: 20303, Message: "图片列表获取失败"}
+	ErrPhotoDetail = &Errno{Code: 20304, Message: "图片详情获取失败"}
+
+
 
 	// daily photograph errors
 	ErrDailyPhotographUserNotFound = &Errno{Code: 20601, Message: "用户不存在"}

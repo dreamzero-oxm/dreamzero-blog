@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"fmt"
 )
 
 type DailyPhotographController struct {
@@ -147,12 +148,10 @@ func GetDailyPhotographsByDateRange(c *gin.Context) {
 	var service service.GetDailyPhotographsByDateRangeService
 
 	// 绑定URI参数
-	if err := c.ShouldBindUri(&service); err != nil {
-		internal.APIResponse(c, IError.ErrParam, err.Error())
-		return
-	}
+	c.ShouldBindUri(&service)
 	// 绑定查询参数
 	if err := c.ShouldBindQuery(&service); err != nil {
+		fmt.Println(456123)
 		internal.APIResponse(c, IError.ErrParam, err.Error())
 		return
 	}
@@ -193,7 +192,7 @@ func GetDailyPhotograph(c *gin.Context) {
 
 	photo, err := service.GetDailyPhotograph()
 	if err != nil {
-		internal.APIResponse(c, IError.ErrPhotoList, err.Error())
+		internal.APIResponse(c, IError.ErrPhotoDetail, err.Error())
 		return
 	}
 
