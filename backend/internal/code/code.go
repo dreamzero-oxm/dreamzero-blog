@@ -56,6 +56,19 @@ var (
 	ErrPhotoDelete = &Errno{Code: 20302, Message: "图片删除失败"}
 	ErrPhotoList   = &Errno{Code: 20303, Message: "图片列表获取失败"}
 
+	// daily photograph errors
+	ErrDailyPhotographUserNotFound = &Errno{Code: 20601, Message: "用户不存在"}
+	ErrDailyPhotographDateParse     = &Errno{Code: 20602, Message: "日期格式错误"}
+	ErrDailyPhotographNotFound      = &Errno{Code: 20603, Message: "照片不存在"}
+	ErrDailyPhotographPermission    = &Errno{Code: 20604, Message: "无权限操作此照片"}
+	ErrDailyPhotographCreate        = &Errno{Code: 20605, Message: "创建照片失败"}
+	ErrDailyPhotographUpdate        = &Errno{Code: 20606, Message: "更新照片失败"}
+	ErrDailyPhotographDelete        = &Errno{Code: 20607, Message: "删除照片失败"}
+	ErrDailyPhotographLike          = &Errno{Code: 20608, Message: "点赞照片失败"}
+	ErrDailyPhotographList          = &Errno{Code: 20609, Message: "获取照片列表失败"}
+	ErrDailyPhotographFileOpen      = &Errno{Code: 20610, Message: "打开文件失败"}
+	ErrDailyPhotographFileUpload    = &Errno{Code: 20611, Message: "上传文件失败"}
+
 	// article comment errors
 	ErrArticleCommentCreateFailed = &Errno{Code: 20401, Message: "评论创建失败"}
 	ErrArticleCommentListFailed   = &Errno{Code: 20402, Message: "评论列表获取失败"}
