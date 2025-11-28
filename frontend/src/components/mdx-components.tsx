@@ -5,8 +5,9 @@ import Mermaid from "@/components/Mermaid"
 import { cn } from "@/lib/utils"
 
 const components = {
-  h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  h1: ({ className, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h1
+      id={id}
       className={cn(
         "font-heading mt-8 mb-8 scroll-m-20 text-[3.2rem] leading-[3.6rem] font-semibold tracking-tight",
         className
@@ -14,8 +15,9 @@ const components = {
       {...props}
     />
   ),
-  h2: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  h2: ({ className, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h2
+      id={id}
       className={cn(
         "font-heading mt-8 mb-8 scroll-m-20 text-[1.6rem] leading-[2.4rem] font-semibold tracking-tight",
         className
@@ -23,8 +25,9 @@ const components = {
       {...props}
     />
   ),
-  h3: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  h3: ({ className, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h3
+      id={id}
       className={cn(
         "font-heading mt-8 mb-8 scroll-m-20 text-[1.4rem] leading-[2.2rem] font-semibold tracking-tight",
         className
@@ -32,8 +35,9 @@ const components = {
       {...props}
     />
   ),
-  h4: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  h4: ({ className, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h4
+      id={id}
       className={cn(
         "font-heading mt-8 mb-8 scroll-m-20 text-[1.2rem] leading-[2rem] font-semibold tracking-tight",
         className
@@ -41,8 +45,9 @@ const components = {
       {...props}
     />
   ),
-  h5: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  h5: ({ className, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h5
+      id={id}
       className={cn(
         "font-heading mt-8 mb-8 scroll-m-20 text-[1rem] leading-[1.8rem] font-semibold tracking-tight",
         className
@@ -50,8 +55,9 @@ const components = {
       {...props}
     />
   ),
-  h6: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+  h6: ({ className, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h6
+      id={id}
       className={cn(
         "font-heading mt-8 mb-8 scroll-m-20 text-[0.8rem] leading-[1.6rem] font-semibold tracking-tight",
         className

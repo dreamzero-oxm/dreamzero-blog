@@ -13,6 +13,7 @@ func RegisterAPIV1(apiGroup *gin.RouterGroup) {
 		articleCommentController *v1.ArticleCommentController
 		userController           *v1.UserController
 		articleController        *v1.ArticleController
+		dailyPhotographController *v1.DailyPhotographController
 	)
 	if err := photoController.InitRouter(apiGroup); err != nil {
 		panic(err)
@@ -24,6 +25,9 @@ func RegisterAPIV1(apiGroup *gin.RouterGroup) {
 		panic(err)
 	}
 	if err := articleController.InitRouter(apiGroup); err != nil {
+		panic(err)
+	}
+	if err := dailyPhotographController.InitRouter(apiGroup); err != nil {
 		panic(err)
 	}
 }

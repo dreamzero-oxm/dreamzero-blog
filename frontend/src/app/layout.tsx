@@ -80,19 +80,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn(lxgwFont.className)}>
+    <html lang="zh-CN" className={cn(lxgwFont.className)}>
       <head>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
+        {/* <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss.xml" />
         <link rel="alternate" type="application/atom+xml" title="Atom" href="/atom.xml" />
-        <link rel="alternate" type="application/json" title="JSON" href="/feed.json" />
+        <link rel="alternate" type="application/json" title="JSON" href="/feed.json" /> */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body>
+      <body className="overflow-x-hidden">
         <ReactQueryProvider>
           <AntdRegistry>
             {/* <AuthProvider> */}
               <div className="w-screen min-h-screen overflow-x-hidden flex flex-col">
-                <main className="flex-1 flex flex-col">
+                <main className="flex-1 flex flex-col ">
                   {children}
                   <Toaster expand={true} position="bottom-right" richColors/>
                 </main>

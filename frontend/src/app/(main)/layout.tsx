@@ -12,9 +12,9 @@ export default function RootLayout({
 
   return (
     // <AuthProvider routeType="main">
-      <div className="flex-1 min-h-full w-full flex flex-col">
+      <div className="flex-1 min-h-full w-full flex flex-col bg-background">
         <Header />
-        <div className="bg-background flex-1">
+        <div className="flex-1 bg-background">
           {children}
         </div>
         <footer className="w-full flex justify-center items-center p-4 bg-background border-t flex-shrink-0">

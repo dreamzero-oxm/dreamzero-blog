@@ -209,3 +209,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 自定义细滚动条样式 */
+.custom-scrollbar {
+  /* Firefox 浏览器 */
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+/* WebKit 浏览器 (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 1px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 1px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
