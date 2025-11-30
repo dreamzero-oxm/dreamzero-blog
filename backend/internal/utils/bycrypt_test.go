@@ -5,7 +5,7 @@ import (
 )
 
 func TestGenerateEncryptedPassword(t *testing.T) {
-	test := []struct {
+	tests := []struct {
 		name     string
 		password string
 		wantErr  bool
@@ -21,7 +21,7 @@ func TestGenerateEncryptedPassword(t *testing.T) {
 			wantErr:  false,
 		},
 	}
-	for _, tt := range test {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			pwd, err := GenerateEncryptedPassword(tt.password)
 			t.Logf("pwd: %v", pwd)
@@ -33,7 +33,7 @@ func TestGenerateEncryptedPassword(t *testing.T) {
 }
 
 func TestComparePassword(t *testing.T) {
-	test := []struct {
+	tests := []struct {
 		name              string
 		password          string
 		encryptedPassword string
@@ -58,7 +58,7 @@ func TestComparePassword(t *testing.T) {
 			want:              false,
 		},
 	}
-	for _, tt := range test {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := ComparePassword(tt.password, tt.encryptedPassword)
 			if got != tt.want {

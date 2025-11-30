@@ -65,16 +65,10 @@ jobs:
         echo "Current directory contents:"
         ls -la
         echo "\nOut directory contents:"
-        ls -la out/ || echo "Out directory does not exist"
-      
+        ls -la out/
+
     - name: Compress frontend build
       run: |
-        echo "Current directory: $(pwd)"
-        echo "Current directory contents:"
-        ls -la
-        echo "\nOut directory contents:"
-        ls -la out/ || echo "Out directory does not exist"
-        
         if [ -d "out/" ]; then
           echo "Compressing out/ directory to frontend-build.tar.gz"
           tar -czf frontend-build.tar.gz out/
@@ -84,34 +78,12 @@ jobs:
           echo "Error: out/ directory not found"
           exit 1
         fi
-      
-    - name: Verify compressed file exists
-      run: |
-        echo "Checking for frontend-build.tar.gz in current directory:"
-        ls -la frontend-build.tar.gz || echo "File not found in current directory"
-        echo "Checking for frontend-build.tar.gz in frontend directory:"
-        ls -la frontend/frontend-build.tar.gz || echo "File not found in frontend directory"
-      
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: frontend-build
         path: frontend-build.tar.gz
-      continue-on-error: true
-        
-    - name: Upload build artifacts from frontend directory
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-build
-        path: frontend/frontend-build.tar.gz
-      continue-on-error: true
-        
-    - name: Upload out directory directly
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-out
-        path: frontend/out/
-      continue-on-error: true
         
   backend-tests:
     runs-on: ubuntu-latest

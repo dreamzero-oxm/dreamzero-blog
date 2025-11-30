@@ -61,6 +61,11 @@ docs:
 ca:
 	openssl req -new -nodes -x509 -out config/server.crt -keyout config/server.key -days 3650 -subj "/C=DE/ST=NRW/L=Earth/O=Random Company/OU=IT/CN=127.0.0.1/emailAddress=xxxxx@qq.com"
 
+.PHONY: install-hooks
+install-hooks: ## Install git hooks
+	@echo "Installing git hooks..."
+	@./scripts/install-hooks.sh
+
 .PHONY: help
 help:
 	@echo "make - compile the source code"
@@ -69,5 +74,6 @@ help:
 	@echo "make docs - gen swag doc"
 	@echo "make test - go test"
 	@echo "make build - go build"
+	@echo "make install-hooks - install git hooks for code quality checks"
 
 
