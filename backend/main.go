@@ -118,7 +118,7 @@ func main() {
 		// init middleware
 		middleware.InitMiddleware(mainServer)
 
-		// init logger 
+		// init logger
 		RegisterLoggerForGin(mainServer)
 
 		// init router

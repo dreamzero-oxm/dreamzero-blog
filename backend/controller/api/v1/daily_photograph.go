@@ -74,10 +74,10 @@ func CreateDailyPhotograph(c *gin.Context) {
 	}
 
 	success, fail, err := service.CreateDailyPhotograph()
-	// if err != nil {
-	// 	internal.APIResponse(c, IError.ErrPhotoUpload, err.Error())
-	// 	return
-	// }
+	if err != nil {
+		internal.APIResponse(c, IError.ErrPhotoUpload, err.Error())
+		return
+	}
 	// 返回成功或失败的照片数量
 	data := struct {
 		Success int `json:"success"`
@@ -148,7 +148,10 @@ func GetDailyPhotographsByDateRange(c *gin.Context) {
 	var service service.GetDailyPhotographsByDateRangeService
 
 	// 绑定URI参数
-	c.ShouldBindUri(&service)
+	if err := c.ShouldBindUri(&service); err != nil {
+		internal.APIResponse(c, IError.ErrParam, err.Error())
+		return
+	}
 	// 绑定查询参数
 	if err := c.ShouldBindQuery(&service); err != nil {
 		fmt.Println(456123)

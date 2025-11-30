@@ -679,8 +679,8 @@ func (s *GetArticleService) Get(c *gin.Context) (*models.Article, error) {
 		userID, err = uuid.Parse(s.UserID)
 		if err != nil {
 			// 记录操作日志 - 无效的用户ID
-			if err := LogArticleAccessAttempt(c, uuid.Nil, "unknown", s.ID, article.Title, false, "无效的用户ID"); err != nil {
-				logger.Logger.Errorf("记录文章访问尝试失败: %v", err)
+			if logErr := LogArticleAccessAttempt(c, uuid.Nil, "unknown", s.ID, article.Title, false, "无效的用户ID"); logErr != nil {
+				logger.Logger.Errorf("记录文章访问尝试失败: %v", logErr)
 			}
 			userName = "guest"
 			isGuest = true
@@ -861,13 +861,13 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 	userID, err := uuid.Parse(s.UserID)
 	if err != nil {
 		// 记录操作日志 - 无效的用户ID
-			if c != nil {
-				go func() {
-					if err := LogArticleLike(c, uuid.Nil, "unknown", s.ID, "未知文章", false, "无效的用户ID"); err != nil {
-						logger.Logger.Errorf("记录文章点赞操作失败: %v", err)
-					}
-				}()
-			}
+		if c != nil {
+			go func() {
+				if logErr := LogArticleLike(c, uuid.Nil, "unknown", s.ID, "未知文章", false, "无效的用户ID"); logErr != nil {
+					logger.Logger.Errorf("记录文章点赞操作失败: %v", logErr)
+				}
+			}()
+		}
 		return code.ErrInvalidUserID
 	}
 
@@ -921,8 +921,8 @@ func (s *LikeArticleService) Like(c *gin.Context) error {
 	// 记录操作日志 - 点赞成功
 	if c != nil {
 		go func() {
-			if err := LogArticleLike(c, userID, userName, article.ID.String(), article.Title, true, ""); err != nil {
-				logger.Logger.Errorf("记录文章点赞操作失败: %v", err)
+			if logErr := LogArticleLike(c, userID, userName, article.ID.String(), article.Title, true, ""); logErr != nil {
+				logger.Logger.Errorf("记录文章点赞操作失败: %v", logErr)
 			}
 		}()
 	}
@@ -979,12 +979,12 @@ func (s *UpdateArticleStatusService) UpdateStatus(c *gin.Context) error {
 	if err := models.DB.Where("id = ?", articleID).First(&article).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// 记录操作日志 - 文章不存在
-		if c != nil {
-			go func() {
-				_ = LogArticleStatusUpdate(c, userID, userName, s.ID, "未知文章", "", "", false, "文章不存在")
-			}()
-		}
-		return code.ErrArticleNotFound
+			if c != nil {
+				go func() {
+					_ = LogArticleStatusUpdate(c, userID, userName, s.ID, "未知文章", "", "", false, "文章不存在")
+				}()
+			}
+			return code.ErrArticleNotFound
 		}
 		// 记录操作日志 - 查询失败
 		if c != nil {
