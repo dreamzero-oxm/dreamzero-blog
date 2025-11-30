@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Pre-commit hook that runs golangci-lint
+# If any file fails the linting checks, the commit will be aborted.
+#
+# This hook is managed in version control. To install/update hooks, run:
+#   make install-hooks
+# or
+#   ./scripts/install-hooks.sh
+
+set -e
+
+echo "Running golangci-lint..."
+
+# Change to the backend directory if we're not already there
+if [ ! -f "go.mod" ]; then
+    if [ -f "backend/go.mod" ]; then
+        cd backend
+    else
+        echo "Warning: Could not find go.mod file. Running golangci-lint from current directory."
+    fi
+fi
+
+# Run golangci-lint on the entire project
+if golangci-lint run; then
+    echo "golangci-lint passed!"
+    echo "Pre-commit check completed successfully."
+    exit 0
+else
+    echo "golangci-lint failed! Please fix the issues before committing."
+    echo ""
+    echo "To run golangci-lint manually: golangci-lint run"
+    echo "To fix issues automatically: golangci-lint run --fix"
+    exit 1
+fi

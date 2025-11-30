@@ -117,7 +117,7 @@ func (a *ArticleController) DeleteArticle(c *gin.Context) {
 	// 将userID转换为字符串
 	if res, err := uuid.Parse(userID.(string)); err == nil {
 		deleteService.UserID = res
-	}else{
+	} else {
 		internal.APIResponse(c, code.ErrParam, nil)
 		return
 	}

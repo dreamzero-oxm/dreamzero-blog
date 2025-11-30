@@ -1,4 +1,6 @@
 version: "2"
+# golangci-lint configuration file
+# This configuration is automatically run before git commits
 
 linters:
   default: standard

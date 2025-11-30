@@ -66,7 +66,7 @@ func (service *RegisterUserService) Register() error {
 	}
 	
 	// 建立用户信息
-	user := generateDefualtUser()
+	user := generateDefaultUser()
 	user.UserName = service.UserName
 	user.Password = service.Password
 	user.Email = service.Email
@@ -245,9 +245,9 @@ func (service *LoginUserService) Login() (*models.User, string, string, error) {
 	return &user, accessToken, refreshToken, nil
 }
 
-// generateDefualtUser 生成默认用户
+// generateDefaultUser 生成默认用户
 // 返回一个带有默认值的用户对象
-func generateDefualtUser() *models.User {
+func generateDefaultUser() *models.User {
 	return &models.User{
 		UserName:         "guest",
 		Password:         "guest",
