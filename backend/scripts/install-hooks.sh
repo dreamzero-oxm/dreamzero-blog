@@ -26,9 +26,10 @@ fi
 # Create git hooks directory if it doesn't exist
 mkdir -p "$GIT_HOOKS_DIR"
 
-# Copy all hooks from git-hooks to .git/hooks
+# Copy only executable hook files from git-hooks to .git/hooks
+# Skip README.md and other documentation files
 for hook in "$HOOKS_DIR"/*; do
-    if [ -f "$hook" ]; then
+    if [ -f "$hook" ] && [ "$(basename "$hook")" != "README.md" ] && [[ ! "$(basename "$hook")" =~ \.md$ ]]; then
         hook_name=$(basename "$hook")
         target_hook="$GIT_HOOKS_DIR/$hook_name"
 
