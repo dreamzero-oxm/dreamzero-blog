@@ -234,3 +234,398 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+/* 修复代码块在移动端的溢出问题 */
+.prose pre {
+  @apply overflow-x-auto;
+  max-width: 100%;
+}
+
+.prose code {
+  @apply break-words;
+}
+
+/* 确保 prose 内容不会导致水平溢出 */
+.prose {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.prose * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 修复图片和媒体导致的溢出 */
+.prose img,
+.prose video,
+.prose audio,
+.prose iframe,
+.prose object,
+.prose embed {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 确保代码块内容可以水平滚动 */
+.prose pre code {
+  @apply overflow-x-auto;
+  display: block;
+  min-width: max-content;
+}
+
+/* 为长代码行添加水平滚动条 */
+.prose code:not(pre code) {
+  @apply break-all;
+}
+
+/* 修复表格在移动端的显示问题 */
+.prose table {
+  @apply w-full text-sm border-collapse;
+  border-spacing: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 100%;
+}
+
+.prose thead {
+  @apply bg-gray-50;
+}
+
+.prose th {
+  @apply px-4 py-3 text-left font-semibold text-gray-900 border-b border-gray-200;
+  white-space: nowrap;
+}
+
+.prose td {
+  @apply px-4 py-3 text-gray-700 border-b border-gray-100;
+  word-break: break-word;
+  vertical-align: top;
+}
+
+.prose tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.prose tbody tr:hover {
+  @apply bg-gray-50;
+}
+
+/* 表格容器 - 与 mdx-components 的 table 组件配合 */
+.prose > div[class*="overflow-x-auto"] {
+  @apply rounded-lg border border-gray-200 bg-white;
+  margin: 1.5rem 0;
+  max-width: 100%;
+}
+
+.prose > div[class*="overflow-x-auto"]::-webkit-scrollbar {
+  height: 6px;
+}
+
+.prose > div[class*="overflow-x-auto"]::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.prose > div[class*="overflow-x-auto"]::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.prose > div[class*="overflow-x-auto"]::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 移动端表格优化 */
+@media (max-width: 640px) {
+  .prose pre {
+    @apply text-xs;
+    max-width: calc(100vw - 2rem);
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0;
+  }
+
+  .prose pre::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .prose pre::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .prose pre::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+  }
+
+  .prose pre::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  /* 移动端表格容器优化 */
+  .prose > div[class*="overflow-x-auto"] {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    max-width: calc(100vw + 2rem);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 移动端表格样式 */
+  .prose table {
+    @apply text-xs;
+    min-width: max-content;
+  }
+
+  .prose th,
+  .prose td {
+    @apply px-2 py-2;
+    min-width: 80px;
+    white-space: nowrap;
+  }
+
+  /* 移动端表格容器滚动条 */
+  .prose > div[class*="overflow-x-auto"]::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .prose > div[class*="overflow-x-auto"]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .prose > div[class*="overflow-x-auto"]::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+  }
+
+  .prose > div[class*="overflow-x-auto"]::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+}
+
+/* 深色模式表格样式 */
+.dark .prose thead {
+  @apply bg-gray-800;
+}
+
+.dark .prose th {
+  @apply text-gray-100 border-gray-700;
+}
+
+.dark .prose td {
+  @apply text-gray-300 border-gray-700;
+}
+
+.dark .prose tbody tr:hover {
+  @apply bg-gray-800;
+}
+
+.dark .prose table,
+.dark .prose .table-wrapper {
+  border-color: #374151;
+}
+
+/* 表格单元格内的代码样式 */
+.prose td code,
+.prose th code {
+  @apply text-xs;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-weight: normal;
+}
+
+/* 响应式表格 - 备选方案 */
+@media (max-width: 768px) {
+  .prose .responsive-table {
+    @apply block;
+  }
+
+  .prose .responsive-table thead,
+  .prose .responsive-table tbody,
+  .prose .responsive-table th,
+  .prose .responsive-table td,
+  .prose .responsive-table tr {
+    @apply block;
+  }
+
+  .prose .responsive-table thead tr {
+    @apply absolute;
+    left: -9999px;
+    top: -9999px;
+  }
+
+  .prose .responsive-table tr {
+    @apply border border-gray-200 mb-6;
+    border-radius: 8px;
+  }
+
+  .prose .responsive-table td {
+    @apply border-none border-b border-gray-200 relative pl-24 pb-3 pt-3;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .prose .responsive-table td:before {
+    content: attr(data-label);
+    @apply absolute left-4 top-3 font-semibold text-gray-900;
+    white-space: nowrap;
+  }
+}
+
+/* 管理后台移动端优化 */
+@media (max-width: 640px) {
+  /* 确保管理页面容器不会溢出 */
+  .container {
+    @apply px-3;
+    max-width: 100%;
+  }
+
+  /* 标签页导航优化 */
+  [role="tablist"] {
+    @apply overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 表格在移动端的优化 */
+  table {
+    @apply text-xs;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 卡片内容优化 */
+  .card-content {
+    @apply px-3 py-4;
+  }
+
+  /* 表单元素优化 */
+  input, textarea, select {
+    @apply text-sm;
+  }
+
+  /* 按钮组优化 */
+  .btn-group {
+    @apply flex-col gap-2;
+  }
+
+  .btn-group > button {
+    @apply w-full;
+  }
+}
+
+/* 管理后台侧边栏移动端优化 */
+@media (max-width: 768px) {
+  [data-sidebar="sidebar"] {
+    @apply fixed inset-y-0 left-0 z-50;
+  }
+
+  [data-sidebar="sidebar"][data-state="collapsed"] {
+    @apply -translate-x-full;
+  }
+
+  [data-sidebar="sidebar"][data-state="expanded"] {
+    @apply translate-x-0;
+  }
+
+  /* 文章列表表格移动端优化 */
+  .article-list-table {
+    @apply text-xs;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .article-list-table th,
+  .article-list-table td {
+    @apply px-2 py-2;
+    white-space: nowrap;
+  }
+
+  .article-list-table th:first-child,
+  .article-list-table td:first-child {
+    @apply min-w-[120px] max-w-[250px];
+    width: 200px;
+  }
+
+  .article-list-table th:nth-child(2),
+  .article-list-table td:nth-child(2) {
+    @apply min-w-[60px] max-w-[80px];
+  }
+
+  .article-list-table th:nth-child(3),
+  .article-list-table td:nth-child(3) {
+    @apply min-w-[60px] max-w-[100px];
+  }
+
+  .article-list-table th:nth-child(n+4),
+  .article-list-table td:nth-child(n+4) {
+    @apply min-w-[50px] max-w-[60px];
+  }
+
+  /* 标题换行处理 */
+  .article-title-cell {
+    @apply break-words;
+    max-width: 200px;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .article-title-truncate {
+    @apply line-clamp-2;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  /* 操作按钮移动端优化 */
+  .article-actions {
+    @apply flex flex-col gap-1 sm:flex-row sm:gap-1;
+  }
+
+  .article-actions button {
+    @apply w-full sm:w-auto justify-center text-xs sm:text-sm;
+  }
+
+  /* 移动端隐藏非关键列 */
+  @media (max-width: 640px) {
+    .article-list-table th:nth-child(4),
+    .article-list-table th:nth-child(5),
+    .article-list-table td:nth-child(4),
+    .article-list-table td:nth-child(5) {
+      @apply hidden;
+    }
+  }
+
+  /* 时间列在移动端显示为文本 */
+  @media (max-width: 640px) {
+    .article-list-table th:nth-child(6),
+    .article-list-table td:nth-child(6) {
+      @apply text-xs;
+      white-space: normal;
+      word-break: break-word;
+    }
+  }
+
+  /* 标签移动端优化 */
+  .article-tags {
+    @apply flex flex-wrap gap-1;
+  }
+
+  .article-tags .badge {
+    @apply text-xs px-1 py-0.5;
+  }
+}
