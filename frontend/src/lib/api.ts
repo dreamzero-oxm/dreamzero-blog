@@ -3,9 +3,17 @@ export const apiHost = 'api/v1'
 export const user = `user`
 
 const api = {
-    // photo
+    // photo (legacy)
     updatePhotos: `/${apiHost}/photo/upload`,
-    listPhotos: `/${apiHost}/photo/list`, 
+    listPhotos: `/${apiHost}/photo/list`,
+    // daily photograph
+    createDailyPhotograph: `/${apiHost}/daily_photograph/create`,
+    getUserDailyPhotographs: `/${apiHost}/daily_photograph/user`,
+    getDailyPhotographsByDateRange: `/${apiHost}/daily_photograph/date_range`,
+    getDailyPhotograph: `/${apiHost}/daily_photograph/detail`,
+    updateDailyPhotograph: `/${apiHost}/daily_photograph/update`,
+    deleteDailyPhotograph: `/${apiHost}/daily_photograph/delete`,
+    likeDailyPhotograph: `/${apiHost}/daily_photograph/like`,
     // article comment
     submitArticleComment: `/${apiHost}/article_comment/add`,
     listArticleComment: `/${apiHost}/article_comment/list`,
@@ -26,7 +34,7 @@ const api = {
     uploadAvatar: `/${apiHost}/${user}/avatar`,
     changePassword: `/${apiHost}/${user}/password`,
     getOperationLogs: `/${apiHost}/${user}/operation-logs`,
-    // others   
+    // others
 }
 
 export default api;
