@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -314,7 +313,7 @@ export default function ArticleView({ articleId, onBack, onEdit }: ArticleViewPr
             <div>
               <h3 className="text-lg font-medium mb-2">封面图片</h3>
               <div className="relative overflow-hidden rounded-md">
-                <Image
+                <img
                   src={article.cover_image}
                   alt={article.title}
                   width={800}
