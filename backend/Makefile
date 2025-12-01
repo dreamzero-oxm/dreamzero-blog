@@ -64,7 +64,7 @@ ca:
 .PHONY: install-hooks
 install-hooks: ## Install git hooks
 	@echo "Installing git hooks..."
-	@./scripts/install-hooks.sh
+	@../scripts/install-hooks.sh
 
 .PHONY: help
 help:
