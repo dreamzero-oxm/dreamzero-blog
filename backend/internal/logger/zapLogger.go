@@ -14,9 +14,9 @@ func initZapLogger(baseDir string) (*zap.SugaredLogger, error) {
 	// 添加颜色输出
 	consoleEncoderConfig := zap.NewDevelopmentEncoderConfig()
 	consoleEncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	consoleEencoder := zapcore.NewConsoleEncoder(consoleEncoderConfig)
+	consoleEncoder := zapcore.NewConsoleEncoder(consoleEncoderConfig)
 	// 日志文件不需要颜色
-	fileEencoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+	fileEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 
 	// 如果是相对路径，则基于项目根目录
 	if !filepath.IsAbs(baseDir) {
@@ -66,10 +66,10 @@ func initZapLogger(baseDir string) (*zap.SugaredLogger, error) {
 	consoleSyncer := zapcore.AddSync(os.Stdout)
 
 	core := zapcore.NewTee(
-		zapcore.NewCore(fileEencoder, debugWriterSyncer, zapcore.DebugLevel),
-		zapcore.NewCore(fileEencoder, infoWriterSyncer, zapcore.InfoLevel),
-		zapcore.NewCore(fileEencoder, errorWriterSyncer, zapcore.ErrorLevel),
-		zapcore.NewCore(consoleEencoder, consoleSyncer, zapcore.DebugLevel),
+		zapcore.NewCore(fileEncoder, debugWriterSyncer, zapcore.DebugLevel),
+		zapcore.NewCore(fileEncoder, infoWriterSyncer, zapcore.InfoLevel),
+		zapcore.NewCore(fileEncoder, errorWriterSyncer, zapcore.ErrorLevel),
+		zapcore.NewCore(consoleEncoder, consoleSyncer, zapcore.DebugLevel),
 	)
 
 	log := zap.New(core, zap.AddCaller())

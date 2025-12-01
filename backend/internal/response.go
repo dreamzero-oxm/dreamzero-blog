@@ -46,9 +46,9 @@ func APIResponseInternalServerError(ctx *gin.Context, err error, data interface{
 }
 
 func APIResponseWithStatus(ctx *gin.Context, err error, data interface{}, statusCode int) {
-	code, message := code.DecodeErr(err)
+	resCode, message := code.DecodeErr(err)
 	ctx.JSON(statusCode, Response{
-		Code: code,
+		Code: resCode,
 		Msg:  message,
 		Data: data,
 	})
