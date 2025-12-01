@@ -50,27 +50,27 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="bg-gray-50 bg-background">
+    <div className="bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-background">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 bg-background">
           {/* 文章列表 */}
           <div className="lg:col-span-2">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">文章列表</h1>
+            <h1 className="text-3xl font-bold text-primary mb-8">文章列表</h1>
             
             {articles?.articles && articles.articles.length > 0 ? (
                 <div className="flex flex-col gap-4">
                   {articles.articles.map((article: Article) => (
                     <Link href={`/article-detail?id=${article.id}`} key={article.id} className="hover:text-blue-600 transition-colors">
-                      <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-bold text-gray-900 mb-2">
+                      <div className="bg-background p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-bold text-primary mb-2">
                             {article.title}
                         </h2>
                         
-                        <p className="text-gray-600 mb-4 line-clamp-3">
+                        <p className="text-muted-foreground mb-4 line-clamp-3">
                           {article.summary}
                         </p>
                         
-                        <div className="flex items-center text-sm text-gray-500 mb-4">
+                        <div className="flex items-center text-sm text-muted-foreground mb-4">
                           {/* <span className="mr-4">作者: {article.user?.nickname}</span> */}
                           <span className="mr-4">发布时间: {formatDate(article.created_at)}</span>
                           <span className="mr-4">浏览量: {article.view_count}</span>
@@ -80,7 +80,7 @@ export default function ArticlesPage() {
                         {article.tags && article.tags.length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {article.tags.map((tag: string) => (
-                              <span key={tag} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                              <span key={tag} className="px-2 py-1 text-xs text-primary bg-muted text-muted-foreground rounded-full">
                                 {tag}
                               </span>
                             ))}
@@ -104,7 +104,7 @@ export default function ArticlesPage() {
                   <button
                     onClick={() => handlePageChange(page - 1)}
                     disabled={page === 1}
-                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 text-sm font-medium text-muted-foreground bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     上一页
                   </button>
@@ -113,11 +113,7 @@ export default function ArticlesPage() {
                     <button
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
-                      className={`px-3 py-2 text-sm font-medium rounded-md ${
-                        page === pageNum
-                          ? 'text-white bg-blue-600'
-                          : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                      }`}
+                      className={`px-3 py-2 text-sm font-medium rounded-md text-primary bg-muted`}
                     >
                       {pageNum}
                     </button>
@@ -126,7 +122,7 @@ export default function ArticlesPage() {
                   <button
                     onClick={() => handlePageChange(page + 1)}
                     disabled={page === totalPages}
-                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 text-sm font-medium text-muted-foreground bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     下一页
                   </button>
@@ -136,18 +132,18 @@ export default function ArticlesPage() {
           </div>
           
           {/* 推荐阅读 */}
-          <div className="lg:col-span-1 h-full flex flex-col justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-md ">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">推荐阅读</h3>
+          <div className="lg:col-span-1 h-full flex flex-col justify-start">
+            <div className="lg:sticky lg:top-8 bg-muted p-6 rounded-lg shadow-md">
+              <h3 className="text-lg font-bold text-primary mb-4">推荐阅读</h3>
               {recommendedArticles && recommendedArticles.articles.length > 0 ? (
                 <div className="space-y-4">
                   {recommendedArticles.articles.map((article: Article) => (
                     <Link key={article.id} href={`/article-detail?id=${article.id}`} className="hover:text-blue-600 transition-colors">
                       <div className="pb-4 border-b border-gray-200 last:border-0">
-                        <h4 className="text-base font-medium text-gray-900 mb-1">
+                        <h4 className="text-base font-medium text-primary mb-1">
                             {article.title}
                         </h4>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {formatDate(article.created_at)}
                         </p>
                       </div>

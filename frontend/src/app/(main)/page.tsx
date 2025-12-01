@@ -195,18 +195,18 @@ export default function Home() {
                   className=""
                 >
                   <Link href={`/article-detail?id=${article.id}`}>
-                    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <div className="bg-background p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
                       <div className="flex items-center justify-between mb-2">
-                        <h2 className="text-xl font-semibold underline underline-offset-4">
+                        <h2 className="text-xl font-semibold underline underline-offset-4 text-primary">
                           {article.title}
                         </h2>
                       </div>
                       
-                      <p className="text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-muted-foreground mb-4 line-clamp-2">
                         {article.summary}
                       </p>
                       
-                      <div className="flex items-center text-sm text-gray-500 mb-4">
+                      <div className="flex items-center text-sm text-muted-foreground mb-4">
                         <span className="mr-4">发布时间: {formatDate(article.created_at)}</span>
                         <span className="mr-4">浏览量: {article.view_count}</span>
                         <span>点赞数: {article.like_count}</span>
@@ -215,7 +215,7 @@ export default function Home() {
                       {article.tags && article.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {article.tags.map((tag: string) => (
-                            <span key={tag} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                            <span key={tag} className="px-2 py-1 text-xs bg-muted text-muted-foreground rounded-full">
                               {tag}
                             </span>
                           ))}
@@ -226,8 +226,8 @@ export default function Home() {
                 </article>
               ))
             ) : (
-              <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                <p className="text-gray-500">暂无推荐文章</p>
+              <div className="bg-background p-6 rounded-lg shadow-md text-center">
+                <p className="text-muted-foreground">暂无推荐文章</p>
               </div>
             )}
             
@@ -235,13 +235,13 @@ export default function Home() {
             {isLoadingMore && (
               <div className="flex justify-center items-center py-4">
                 <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
-                <span className="ml-2 text-gray-600">加载中...</span>
+                <span className="ml-2 text-muted-foreground">加载中...</span>
               </div>
             )}
             
             {/* 没有更多数据提示 */}
             {!hasMore && articles.length > 0 && (
-              <div className="text-center py-4 text-gray-500">
+              <div className="text-center py-4 text-muted-foreground">
                 已加载全部文章
               </div>
             )}

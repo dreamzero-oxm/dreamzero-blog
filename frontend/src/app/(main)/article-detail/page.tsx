@@ -60,7 +60,7 @@ function ArticleDetailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <div className="flex flex-col xl:flex-row gap-6 lg:gap-8">
           {/* 主内容区域 */}
@@ -77,7 +77,7 @@ function ArticleDetailContent() {
             </button>
 
             {/* 文章内容 */}
-            <article className="bg-white rounded-lg shadow-sm sm:shadow-md overflow-hidden">
+            <article className="bg-card rounded-lg shadow-sm sm:shadow-md overflow-hidden">
               {/* 文章封面 */}
               {article.cover_image && (
                 <div className="w-full h-48 sm:h-64 md:h-80 lg:h-96">
@@ -91,12 +91,12 @@ function ArticleDetailContent() {
 
               <div className="p-4 sm:p-6 md:p-8">
                 {/* 文章标题 */}
-                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight break-words">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4 leading-tight break-words">
                   {article.title}
                 </h1>
 
                 {/* 文章元信息 */}
-                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
                   <div className="flex items-center">
                     <span className="mr-1">发布时间:</span>
                     <span className="font-medium">{formatDate(article.created_at)}</span>
@@ -117,7 +117,7 @@ function ArticleDetailContent() {
                     {article.tags.map((tag: string) => (
                       <span
                         key={tag}
-                        className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-blue-100 text-blue-800 rounded-full"
+                        className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-muted text-muted-foreground rounded-full"
                       >
                         {tag}
                       </span>
@@ -127,14 +127,14 @@ function ArticleDetailContent() {
 
                 {/* 文章摘要 */}
                 {article.summary && (
-                  <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-50 rounded-lg">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">摘要</h3>
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed break-words">{article.summary}</p>
+                  <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-muted rounded-lg">
+                    <h3 className="text-base sm:text-lg font-semibold text-muted-foreground mb-2">摘要</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed break-words">{article.summary}</p>
                   </div>
                 )}
 
                 {/* 文章正文 */}
-                <div className="prose prose-sm sm:prose-base md:prose-lg lg:prose-xl max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700 custom-scrollbar">
+                <div className="prose prose-sm sm:prose-base md:prose-lg lg:prose-xl max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground custom-scrollbar">
                   <MarkdownWithTOC
                     content={article.content || '暂无内容'}
                     onHeadingsExtracted={handleHeadingsExtracted}
@@ -158,7 +158,7 @@ export default function ArticleDetailPage() {
   return (
     <Suspense fallback={
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-foreground"></div>
       </div>
     }>
       <ArticleDetailContent />
