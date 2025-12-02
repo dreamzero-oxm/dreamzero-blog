@@ -525,8 +525,8 @@
 }
 
 /* 管理后台侧边栏移动端优化 */
-@media (max-width: 768px) {
-  [data-sidebar="sidebar"] {
+@media (max-width: 1024px) {
+  /* [data-sidebar="sidebar"] {
     @apply fixed inset-y-0 left-0 z-50;
   }
 
@@ -536,7 +536,7 @@
 
   [data-sidebar="sidebar"][data-state="expanded"] {
     @apply translate-x-0;
-  }
+  } */
 
   /* 文章列表表格移动端优化 */
   .article-list-table {
@@ -574,15 +574,6 @@
     @apply min-w-[50px] max-w-[60px];
   }
 
-  /* 标题换行处理 */
-  .article-title-cell {
-    @apply break-words;
-    max-width: 200px;
-    white-space: normal;
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
-
   .article-title-truncate {
     @apply line-clamp-2;
     overflow: hidden;
@@ -593,11 +584,11 @@
 
   /* 操作按钮移动端优化 */
   .article-actions {
-    @apply flex flex-col gap-1 sm:flex-row sm:gap-1;
+    @apply flex flex-col gap-1 md:flex-row md:gap-1;
   }
 
   .article-actions button {
-    @apply w-full sm:w-auto justify-center text-xs sm:text-sm;
+    @apply w-full md:w-auto justify-center text-xs md:text-sm;
   }
 
   /* 移动端隐藏非关键列 */
@@ -611,7 +602,7 @@
   }
 
   /* 时间列在移动端显示为文本 */
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .article-list-table th:nth-child(6),
     .article-list-table td:nth-child(6) {
       @apply text-xs;

@@ -540,9 +540,9 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
               <Table className="article-list-table w-full min-w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[200px] sm:w-[250px] max-w-[250px] min-w-[150px]">标题</TableHead>
-                    <TableHead className="min-w-[80px] sm:min-w-[100px]">状态</TableHead>
-                    <TableHead className="min-w-[100px] sm:min-w-[150px]">标签</TableHead>
+                    <TableHead className="text-center">标题</TableHead>
+                    <TableHead className="min-w-[80px] sm:min-w-[100px] text-center">状态</TableHead>
+                    <TableHead className="min-w-[100px] sm:min-w-[150px] text-center">标签</TableHead>
                     <TableHead className="min-w-[60px] text-center">浏览量</TableHead>
                     <TableHead className="min-w-[60px] text-center">点赞数</TableHead>
                     <TableHead className="min-w-[100px] sm:min-w-[120px] text-center">创建时间</TableHead>
@@ -552,7 +552,7 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                 <TableBody>
                   {articles.map((article: Article) => (
                     <TableRow key={article.id} className="hover:bg-muted/50">
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium w-[200px] sm:w-[250px] max-w-[250px] min-w-[150px] overflow-hidden">
                         <div className="flex flex-col space-y-1 w-full">
                           <div className="article-title-truncate max-w-[200px] sm:max-w-[250px]" title={article.title}>
                             {article.title}
@@ -573,10 +573,12 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                         </div>
                       </TableCell>
                       <TableCell>
-                        {getStatusBadge(article.status)}
+                        <div className="flex justify-center">
+                          {getStatusBadge(article.status)}
+                        </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1 justify-center">
                           {article.tags && article.tags.length > 0 ? (
                             article.tags.slice(0, 2).map((tag: string, index: number) => (
                               <Badge key={index} variant="secondary" className="text-xs">
