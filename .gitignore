@@ -93,3 +93,6 @@ temp/
 /docker/minio
 /docker/postgres
 /docker/backend
+
+# ---------------ios app------------------
+buildServer.json
