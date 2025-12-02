@@ -231,42 +231,49 @@ export default function ProfilePage() {
  */
   return (
     // 主容器：响应式布局，居中对齐，添加适当的内边距
-    <div className="container mx-auto py-6 px-4 md:px-6 lg:px-8">
+    <div className="w-full py-4 sm:py-6 px-3 sm:px-4 md:px-6 lg:px-8 overflow-x-hidden">
       {/* 页面标题区域 */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         {/* 页面主标题 */}
-        <h1 className="text-3xl font-bold tracking-tight">个人信息管理</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">个人信息管理</h1>
         {/* 页面描述文本 */}
-        <p className="text-muted-foreground mt-2">查看和编辑您的个人资料信息</p>
+        <p className="text-muted-foreground mt-2 text-sm sm:text-base">查看和编辑您的个人资料信息</p>
       </div>
-      
+
       {/* 标签页组件：控制不同功能模块的显示 */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        {/* 标签页导航栏：5列网格布局，平均分布 */}
-        <TabsList className="grid w-full grid-cols-5">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+        {/* 标签页导航栏：移动端横向滚动，桌面端网格布局 */}
+        <TabsList className="grid w-full grid-cols-5 sm:grid-cols-5 max-w-full">
+          {/* 移动端优化：使用省略号显示长文本 */}
+          {/* 桌面端：显示完整标签 */}
           {/* 概览标签页 */}
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <span>概览</span>
+          <TabsTrigger value="overview" className="flex items-center justify-center sm:justify-start gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+            <span className="hidden sm:inline">概览</span>
+            <span className="sm:hidden">📊</span>
           </TabsTrigger>
           {/* 头像管理标签页 */}
-          <TabsTrigger value="avatar" className="flex items-center gap-2">
-            <Camera className="h-4 w-4" />
-            <span>头像</span>
+          <TabsTrigger value="avatar" className="flex items-center justify-center sm:justify-start gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+            <Camera className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">头像</span>
+            <span className="sm:hidden">头像</span>
           </TabsTrigger>
           {/* 个人信息编辑标签页 */}
-          <TabsTrigger value="edit" className="flex items-center gap-2">
-            <Edit className="h-4 w-4" />
-            <span>编辑</span>
+          <TabsTrigger value="edit" className="flex items-center justify-center sm:justify-start gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+            <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">编辑</span>
+            <span className="sm:hidden">编辑</span>
           </TabsTrigger>
           {/* 安全设置标签页 */}
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
-            <span>安全</span>
+          <TabsTrigger value="security" className="flex items-center justify-center sm:justify-start gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+            <Lock className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">安全</span>
+            <span className="sm:hidden">安全</span>
           </TabsTrigger>
           {/* 操作日志标签页 */}
-          <TabsTrigger value="logs" className="flex items-center gap-2">
-            <History className="h-4 w-4" />
-            <span>操作日志</span>
+          <TabsTrigger value="logs" className="flex items-center justify-center sm:justify-start gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
+            <History className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">操作日志</span>
+            <span className="sm:hidden">日志</span>
           </TabsTrigger>
         </TabsList>
         
@@ -278,30 +285,31 @@ export default function ProfilePage() {
               <CardTitle>个人资料</CardTitle>
               <CardDescription>您的基本信息</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6">
               {/* 用户头像和基本信息布局 */}
-              <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                 {/* 用户头像区域 */}
-                <div className="flex flex-col items-center space-y-2">
-                  <Avatar className="h-24 w-24">
+                <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                  <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
                     <AvatarImage src={currentAvatar || ''} alt={profile?.nickname || '用户头像'} />
-                    <AvatarFallback className="text-2xl">
+                    <AvatarFallback className="text-xl sm:text-2xl">
                       {profile?.nickname?.charAt(0) || profile?.user_name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setActiveTab('avatar')}
-                    className="mt-2"
+                    className="mt-2 text-xs sm:text-sm"
                   >
-                    <Camera className="mr-2 h-4 w-4" />
-                    更换头像
+                    <Camera className="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">更换头像</span>
+                    <span className="sm:hidden">更换</span>
                   </Button>
                 </div>
-                
+
                 {/* 用户基本信息网格 */}
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">用户名</p>
                     <p className="text-base">{profile?.user_name || '未设置'}</p>
@@ -334,20 +342,24 @@ export default function ProfilePage() {
               </div>
               
               {/* 个人简介 */}
-              <div>
+              <div className="col-span-full">
                 <p className="text-sm font-medium text-muted-foreground mb-2">个人简介</p>
-                <p className="text-base bg-muted/50 p-3 rounded-md min-h-[80px]">
+                <p className="text-sm sm:text-base bg-muted/50 p-3 rounded-md min-h-[60px] sm:min-h-[80px]">
                   {profile?.bio || '未设置个人简介'}
                 </p>
               </div>
-              
-              <Separator />
-              
+
+              <Separator className="col-span-full" />
+
               {/* 操作按钮区域 */}
-              <div className="flex justify-end">
-                <Button onClick={() => setActiveTab('edit')}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  编辑资料
+              <div className="flex justify-end col-span-full">
+                <Button
+                  onClick={() => setActiveTab('edit')}
+                  className="w-full sm:w-auto text-sm sm:text-base"
+                >
+                  <Edit className="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">编辑资料</span>
+                  <span className="sm:hidden">编辑</span>
                 </Button>
               </div>
             </CardContent>
@@ -360,19 +372,24 @@ export default function ProfilePage() {
               <CardDescription>您的联系方式</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">邮箱</p>
-                  <p className="text-base">{profile?.email || '未设置'}</p>
+                  <p className="text-sm sm:text-base break-words">{profile?.email || '未设置'}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">个人网站</p>
                   {profile?.website ? (
-                    <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-base text-primary hover:underline">
+                    <a
+                      href={profile.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm sm:text-base text-primary hover:underline break-words"
+                    >
                       {profile.website}
                     </a>
                   ) : (
-                    <p className="text-base">未设置</p>
+                    <p className="text-sm sm:text-base">未设置</p>
                   )}
                 </div>
               </div>
@@ -386,16 +403,16 @@ export default function ProfilePage() {
               <CardDescription>您的账户信息和状态</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">账户状态</p>
                   <div className="flex items-center gap-2 mt-1">
                     {profile?.is_locked ? (
                       <>
-                        <Lock className="h-4 w-4 text-destructive" />
-                        <span className="text-base text-destructive">已锁定</span>
+                        <Lock className="h-3 w-3 sm:h-4 sm:w-4 text-destructive" />
+                        <span className="text-sm sm:text-base text-destructive">已锁定</span>
                         {profile?.lock_until && (
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-xs sm:text-sm text-muted-foreground break-words">
                             (至 {new Date(profile.lock_until).toLocaleString('zh-CN')})
                           </span>
                         )}
@@ -403,20 +420,20 @@ export default function ProfilePage() {
                     ) : (
                       <>
                         <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                        <span className="text-base">正常</span>
+                        <span className="text-sm sm:text-base">正常</span>
                       </>
                     )}
                   </div>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">注册时间</p>
-                  <p className="text-base">
+                  <p className="text-sm sm:text-base">
                     {profile?.created_at ? new Date(profile.created_at).toLocaleString('zh-CN') : '未知'}
                   </p>
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <p className="text-sm font-medium text-muted-foreground">最后更新</p>
-                  <p className="text-base">
+                  <p className="text-sm sm:text-base">
                     {profile?.updated_at ? new Date(profile.updated_at).toLocaleString('zh-CN') : '未知'}
                   </p>
                 </div>
@@ -428,13 +445,15 @@ export default function ProfilePage() {
         {/* 头像管理标签页内容：提供头像上传和预览功能 */}
         <TabsContent value="avatar">
           {/* 两列布局：左侧上传区域，右侧预览区域 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* 头像上传组件 */}
-            <AvatarUpload 
-              currentAvatar={currentAvatar} // 当前头像URL
-              username={profile?.user_name} // 用户名，用于头像文件命名
-              onAvatarChange={handleAvatarChange} // 头像更改回调函数
-            />
+            <div className="w-full">
+              <AvatarUpload
+                currentAvatar={currentAvatar} // 当前头像URL
+                username={profile?.user_name} // 用户名，用于头像文件命名
+                onAvatarChange={handleAvatarChange} // 头像更改回调函数
+              />
+            </div>
             {/* 当前头像预览卡片 */}
             <Card>
               <CardHeader>
@@ -443,14 +462,14 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="flex flex-col items-center space-y-4">
                 {/* 大尺寸头像预览 */}
-                <Avatar className="h-32 w-32">
+                <Avatar className="h-24 w-24 sm:h-32 sm:w-32">
                   <AvatarImage src={currentAvatar || ''} alt={profile?.nickname || '用户头像'} />
-                  <AvatarFallback className="text-3xl">
+                  <AvatarFallback className="text-2xl sm:text-3xl">
                     {profile?.nickname?.charAt(0) || profile?.user_name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 {/* 头像使用说明 */}
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center px-2">
                   您的头像将显示在个人资料、评论和其他用户可见的地方
                 </p>
               </CardContent>
