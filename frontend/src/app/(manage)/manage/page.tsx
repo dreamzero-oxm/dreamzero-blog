@@ -84,7 +84,7 @@ export default function ManagePage() {
   };
   
   return (
-    <div className="container mx-auto ">
+    <div className="w-full overflow-x-hidden">
       {viewMode === 'list' && (
         <ArticleList
           onCreate={handleCreateArticle}
@@ -92,21 +92,25 @@ export default function ManagePage() {
           onView={handleViewArticle}
         />
       )}
-      
+
       {(viewMode === 'create' || viewMode === 'edit') && (
-        <ArticleForm
-          article={selectedArticle || undefined}
-          onSave={handleSaveArticle}
-          onCancel={handleBackToList}
-        />
+        <div className="w-full overflow-x-hidden">
+          <ArticleForm
+            article={selectedArticle || undefined}
+            onSave={handleSaveArticle}
+            onCancel={handleBackToList}
+          />
+        </div>
       )}
-      
+
       {viewMode === 'view' && selectedArticle && (
-        <ArticleView
-          articleId={selectedArticle.id}
-          onBack={handleBackToList}
-          onEdit={handleEditArticle}
-        />
+        <div className="w-full overflow-x-hidden">
+          <ArticleView
+            articleId={selectedArticle.id}
+            onBack={handleBackToList}
+            onEdit={handleEditArticle}
+          />
+        </div>
       )}
     </div>
   );

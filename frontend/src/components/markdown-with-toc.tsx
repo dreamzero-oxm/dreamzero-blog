@@ -1,6 +1,7 @@
 'use client'
 
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useEffect, Children, useMemo, useCallback } from 'react';
 import { components } from '@/components/mdx-components';
 import { extractHeadings, Heading } from './table-of-contents';
@@ -121,7 +122,10 @@ export default function MarkdownWithTOC({ content, onHeadingsExtracted }: Markdo
   }), [generateId]);
 
   return (
-    <ReactMarkdown components={customComponents}>
+    <ReactMarkdown
+      components={customComponents}
+      remarkPlugins={[remarkGfm]}
+    >
       {content || '暂无内容'}
     </ReactMarkdown>
   );
