@@ -337,25 +337,32 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
   const allTags = getAllTags(articles);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 w-full overflow-x-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">文章管理</h2>
-          <p className="text-muted-foreground">管理您的所有文章</p>
+          <h2 className="text-xl sm:text-2xl font-bold">文章管理</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">管理您的所有文章</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            onClick={() => refetch()} 
-            className="flex items-center gap-2"
+          <Button
+            variant="outline"
+            onClick={() => refetch()}
+            className="flex items-center gap-2 text-sm sm:text-base"
+            size="sm"
             disabled={isLoading}
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            刷新
+            <RefreshCw className={`h-3 w-3 sm:h-4 sm:w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">刷新</span>
+            <span className="sm:hidden">刷新</span>
           </Button>
-          <Button onClick={onCreate} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            新建文章
+          <Button
+            onClick={onCreate}
+            className="flex items-center gap-2 text-sm sm:text-base"
+            size="sm"
+          >
+            <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">新建文章</span>
+            <span className="sm:hidden">新建</span>
           </Button>
         </div>
       </div>
@@ -529,31 +536,30 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
           ) : articles.length === 0 ? (
             <div className="flex justify-center py-8 text-muted-foreground">暂无文章</div>
           ) : (
-            <div className="rounded-md border">
-              <Table>
+            <div className="rounded-md border overflow-x-auto">
+              <Table className="article-list-table w-full min-w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[300px]">标题</TableHead>
-                    <TableHead className="w-[100px]">状态</TableHead>
-                    <TableHead className="w-[150px]">标签</TableHead>
-                    <TableHead className="w-[80px] text-center">浏览量</TableHead>
-                    <TableHead className="w-[80px] text-center">点赞数</TableHead>
-                    <TableHead className="w-[80px] text-center">评论数</TableHead>
-                    <TableHead className="w-[120px]">创建时间</TableHead>
-                    <TableHead className="w-[150px] text-right">操作</TableHead>
+                    <TableHead className="text-center">标题</TableHead>
+                    <TableHead className="min-w-[80px] sm:min-w-[100px] text-center">状态</TableHead>
+                    <TableHead className="min-w-[100px] sm:min-w-[150px] text-center">标签</TableHead>
+                    <TableHead className="min-w-[60px] text-center">浏览量</TableHead>
+                    <TableHead className="min-w-[60px] text-center">点赞数</TableHead>
+                    <TableHead className="min-w-[100px] sm:min-w-[120px] text-center">创建时间</TableHead>
+                    <TableHead className="min-w-[100px] sm:min-w-[150px] text-center">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {articles.map((article: Article) => (
                     <TableRow key={article.id} className="hover:bg-muted/50">
-                      <TableCell className="font-medium">
-                        <div className="flex flex-col space-y-1">
-                          <div className="font-semibold truncate" title={article.title}>
+                      <TableCell className="font-medium w-[200px] sm:w-[250px] max-w-[250px] min-w-[150px] overflow-hidden">
+                        <div className="flex flex-col space-y-1 w-full">
+                          <div className="article-title-truncate max-w-[200px] sm:max-w-[250px]" title={article.title}>
                             {article.title}
                           </div>
                           {article.summary && (
                             <div className="text-sm text-muted-foreground">
-                              <div className={expandedArticles.has(article.id) ? '' : 'truncate'} title={article.summary}>
+                              <div className={expandedArticles.has(article.id) ? '' : 'article-title-truncate'} title={article.summary}>
                                 {article.summary}
                               </div>
                               <button
@@ -567,10 +573,12 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                         </div>
                       </TableCell>
                       <TableCell>
-                        {getStatusBadge(article.status)}
+                        <div className="flex justify-center">
+                          {getStatusBadge(article.status)}
+                        </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1 justify-center">
                           {article.tags && article.tags.length > 0 ? (
                             article.tags.slice(0, 2).map((tag: string, index: number) => (
                               <Badge key={index} variant="secondary" className="text-xs">
@@ -587,16 +595,18 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center hidden sm:table-cell">
                         <div className="flex items-center justify-center">
-                          <Eye className="h-4 w-4 mr-1 text-muted-foreground" />
-                          {article.view_count}
+                          <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-muted-foreground" />
+                          <span className="text-xs sm:hidden">{article.view_count}</span>
+                          <span className="hidden sm:inline">{article.view_count}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center hidden sm:table-cell">
                         <div className="flex items-center justify-center">
-                          <Heart className="h-4 w-4 mr-1 text-muted-foreground" />
-                          {article.like_count}
+                          <Heart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-muted-foreground" />
+                          <span className="text-xs sm:hidden">{article.like_count}</span>
+                          <span className="hidden sm:inline">{article.like_count}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -605,49 +615,54 @@ export default function ArticleList({ onEdit, onView, onCreate }: ArticleListPro
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="article-actions">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-6 w-6 sm:h-8 sm:w-8"
                             onClick={() => onView?.(article)}
                           >
-                            <FileText className="h-4 w-4" />
+                            <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="text-xs sm:hidden">查看</span>
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-6 w-6 sm:h-8 sm:w-8"
                             onClick={() => onEdit?.(article)}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="text-xs sm:hidden">编辑</span>
                           </Button>
                           {article.status === 'published' ? (
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8"
+                              className="h-6 w-6 sm:h-8 sm:w-8"
                               onClick={() => handleStatusChange(article.id, 'draft')}
                             >
-                              <EyeOff className="h-4 w-4" />
+                              <EyeOff className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="text-xs sm:hidden">隐藏</span>
                             </Button>
                           ) : (
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8"
+                              className="h-6 w-6 sm:h-8 sm:w-8"
                               onClick={() => handleStatusChange(article.id, 'published')}
                             >
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="text-xs sm:hidden">发布</span>
                             </Button>
                           )}
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            className="h-6 w-6 sm:h-8 sm:w-8 text-destructive hover:text-destructive"
                             onClick={() => handleDelete(article.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="text-xs sm:hidden">删除</span>
                           </Button>
                         </div>
                       </TableCell>

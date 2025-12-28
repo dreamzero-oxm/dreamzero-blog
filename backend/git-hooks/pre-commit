@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Pre-commit hook that runs golangci-lint
+# Pre-commit hook that runs comprehensive linting for both frontend and backend
 # If any file fails the linting checks, the commit will be aborted.
 #
 # This hook is managed in version control. To install/update hooks, run:
@@ -10,26 +10,58 @@
 
 set -e
 
-echo "Running golangci-lint..."
+echo "Running pre-commit linting checks..."
 
-# Change to the backend directory if we're not already there
-if [ ! -f "go.mod" ]; then
-    if [ -f "backend/go.mod" ]; then
-        cd backend
+# Get the project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Find the comprehensive lint script
+LINT_SCRIPT="$PROJECT_ROOT/../scripts/lint-all.sh"
+
+# Fallback to old behavior if script doesn't exist
+if [ ! -f "$LINT_SCRIPT" ]; then
+    echo "Comprehensive lint script not found. Running backend-only linting..."
+
+    # Change to the backend directory if we're not already there
+    if [ ! -f "go.mod" ]; then
+        if [ -f "backend/go.mod" ]; then
+            cd backend
+        else
+            echo "Warning: Could not find go.mod file. Running golangci-lint from current directory."
+        fi
+    fi
+
+    # Run golangci-lint on the entire project
+    if golangci-lint run; then
+        echo "golangci-lint passed!"
+        echo "Pre-commit check completed successfully."
+        exit 0
     else
-        echo "Warning: Could not find go.mod file. Running golangci-lint from current directory."
+        echo "golangci-lint failed! Please fix the issues before committing."
+        echo ""
+        echo "To run golangci-lint manually: golangci-lint run"
+        echo "To fix issues automatically: golangci-lint run --fix"
+        exit 1
     fi
 fi
 
-# Run golangci-lint on the entire project
-if golangci-lint run; then
-    echo "golangci-lint passed!"
-    echo "Pre-commit check completed successfully."
+# Run comprehensive linting
+if "$LINT_SCRIPT" all; then
+    echo ""
+    echo "All pre-commit linting checks passed!"
     exit 0
 else
-    echo "golangci-lint failed! Please fix the issues before committing."
     echo ""
-    echo "To run golangci-lint manually: golangci-lint run"
-    echo "To fix issues automatically: golangci-lint run --fix"
+    echo "Pre-commit linting failed! Please fix the issues before committing."
+    echo ""
+    echo "To run linting manually:"
+    echo "  Frontend: cd frontend && npm run lint"
+    echo "  Backend:  cd backend && golangci-lint run"
+    echo "  All:      $LINT_SCRIPT all"
+    echo ""
+    echo "To fix issues automatically:"
+    echo "  Frontend: Check the ESLint output for specific file fixes"
+    echo "  Backend:  golangci-lint run --fix"
     exit 1
 fi

@@ -17,7 +17,7 @@ export default function RootLayout({
         <div className="flex-1 bg-background">
           {children}
         </div>
-        <footer className="w-full flex justify-center items-center p-4 bg-background border-t flex-shrink-0">
+        <footer className="w-full flex justify-center items-center p-4 bg-muted border-t flex-shrink-0">
           <Link href={'https://beian.miit.gov.cn'} className="underline underline-offset-4 text-sm whitespace-nowrap">
             粤ICP备2025480966号-1
           </Link>

@@ -2,7 +2,6 @@
 
 // 第三方库导入
 import { useState, useRef, ChangeEvent } from 'react';
-import Image from 'next/image';
 import { toast } from 'sonner';
 import { Upload as UploadIcon, Crop as CropIcon, Loader2, AlertCircle } from 'lucide-react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
@@ -242,7 +241,7 @@ export function AvatarUpload({ currentAvatar, username, onAvatarChange }: Avatar
                 circularCrop
                 keepSelection
               >
-                <Image
+                <img
                   ref={imgRef}
                   src={previewUrl}
                   alt="Preview"
