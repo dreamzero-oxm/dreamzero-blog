@@ -86,6 +86,7 @@ logs/*
 test_files/
 **/logs/*
 temp/
+runtime_logs
 
 # ------docker------
 /docker/kafka

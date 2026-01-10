@@ -1,2 +1,14 @@
 front_end_port=9999
 back_end_port=9997
+
+# MinIO Root 用户（用于 Web 控制台登录）
+MINIO_ROOT_USER=admin
+MINIO_ROOT_PASSWORD=admin123456
+
+# MinIO 额外用户（用于 API 访问）
+MINIO_USER_NAME=minio_user
+MINIO_USER_PWD=minio_password123
+
+# MinIO 访问密钥（用于应用程序访问）
+MINIO_ACCESS_KEY=dreamzero_access_key
+MINIO_SECRET_KEY=dreamzero_secret_key_very_long_and_secure
