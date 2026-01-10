@@ -81,7 +81,7 @@ RUN if [ "$NEED_MIRROR" = "1" ]; then \
 
 # 4. 安装 swag（走 GOPROXY）
 # 建议固定一个版本，构建更稳定，不要用 latest
-RUN go install github.com/swaggo/swag/cmd/swag@v1.8.12
+RUN GOPROXY=$(if [ "$NEED_MIRROR" = "1" ]; then echo "https://mirrors.aliyun.com/goproxy/,direct"; else echo "https://proxy.golang.org,direct"; fi) go install github.com/swaggo/swag/cmd/swag@v1.8.12
 
 
 # 以上所有层都与业务代码无关，可长期缓存
@@ -89,14 +89,15 @@ RUN go install github.com/swaggo/swag/cmd/swag@v1.8.12
 WORKDIR /app/frontend
 
 # 5. 缓存 Node 依赖
-COPY frontend/package.json frontend/pnpm-lock.yaml
+COPY frontend/package.json .
+COPY frontend/pnpm-lock.yaml .
 RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/backend
 
 # 6. 缓存 Go 依赖
 COPY backend/go.mod backend/go.sum ./
-RUN go mod download
+RUN GOPROXY=$(if [ "$NEED_MIRROR" = "1" ]; then echo "https://mirrors.aliyun.com/goproxy/,direct"; else echo "https://proxy.golang.org,direct"; fi) go mod download
 
 WORKDIR /app
 

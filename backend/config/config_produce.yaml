@@ -9,18 +9,18 @@ app:
   rsa_public_key_path: "/etc/moity-blog/rsa_public_key.pem"
   log_output_dir: "/var/log/moity_blog_backend"
 minio:
-  endpoint: "172.18.0.1:10004"
+  endpoint: "172.21.0.1:19000"
   access_key_id: "cxb944fJZaWvdZrnhB3V"
   secret_access_key: "mZUASbUjdRXO4zoKnAfmZbbVihPgt7gljPAZ1PrH"
   use_ssl: false
   bucket_names:
-    - "moity-blog"
+    - "dreamzero-bucket"
   location: "cn-east-1"
 database: 
   postgres:
-    host: "172.18.0.1"
+    host: "172.21.0.1"
     port: "5432"
-    username: "postgres"
+    username: "appuser"
     password: "10130420"
     db_name: "www_dreamzero_cn"
     sslmode: "disable"
@@ -30,7 +30,7 @@ database:
     log_output_dir: "/var/log/dreamzero_blog_backend"
 kafka:
   brokers:
-    - "172.18.0.1:9092"
+    - "172.21.0.1:9092"
   version: "4.0.0"
   client_id: "blog-server"
   producer:
@@ -52,7 +52,7 @@ kafka:
     key_file: "/path/to/client-key.pem"
     skip_verify: false
 redis:
-  addr: "172.18.0.1:6379"
+  addr: "172.21.0.1:6379"
   password: "moity10130420"
   db: 0
   dial_timeout: 10s
