@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"blog-server/internal/config"
-	"blog-server/internal/email"
+	// "blog-server/internal/email"
 	"blog-server/internal/logger"
 	"blog-server/internal/middleware"
 	"blog-server/internal/models"
@@ -102,15 +102,15 @@ func main() {
 			}
 		}()
 
-		// init email
-		if err := email.InitEmail(); err != nil {
-			return err
-		}
+		// // init email
+		// if err := email.InitEmail(); err != nil {
+		// 	return err
+		// }
 
-		// init email consumer
-		if err := email.InitEmailConsumer(); err != nil {
-			return err
-		}
+		// // init email consumer
+		// if err := email.InitEmailConsumer(); err != nil {
+		// 	return err
+		// }
 
 		// init server
 		mainServer := server.NewServer()

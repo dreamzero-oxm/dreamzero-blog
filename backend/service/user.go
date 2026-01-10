@@ -32,38 +32,38 @@ type RegisterUserService struct {
 // 返回可能的错误
 func (service *RegisterUserService) Register() error {
 	postgreDB := models.DB
-	var count int64
+	// var count int64
 	
-	// 验证验证码长度
-	if len(service.VerificationCode) != 6 {
-		return code.ErrVerificationCodeLength
-	} else {
-		// 从Redis获取验证码
-		redisClient := redis.GetRedisClient()
-		if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrefix+":verification_code:"+service.Email).Result(); err != nil {
-			logger.Logger.Errorf("redis get verification code failed: %v", err)
-			return code.ErrVerificationCodeInvalid
-		} else {
-			// 验证验证码是否匹配
-			if v != service.VerificationCode {
-				return code.ErrVerificationCodeInvalid
-			}
-			// 验证成功，删除验证码
-			if err := redisClient.Del(context.Background(), config.Conf.Redis.KeyPrefix+":verification_code:"+service.Email).Err(); err != nil {
-				logger.Logger.Errorf("redis delete verification code failed: %v", err)
-				return code.ErrVerificationCodeInvalid
-			}
-		}
-	}
+	// // 验证验证码长度
+	// if len(service.VerificationCode) != 6 {
+	// 	return code.ErrVerificationCodeLength
+	// } else {
+	// 	// 从Redis获取验证码
+	// 	redisClient := redis.GetRedisClient()
+	// 	if v, err := redisClient.Get(context.Background(), config.Conf.Redis.KeyPrefix+":verification_code:"+service.Email).Result(); err != nil {
+	// 		logger.Logger.Errorf("redis get verification code failed: %v", err)
+	// 		return code.ErrVerificationCodeInvalid
+	// 	} else {
+	// 		// 验证验证码是否匹配
+	// 		if v != service.VerificationCode {
+	// 			return code.ErrVerificationCodeInvalid
+	// 		}
+	// 		// 验证成功，删除验证码
+	// 		if err := redisClient.Del(context.Background(), config.Conf.Redis.KeyPrefix+":verification_code:"+service.Email).Err(); err != nil {
+	// 			logger.Logger.Errorf("redis delete verification code failed: %v", err)
+	// 			return code.ErrVerificationCodeInvalid
+	// 		}
+	// 	}
+	// }
 	
-	// 查询该用户的用户名是否已经存在
-	if err := postgreDB.Model(&models.User{}).Where("user_name = ?", service.UserName).Count(&count).Error; err != nil {
-		logger.Logger.Errorf("check user failed: %v", err)
-		return code.ErrDatabase
-	}
-	if count > 0 {
-		return code.ErrUserExistBefore
-	}
+	// // 查询该用户的用户名是否已经存在
+	// if err := postgreDB.Model(&models.User{}).Where("user_name = ?", service.UserName).Count(&count).Error; err != nil {
+	// 	logger.Logger.Errorf("check user failed: %v", err)
+	// 	return code.ErrDatabase
+	// }
+	// if count > 0 {
+	// 	return code.ErrUserExistBefore
+	// }
 	
 	// 建立用户信息
 	user := generateDefaultUser()
