@@ -1,115 +1,115 @@
 services:
   # blog-web-frontend:
-  #   depends_on:
-  #   #   postgres:
-  #   #     condition: service_healthy
-  #     minio:
-  #       condition: service_healthy
-  #   #   kafka:
-  #   #     condition: service_healthy
-  #   #   redis:
-  #   #     condition: service_healthy
-  #   image: main-dreamzero-blog:v1.3.2
-  #   container_name: www-dreamzero-web
-  #   ports:
-  #     - ${front_end_port}:9999
-  #     - ${back_end_port}:9997
-  #   volumes:
-  #     - /home/moity/code/projects/dreamzero-blog/frontend/src/content/blog:/app/frontend/src/content/blog
-  #     - /home/moity/code/projects/dreamzero-blog/backend/config:/app/backend/config
-  #     - /home/moity/code/projects/dreamzero-blog/backend/runtime_logs:/var/log/moity_blog_backend
-  #     - /home/moity/code/projects/dreamzero-blog/backend/public:/etc/dreamzero/public
-  #   env_file: .env
-  #   environment:
-  #     - TZ=${TIMEZONE}
-  #   networks:
-  #     - blog
-  #   restart: always
-  #   extra_hosts:
-  #     - "myhost:host-gateway"
-  minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
-    container_name: minio
-    restart: unless-stopped
-    ports:
-      - "19000:9000"
-      - "19001:9001"
-    # env_file: .env
-    environment:
-      # Root 用户（用于 Web 控制台登录）
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    command: server --address ":9000" --console-address ":9001" /data
-    volumes:
-      - ./minio/data:/data
-    networks:
-      - www.dreamzero.cn
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-
-  # 自动创建额外的用户和访问密钥
-  minio-setup:
-    image: minio/mc:latest
-    container_name: minio-setup
     depends_on:
-      - minio
-    restart: "no"
-    # env_file: .env
-    environment:          # 在这里声明变量
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-      ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      SECRET_KEY: ${MINIO_SECRET_KEY}
-      USER_NAME: ${MINIO_USER_NAME}
-      USER_PWD: ${MINIO_USER_PWD}
-      BUCKET_NAME: ${MINIO_BUCKET_NAME}
+    #   postgres:
+    #     condition: service_healthy
+      minio:
+        condition: service_healthy
+    #   kafka:
+    #     condition: service_healthy
+    #   redis:
+    #     condition: service_healthy
+    image: main-dreamzero-blog:v1.3.2
+    container_name: www-dreamzero-web
+    ports:
+      - ${front_end_port}:9999
+      - ${back_end_port}:9997
+    volumes:
+      - /home/moity/code/projects/dreamzero-blog/frontend/src/content/blog:/app/frontend/src/content/blog
+      - /home/moity/code/projects/dreamzero-blog/backend/config:/app/backend/config
+      - /home/moity/code/projects/dreamzero-blog/backend/runtime_logs:/var/log/moity_blog_backend
+      - /home/moity/code/projects/dreamzero-blog/backend/public:/etc/dreamzero/public
+    env_file: .env
+    environment:
+      - TZ=${TIMEZONE}
     networks:
-      - www.dreamzero.cn
-    entrypoint: >
-      /bin/sh -c "
-      set -e;
-      echo 'Waiting for MinIO to start...';
-      sleep 10;
-      
-      echo 'Setting alias...';
-      mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
-      echo 'Alias set successfully';
+      - blog
+    restart: always
+    extra_hosts:
+      - "myhost:host-gateway"
+    minio:
+      image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+      container_name: minio
+      restart: unless-stopped
+      ports:
+        - "19000:9000"
+        - "19001:9001"
+      # env_file: .env
+      environment:
+        # Root 用户（用于 Web 控制台登录）
+        MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+        MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      command: server --address ":9000" --console-address ":9001" /data
+      volumes:
+        - ./minio/data:/data
+      networks:
+        - www.dreamzero.cn
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+        interval: 30s
+        timeout: 20s
+        retries: 3
 
-      echo 'Creating bucket...';
-      /usr/bin/mc mb myminio/${MINIO_BUCKET_NAME} --ignore-existing;
-      echo 'Bucket created or already exists';
-      
-      echo 'Creating user: ${MINIO_USER_NAME}';
-      mc admin user add myminio ${MINIO_USER_NAME} ${MINIO_USER_PWD};
-      echo 'User created successfully';
-      
-      echo 'Creating access key for user...';
-      mc admin accesskey create myminio ${MINIO_USER_NAME} --access-key ${MINIO_ACCESS_KEY} --secret-key ${MINIO_SECRET_KEY};
-      echo 'Access key created successfully';
-      
-      echo 'Attaching policy to user...';
-      mc admin policy attach myminio readwrite --user=${MINIO_USER_NAME};
-      echo 'Policy attached successfully';
-      
-      echo 'Setting bucket anonymous access...';
-      mc anonymous set download myminio/dreamzero-bucket;
-      echo 'Bucket anonymous access set';
-      
-      echo 'Listing buckets:';
-      mc ls myminio;
-      
-      echo 'Listing users:';
-      mc admin user list myminio;
-      
-      echo 'Setup completed successfully!';
-      echo 'Root User: ${MINIO_ROOT_USER} / ${MINIO_ROOT_PASSWORD}';
-      echo 'User: ${MINIO_USER_NAME}';
-      echo 'API Access Key: ${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY}';
-      exit 0;
-      "
+    # 自动创建额外的用户和访问密钥
+    minio-setup:
+      image: minio/mc:latest
+      container_name: minio-setup
+      depends_on:
+        - minio
+      restart: "no"
+      # env_file: .env
+      environment:          # 在这里声明变量
+        MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+        MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+        ACCESS_KEY: ${MINIO_ACCESS_KEY}
+        SECRET_KEY: ${MINIO_SECRET_KEY}
+        USER_NAME: ${MINIO_USER_NAME}
+        USER_PWD: ${MINIO_USER_PWD}
+        BUCKET_NAME: ${MINIO_BUCKET_NAME}
+      networks:
+        - www.dreamzero.cn
+      entrypoint: >
+        /bin/sh -c "
+        set -e;
+        echo 'Waiting for MinIO to start...';
+        sleep 10;
+        
+        echo 'Setting alias...';
+        mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+        echo 'Alias set successfully';
+
+        echo 'Creating bucket...';
+        /usr/bin/mc mb myminio/${MINIO_BUCKET_NAME} --ignore-existing;
+        echo 'Bucket created or already exists';
+        
+        echo 'Creating user: ${MINIO_USER_NAME}';
+        mc admin user add myminio ${MINIO_USER_NAME} ${MINIO_USER_PWD};
+        echo 'User created successfully';
+        
+        echo 'Creating access key for user...';
+        mc admin accesskey create myminio ${MINIO_USER_NAME} --access-key ${MINIO_ACCESS_KEY} --secret-key ${MINIO_SECRET_KEY};
+        echo 'Access key created successfully';
+        
+        echo 'Attaching policy to user...';
+        mc admin policy attach myminio readwrite --user=${MINIO_USER_NAME};
+        echo 'Policy attached successfully';
+        
+        echo 'Setting bucket anonymous access...';
+        mc anonymous set download myminio/dreamzero-bucket;
+        echo 'Bucket anonymous access set';
+        
+        echo 'Listing buckets:';
+        mc ls myminio;
+        
+        echo 'Listing users:';
+        mc admin user list myminio;
+        
+        echo 'Setup completed successfully!';
+        echo 'Root User: ${MINIO_ROOT_USER} / ${MINIO_ROOT_PASSWORD}';
+        echo 'User: ${MINIO_USER_NAME}';
+        echo 'API Access Key: ${MINIO_ACCESS_KEY} / ${MINIO_SECRET_KEY}';
+        exit 0;
+        "
 
   # redis:
   #   image: redis:latest
