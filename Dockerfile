@@ -89,7 +89,7 @@ RUN go install github.com/swaggo/swag/cmd/swag@v1.8.12
 WORKDIR /app/frontend
 
 # 5. 缓存 Node 依赖
-COPY frontend/package.json frontend/pnpm-lock.yaml .
+COPY frontend/package.json frontend/pnpm-lock.yaml
 RUN pnpm install --frozen-lockfile
 
 WORKDIR /app/backend
