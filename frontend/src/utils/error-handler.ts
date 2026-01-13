@@ -34,6 +34,17 @@ export const handleError = (error: any): ApiError => {
     return error;
   }
 
+  // AbortError: 请求被取消（通常是 React Query 自动取消或用户主动取消）
+  // 这种情况不应该显示错误提示，因为这是正常的请求取消行为
+  if (error.name === 'AbortError' || error.message === 'signal is aborted without reason') {
+    return new ApiError(
+      '请求已取消',
+      ErrorType.UNKNOWN_ERROR,
+      0,
+      { silent: true }  // 标记为静默错误，不应该显示 toast
+    );
+  }
+
   // 网络错误
   if (error.name === 'TypeError' && error.message.includes('fetch')) {
     return new ApiError(
@@ -140,4 +151,21 @@ export const isResponseSuccess = (response: BaseResponse): boolean => {
 // 从响应中提取错误信息
 export const getResponseError = (response: BaseResponse): string => {
   return response.msg || '操作失败';
+};
+
+/**
+ * 处理错误并显示 toast 提示（静默错误不会显示 toast）
+ * @param error 错误对象
+ * @returns ApiError 对象
+ */
+export const handleErrorWithToast = (error: any): ApiError => {
+  const apiError = handleError(error);
+
+  // 如果不是静默错误，可以获取错误消息
+  // 显示 toast 的逻辑由调用方决定
+  if (!apiError.details?.silent) {
+    getErrorMessage(apiError);
+  }
+
+  return apiError;
 };
