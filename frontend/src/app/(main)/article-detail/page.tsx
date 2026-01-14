@@ -61,10 +61,10 @@ function ArticleDetailContent() {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <div className="flex flex-col xl:flex-row gap-6 lg:gap-8">
           {/* 主内容区域 */}
-          <div className="flex-1 min-w-0 xl:max-w-4xl">
+          <div className="flex-1 min-w-0 xl:max-w-5xl">
             {/* 返回按钮 */}
             <button
               onClick={() => router.back()}

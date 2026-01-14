@@ -42,13 +42,18 @@ export function useGetArticles(params?: ListArticlesRequest) {
     queryKey: ['articles', params],
     queryFn: async (): Promise<BaseResponse<ArticleListResponse>> => {
       try {
-        return await get<BaseResponse<ArticleListResponse>>(api.articles, { 
+        return await get<BaseResponse<ArticleListResponse>>(api.articles, {
           params,
           timeout: 15000
         });
       } catch (error) {
         const apiError = handleError(error);
-        
+
+        // 如果是静默错误（如请求被取消），不显示 toast
+        if (apiError.details?.silent) {
+          throw error;
+        }
+
         // 根据错误类型进行特定处理
         if (apiError.type === ErrorType.AUTHENTICATION_ERROR) {
           toast.error('请先登录后再查看文章列表');
@@ -61,7 +66,7 @@ export function useGetArticles(params?: ListArticlesRequest) {
         } else {
           toast.error(`获取文章列表失败: ${apiError.message}`);
         }
-        
+
         throw error;
       }
     },
@@ -87,7 +92,12 @@ export function useGetArticle(id: string) {
         });
       } catch (error) {
         const apiError = handleError(error);
-        
+
+        // 如果是静默错误（如请求被取消），不显示 toast
+        if (apiError.details?.silent) {
+          throw error;
+        }
+
         // 根据错误类型进行特定处理
         if (apiError.type === ErrorType.AUTHENTICATION_ERROR) {
           toast.error('请先登录后再查看文章');
@@ -100,7 +110,7 @@ export function useGetArticle(id: string) {
         } else {
           toast.error(`获取文章失败: ${apiError.message}`);
         }
-        
+
         throw error;
       }
     },
