@@ -19,6 +19,7 @@ import (
 	"blog-server/router"
 
 	"github.com/urfave/cli"
+	"github.com/gin-contrib/pprof"
 )
 
 //	@title			Blog-server
@@ -119,6 +120,8 @@ func main() {
 
 		// init server
 		mainServer := server.NewServer()
+		// 注册pprof路由
+		pprof.Register(mainServer.GinEngine)
 
 		// init middleware
 		middleware.InitMiddleware(mainServer)

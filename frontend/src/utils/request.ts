@@ -30,13 +30,18 @@ const fetchWithTimeout = async (
   options: RequestInit,
   timeout: number
 ): Promise<Response> => {
+  // 如果已经提供了 signal，不要创建新的 controller
+  if (options.signal) {
+    return fetch(url, options);
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
+
   try {
     const response = await fetch(url, {
       ...options,
-      signal: options.signal || controller.signal
+      signal: controller.signal
     });
     clearTimeout(timeoutId);
     return response;
