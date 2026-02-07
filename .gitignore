@@ -94,3 +94,5 @@ runtime_logs
 /docker/minio
 /docker/postgres
 /docker/backend
+
+passwords.txt
