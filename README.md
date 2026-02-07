@@ -8,6 +8,7 @@
 [![Go](https://img.shields.io/badge/Go-1.24.0-00ADD8?style=flat-square&logo=go)](https://go.dev/)
 [![React](https://img.shields.io/badge/React-19.2.3-61DAFB?style=flat-square&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Swift](https://img.shields.io/badge/Swift-6.0-FA7343?style=flat-square&logo=swift)](https://swift.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 **[Live Site](https://dreamzero.cn)** | **[GitHub](https://github.com/dreamzero-oxm/dreamzero-blog)**
@@ -47,6 +48,16 @@
 - **缓存:** [Redis](https://redis.io/)
 - **对象存储:** [MinIO](https://min.io/)
 
+### Mobile
+
+- **框架:** [SwiftUI](https://developer.apple.com/xcode/swiftui/)
+- **语言:** [Swift 6.0](https://swift.org/)
+- **架构:** MVVM + Repository Pattern
+- **持久化:** SwiftData
+- **网络:** Alamofire (HTTP networking)
+- **依赖注入:** Factory (2.5.3)
+- **AI 集成:** Zhipu AI (GLM-4.7) with RAG
+
 ### DevOps
 
 - **容器化:** Docker, Docker Compose
@@ -85,6 +96,20 @@
 - **文件上传** - MinIO 对象存储
 - **Redis 缓存** - 提升响应速度
 - **健康检查** - 服务状态监控
+
+</details>
+
+<details>
+<summary><b>Mobile (iOS)</b></summary>
+
+- **原生体验** - SwiftUI 构建，流畅的 iOS 原生界面
+- **文章浏览** - 文章列表、标签筛选、Markdown 渲染
+- **每日摄影** - 瀑布流照片展示、保存到相册
+- **AI 聊天** - 智谱 AI 集成，流式对话，多轮会话
+- **RAG 知识库** - 本地向量嵌入、语义搜索、文档管理
+- **用户系统** - 邮箱注册、个人资料管理
+- **自动刷新** - JWT 令牌自动续期机制
+- **本地缓存** - SwiftData 持久化、图片缓存
 
 </details>
 
@@ -151,6 +176,40 @@ dreamzero-blog/
 └── README.md              # 项目说明
 ```
 
+### iOS App Structure
+
+```
+iosApp/
+├── DreamzeroBlog/         # Xcode 项目源码
+│   ├── DTO/               # 数据传输对象 (API 模型)
+│   ├── Models/            # 领域模型
+│   │   └── Persistence/   # SwiftData 持久化模型
+│   ├── Endpoints/         # API 端点定义 (协议驱动)
+│   ├── Repositorys/       # 数据仓库层 (业务逻辑)
+│   ├── ViewModels/        # 视图模型 (@Observable)
+│   ├── Views/             # SwiftUI 视图
+│   │   ├── Register/      # 注册流程
+│   │   ├── Settings/      # 设置子页面
+│   │   └── Components/    # 可复用 UI 组件
+│   ├── Services/          # 业务服务
+│   ├── Utils/             # 工具类
+│   │   ├── Networking/    # 网络层 (APIClient)
+│   │   └── Keychain/      # 安全存储
+│   ├── Interceptors/      # 请求拦截器
+│   ├── DependencyInject/  # Factory DI 配置
+│   ├── Themes/            # 主题系统
+│   └── Layouts/           # 自定义布局
+├── DreamzeroBlog.xcodeproj/
+├── Secrets.xcconfig       # API 密钥配置 (git-ignored)
+├── buildServer.json       # Xcode 构建服务器配置
+├── API.md                 # API 文档
+├── QUICK_START.md         # 快速开始指南
+├── CHAT_FEATURE_README.md # 聊天功能说明
+├── REGISTRATION_FEATURE.md # 注册功能说明
+├── REFACTOR_SUMMARY.md    # 重构说明
+└── 产品报告.md            # 产品报告
+```
+
 ---
 
 ## 快速开始 (Quick Start)
@@ -160,6 +219,8 @@ dreamzero-blog/
 - **Node.js** >= 24.11.1
 - **Go** >= 1.24.0
 - **pnpm** >= 9.15.4
+- **Xcode** >= 16.0 (iOS development)
+- **iOS Target** >= 17.0
 - **Docker** (可选)
 
 ### 本地开发 (Local Development)
@@ -201,6 +262,25 @@ make dev-backend
 cd docker
 docker-compose up
 ```
+
+</details>
+
+<details>
+<summary><b>iOS 开发</b></summary>
+
+```bash
+cd iosApp/DreamzeroBlog
+# 配置 API Key
+# 编辑 DependencyInject/ApiClientInject.swift 中的 zhipuAPIKey
+
+# 在 Xcode 中打开项目
+open DreamzeroBlog.xcodeproj
+
+# 或使用命令行构建
+xcodebuild -project DreamzeroBlog.xcodeproj -scheme DreamzeroBlog build
+```
+
+**注意:** `Secrets.xcconfig` 需要配置智谱 AI API Key。详见 [QUICK_START.md](iosApp/QUICK_START.md)。
 
 </details>
 
